@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:background="@color/colorSearchBg"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <FrameLayout
+        android:id="@+id/fragment_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <com.mine.shortvideo.customview.BottomNavigationViewEx
+        android:id="@+id/bnve_center_icon_only"
+        style="@style/bnve_primary_bg"
+        android:layout_alignParentBottom="true"
+        app:itemTextColor="@color/selector_item_gray_color"
+        app:menu="@menu/menu_navigation_center_icon_only" />
+</RelativeLayout>
