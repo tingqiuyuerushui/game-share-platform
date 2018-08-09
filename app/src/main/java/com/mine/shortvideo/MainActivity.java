@@ -9,9 +9,12 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-
+import com.mine.shortvideo.activity.SearchActivity;
 import com.mine.shortvideo.customview.BottomNavigationViewEx;
 import com.mine.shortvideo.fragment.FragmentTabAdapter;
 import com.mine.shortvideo.fragment.HomeFragment;
@@ -24,11 +27,18 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends Activity {
 
     @BindView(R.id.bnve_center_icon_only)
     BottomNavigationViewEx bnveCenterIconOnly;
+    @BindView(R.id.fragment_content)
+    FrameLayout fragmentContent;
+    @BindView(R.id.btn_search)
+    ImageView btnSearch;
+    @BindView(R.id.btn_pull)
+    ImageView btnPull;
     private Context context;
     private static final String TAG = "MainActivity";
     private List<Fragment> fragments = new ArrayList<>();
@@ -38,6 +48,8 @@ public class MainActivity extends Activity {
     public static final int VIDEOFRAGMENT = 1;
     public static final int MESSAGEFRAGMENT = 2;
     public static final int MINEFRAGMENT = 3;
+    private static boolean ISUPPULL = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,25 +72,25 @@ public class MainActivity extends Activity {
         bnveCenterIconOnly.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    switch (item.getItemId()){
-                        case R.id.i_home:
-                            tabAdapter.getRadioGroup(HOMEFRAGMENT);
-                            return true;
-                        case R.id.i_video:
-                            tabAdapter.getRadioGroup(VIDEOFRAGMENT);
-                            return true;
-                        case R.id.menu_add:
+                switch (item.getItemId()) {
+                    case R.id.i_home:
+                        tabAdapter.getRadioGroup(HOMEFRAGMENT);
+                        return true;
+                    case R.id.i_video:
+                        tabAdapter.getRadioGroup(VIDEOFRAGMENT);
+                        return true;
+                    case R.id.menu_add:
 //                            tabAdapter.getRadioGroup(USERFRAGMENT);
-                            return true;
-                        case R.id.i_message:
-                            tabAdapter.getRadioGroup(MESSAGEFRAGMENT);
-                            return true;
-                        case R.id.i_mine:
-                            tabAdapter.getRadioGroup(MINEFRAGMENT);
-                            return true;
-                    }
+                        return true;
+                    case R.id.i_message:
+                        tabAdapter.getRadioGroup(MESSAGEFRAGMENT);
+                        return true;
+                    case R.id.i_mine:
+                        tabAdapter.getRadioGroup(MINEFRAGMENT);
+                        return true;
+                }
                 return false;
-        }
+            }
         });
         FragmentTagList.add("HomeFragment");
         FragmentTagList.add("VideoFragment");
@@ -88,7 +100,7 @@ public class MainActivity extends Activity {
         fragments.add(new VideoFragment());
         fragments.add(new MessageFragment());
         fragments.add(new MineFragment());
-        tabAdapter = new FragmentTabAdapter(this, fragments, R.id.fragment_content,FragmentTagList);
+        tabAdapter = new FragmentTabAdapter(this, fragments, R.id.fragment_content, FragmentTagList);
     }
 
     private void disableAllAnimation(BottomNavigationViewEx bnve) {
@@ -113,5 +125,25 @@ public class MainActivity extends Activity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @OnClick({R.id.btn_search, R.id.btn_pull})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.btn_search:
+                Intent intent = new Intent();
+                intent.setClass(context, SearchActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.btn_pull:
+                if (ISUPPULL){
+                    btnPull.setImageResource(R.mipmap.icon_down_pull);
+                    ISUPPULL = false;
+                }else {
+                    btnPull.setImageResource(R.mipmap.icon_up_pull);
+                    ISUPPULL = true;
+                }
+                break;
+        }
     }
 }

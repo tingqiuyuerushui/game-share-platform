@@ -34,7 +34,7 @@ public class HomeFragment extends BaseFragment {
         //设置viewpager的方向为竖直
         viewPager.setOrientation(OrientedViewPager.Orientation.VERTICAL);
         //设置limit
-        viewPager.setOffscreenPageLimit(4);
+        viewPager.setOffscreenPageLimit(3);
         //设置transformer
         viewPager.setPageTransformer(true, new VerticalStackTransformer(getActivity()));
         viewPager.setAdapter(mContentFragmentAdapter);
