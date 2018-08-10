@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.mine.shortvideo.activity.LoginActivity;
 import com.mine.shortvideo.activity.SearchActivity;
 import com.mine.shortvideo.customview.BottomNavigationViewEx;
 import com.mine.shortvideo.fragment.FragmentTabAdapter;
@@ -80,6 +81,9 @@ public class MainActivity extends Activity {
                         tabAdapter.getRadioGroup(VIDEOFRAGMENT);
                         return true;
                     case R.id.menu_add:
+                        Intent intent = new Intent();
+                        intent.setClass(context, LoginActivity.class);
+                        startActivity(intent);
 //                            tabAdapter.getRadioGroup(USERFRAGMENT);
                         return true;
                     case R.id.i_message:

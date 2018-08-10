@@ -31,6 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Request;
 import okhttp3.Response;
 import timber.log.Timber;
 
@@ -118,15 +119,15 @@ public class MineFragment extends BaseFragment {
         if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
             if (data != null) {
                 photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
-                OkHttpUtils.post3(Const.uploadUrl, addParams(), photos.get(0), new Callback() {
+                OkHttpUtils.postFileAsync(Const.uploadUrl, addParams(), photos.get(0), new OkHttpUtils.DataCallBack() {
                     @Override
-                    public void onFailure(Call call, IOException e) {
-                        Timber.e("请求失败");
+                    public void requestFailure(Request request, IOException e) {
+
                     }
 
                     @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        Timber.e(response.body().string());
+                    public void requestSuccess(String result) throws Exception {
+
                     }
                 });
             }
