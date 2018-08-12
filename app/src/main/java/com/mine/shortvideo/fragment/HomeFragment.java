@@ -15,6 +15,7 @@ import com.mine.shortvideo.transformer.VerticalStackTransformer;
 import com.mine.shortvideo.utils.OkHttpUtils;
 
 import java.io.IOException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +48,46 @@ public class HomeFragment extends BaseFragment {
         //设置transformer
         viewPager.setPageTransformer(true, new VerticalStackTransformer(getActivity()));
         viewPager.setAdapter(mContentFragmentAdapter);
+        getToken();
         getUserInfo();
+        String postJsonData = "{ \"name\":{\"value\":\"" +
+                "17839997702" +
+                "\"}, \"pass\":{\"value\":\"" +
+                "123456" +
+                "\"}, \"field_user_mobile\":[{\"value\":\"" +
+                "17839997702" +
+                "\"}], \"field_user_nickname\":[{\"value\":\"" +
+                "乌拉圭的大青蛙" +
+                "\"}], \"roles\": [ { \"target_id\": \"authenticated\" } ], \"status\": [ { \"value\": true } ] }";
+        creatUser(postJsonData);
     }
+    private void creatUser(String postJsonData){
+        OkHttpUtils.postJsonAsync(Const.createUser, postJsonData, new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void requestSuccess(String result) throws Exception {
+                Timber.e("create user" + result);
+            }
+        });
+    }
+    private void getToken() {
+        OkHttpUtils.getAsync(Const.getTokenUrl, new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void requestSuccess(String result) throws Exception {
+                Timber.e("token" + result);
+            }
+        });
+    }
+
     private void getUserInfo(){
         OkHttpUtils.getAsync(Const.getUserInfoUrl, new OkHttpUtils.DataCallBack() {
             @Override

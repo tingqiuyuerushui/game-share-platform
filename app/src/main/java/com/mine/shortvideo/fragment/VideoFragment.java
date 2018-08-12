@@ -26,6 +26,7 @@ public class VideoFragment extends BaseFragment {
     private Context context;
     private static final String TAG = "VideoFragment";
     private static boolean isPlaying = false;
+    private VideoView videoView = null;
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_video;
@@ -73,7 +74,7 @@ public class VideoFragment extends BaseFragment {
 
     private void playVideo(int position) {
         View itemView = recycler.getChildAt(position);
-        final VideoView videoView = itemView.findViewById(R.id.video_view);
+        videoView = itemView.findViewById(R.id.video_view);
         final ImageView imgPlay = itemView.findViewById(R.id.img_play);
         final ImageView imgThumb = itemView.findViewById(R.id.img_thumb);
         final RelativeLayout rootView = itemView.findViewById(R.id.root_view);
@@ -124,5 +125,17 @@ public class VideoFragment extends BaseFragment {
         imgThumb.animate().alpha(1).start();
         imgPlay.animate().alpha(0f).start();
     }
-
+    //使用FragmentManager的show hide方法来显示和隐藏fragment的时候使用
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(hidden){
+            if(videoView != null)
+                videoView.pause();
+            //TODO now visible to user
+        } else {
+            //TODO now invisible to user
+            if(videoView != null)
+                videoView.start();
+        }
+    }
 }

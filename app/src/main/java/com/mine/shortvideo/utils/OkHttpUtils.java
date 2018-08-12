@@ -357,6 +357,7 @@ public class OkHttpUtils {
         final Request request = new Request.Builder()
                 .url(url)
                 .post(body)
+                .addHeader("Authorization","Basic " + getAuthHeader())
                 .build();
         mClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -442,6 +443,7 @@ public class OkHttpUtils {
     }
     private static String getAuthHeader(){
         String auth = "admin" + ":" + "admin";
+//        String auth = "d8admin@163.com" + ":" + "uaes,1234";
 //        byte[] encodedAuth = Base64.encode(auth.getBytes(StandardCharsets.UTF_8),);
         String authHeader = Base64.encodeToString(auth.getBytes(StandardCharsets.UTF_8),Base64.NO_WRAP);
         return  authHeader;

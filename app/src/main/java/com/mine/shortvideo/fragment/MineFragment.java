@@ -18,6 +18,7 @@ import com.mine.shortvideo.adapter.UserVideoListAdapter;
 import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.myInterface.MyItemOnClickListener;
 import com.mine.shortvideo.photopicker.PhotoPicker;
+import com.mine.shortvideo.utils.Code;
 import com.mine.shortvideo.utils.OkHttpUtils;
 import com.mine.shortvideo.utils.ToastUtils;
 
@@ -97,7 +98,7 @@ public class MineFragment extends BaseFragment {
             public void onItemOnClick(View view, int postion) {
                 if (postion == 3) {
                     Intent intent = new Intent(getActivity(), SelectVideoListActivity.class);
-                    startActivityForResult(intent, 101);
+                    startActivityForResult(intent, Code.LOCAL_VIDEO_REQUEST);
                 }else {
                     Intent intent = new Intent();
                     intent.setClass(context, MinePlayVideoActivity.class);
@@ -131,7 +132,7 @@ public class MineFragment extends BaseFragment {
                     }
                 });
             }
-        } else if (requestCode == 101) {
+        } else if (requestCode == Code.LOCAL_VIDEO_REQUEST && resultCode == Code.LOCAL_VIDEO_RESULT) {
             String filPaths = data.getStringExtra("path");
             Log.e("video Path", filPaths);
         }

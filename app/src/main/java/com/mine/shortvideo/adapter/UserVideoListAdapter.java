@@ -15,7 +15,7 @@ import com.mine.shortvideo.myInterface.MyItemOnClickListener;
 public class UserVideoListAdapter extends RecyclerView.Adapter<UserVideoListAdapter.ViewHolder>{
     private Context context;
     private MyItemOnClickListener mMyItemOnClickListener;
-    private int[] imgs = {R.mipmap.img_list_example_thumb_1,R.mipmap.img_list_example_thumb_0,R.mipmap.img_list_example_thumb_1,R.mipmap.add_bg};
+    private int[] imgs = {R.mipmap.img_list_example_thumb_1,R.mipmap.img_list_example_thumb_0,R.mipmap.img_list_example_thumb_1,R.mipmap.icon_add};
 
     public UserVideoListAdapter(Context context) {
         this.context = context;
@@ -34,6 +34,7 @@ public class UserVideoListAdapter extends RecyclerView.Adapter<UserVideoListAdap
     }
 
     @Override
+
     public int getItemCount() {
         return imgs.length;
     }
