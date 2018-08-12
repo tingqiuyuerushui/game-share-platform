@@ -4,7 +4,9 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorSearchBg">#575763</color>
+    <color name="colorMain">#332E34</color>
     <color name="colorGreen">#ff669900</color>
     <color name="colorGray">#ccc</color>
     <color name="text_color">#141d26</color>
+    <color name="login_line_color">#bebebe</color>
 </resources>

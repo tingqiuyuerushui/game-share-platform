@@ -3,9 +3,8 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/black"
             android:orientation="vertical"
-            android:paddingTop="30dp">
+            android:layout_marginTop="40dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,10 +41,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/lv_tv_shape"
-                        android:padding="2dp"
                         android:text="LV15"
                         android:textColor="@android:color/white"
-                        android:textSize="14sp"/>
+                        android:textSize="12sp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -53,7 +51,7 @@
                         android:paddingLeft="8dp"
                         android:text="乌拉圭的大青蛙"
                         android:textColor="@android:color/white"
-                        android:textSize="16sp"/>
+                        android:textSize="12sp"/>
                 </LinearLayout>
 
                 <TextView

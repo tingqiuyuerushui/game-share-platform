@@ -6,6 +6,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.annotation.JSONType;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -51,6 +52,7 @@ public class OkHttpUtils {
      * 因为我们请求数据一般都是子线程中请求，在这里我们使用了handler
      */
     private Handler mHandler;
+    public static final MediaType JSONTYPE = MediaType.parse("application/json; charset=utf-8");
 
     /**
      * 构造方法
@@ -176,16 +178,11 @@ public class OkHttpUtils {
      * @param callBack
      * @return
      */
-        private void inner_getAsync(String url, final DataCallBack callBack) {
-        final Request request = new Request.Builder()
+    private void inner_getAsync(String url, final DataCallBack callBack) {
+        final Request request = new Request
+                .Builder()
                 .url(url)
-                .addHeader("Content-Type", "application/json; charset=UTF-8")
-                .addHeader("Accept-Encoding", "gzip, deflate")
-                .addHeader("Connection", "keep-alive")
-                .addHeader("Accept", "*/*")
-                .addHeader("Cache-Control","max-stale=0")
-                .addHeader("Cookie", "74d8fd70d6f29730092a424b1bfdf4f01cc9b624b2d370994e611daa34736a4a394b4710d61cd7428f42cc2a105f0350; sid_guard=358db2a8ebc0a41eee1f31bc17dfa1d9%7C1525613900%7C2592000%7CTue%2C+05-Jun-2018+13%3A38%3A20+GMT; uid_tt=9df5944946c5f430f4e08b8bedab50c5; sid_tt=358db2a8ebc0a41eee1f31bc17dfa1d9; sessionid=358db2a8ebc0a41eee1f31bc17dfa1d9; qh[360]=1; install_id=31261502423; ttreq=1$93f2d7c6896238ceca9358890b50db559b60b5c9")
-//                .addHeader("Host","aweme.snssdk.com")
+                .addHeader("Authorization","Basic " + getAuthHeader())
                 .build();
 
         mClient.newCall(request).enqueue(new Callback() {
@@ -198,9 +195,7 @@ public class OkHttpUtils {
             public void onResponse(Call call, Response response) throws IOException {
                 String result = null;
                 try {
-                    result = zipInputStream(response.body().byteStream());
-                    ResponseBody body = response.body();
-                    Log.e("result", "onResponse: "+body);
+                    result = response.body().string();
                 } catch (IOException e) {
                     deliverDataFailure(request, e, callBack);
                 }
@@ -208,6 +203,33 @@ public class OkHttpUtils {
             }
         });
     }
+//        private void inner_getAsync(String url, final DataCallBack callBack) {
+//        final Request request = new Request.Builder()
+//                .url(url)
+//                .addHeader("Content-Type", "application/json")
+//                .addHeader("Authorization","Basic " + getAuthHeader())
+//                .build();
+//
+//        mClient.newCall(request).enqueue(new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                deliverDataFailure(request, e, callBack);
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                String result = null;
+//                try {
+//                    result = zipInputStream(response.body().byteStream());
+//                    ResponseBody body = response.body();
+//                    Log.e("result", "onResponse: "+body);
+//                } catch (IOException e) {
+//                    deliverDataFailure(request, e, callBack);
+//                }
+//                deliverDataSuccess(result, callBack);
+//            }
+//        });
+//    }
 
     /**
      * 处理gzip,deflate返回流
@@ -287,21 +309,10 @@ public class OkHttpUtils {
     }
 
     private void inner_postAsync(String url, Map<String, String> params, final DataCallBack callBack) {
-
-        String postBody = JSON.toJSONString(params);
-        RequestBody requestBody = null;
+        RequestBody requestBody;
         if (params == null) {
             params = new HashMap<>();
         }
-
-        /**
-         * 如果是3.0之前版本的，构建表单数据是下面的一句
-         */
-        //FormEncodingBuilder builder = new FormEncodingBuilder();
-
-        /**
-         * 3.0之后版本
-         */
         FormBody.Builder builder = new FormBody.Builder();
 
         /**
@@ -310,9 +321,6 @@ public class OkHttpUtils {
         for (Map.Entry<String, String> map : params.entrySet()) {
             String key = map.getKey().toString();
             String value = null;
-            /**
-             * 判断值是否是空的
-             */
             if (map.getValue() == null) {
                 value = "";
             } else {
@@ -324,30 +332,54 @@ public class OkHttpUtils {
             builder.add(key, value);
         }
         requestBody = builder.build();
-        //结果返回
         // 请求对象
         final Request request = new Request.Builder().url(url)
-                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"),postBody))
+                .post(requestBody)
                 .build();
         mClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 deliverDataFailure(request, e, callBack);
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
                 deliverDataSuccess(result, callBack);
             }
-
-
         });
     }
-
-    public static void post3(String address, Map<String,String> map,String filePath, okhttp3.Callback callback)
+    //-------------------------提交json--------------------------
+    public static void postJsonAsync(String url, String json, DataCallBack callBack) {
+        getInstance().inner_postJsonAsync(url, json, callBack);
+    }
+    private void inner_postJsonAsync(String url, String json, final DataCallBack callBack) {
+        RequestBody body = RequestBody.create(JSONTYPE, json);
+        final Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                deliverDataFailure(request, e, callBack);
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                deliverDataSuccess(result, callBack);
+            }
+        });
+    }
+    //-------------------------上传文件--------------------------
+    /**
+     * 带参数上传文件
+     *
+     * */
+    public static void postFileAsync(String url, Map<String,String> map,String filePath, DataCallBack callBack) {
+        getInstance().inner_postFileAsync(url, map,filePath, callBack);
+    }
+    private void inner_postFileAsync(String url, Map<String,String> map,String filePath, final DataCallBack callBack)
     {
-        OkHttpClient client = new OkHttpClient();
         MultipartBody.Builder builder = new MultipartBody.Builder();
         if (map!=null)
         {
@@ -361,30 +393,50 @@ public class OkHttpUtils {
         if(file.exists()){
             String TYPE = "application/octet-stream";
             RequestBody fileBody = RequestBody.create(MediaType.parse(TYPE),file);
-
+            //添加form表单参数
 //            RequestBody requestBody = builder
 //                    .setType(MultipartBody.FORM)
 //                    .addFormDataPart("detail_image",file.getName(),fileBody)
 //                    .build();
 
-            Request request = new Request.Builder()
-                    .url(address)
+            final Request request = new Request.Builder()
+                    .url(url)
                     .post(fileBody)
                     .addHeader("Authorization","Basic " + getAuthHeader())
-                    .addHeader("Content-Disposition","file; filename=\"111.jpg\"")
+                    .addHeader("Content-Disposition","file; filename=" + "\""+file.getName() + "\"")
                     .build();
-            client.newCall(request).enqueue(callback);
+            mClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    deliverDataFailure(request, e, callBack);
+                }
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String result = response.body().string();
+                    deliverDataSuccess(result, callBack);
+                }
+            });
         }else {
             Timber.e("post3: 文件不存在");
             RequestBody requestBody = builder
                     .setType(MultipartBody.FORM)
                     .build();
-            Request request = new Request.Builder()
-                    .url(address)
+            final Request request = new Request.Builder()
+                    .url(url)
                     .post(requestBody)
                     .addHeader("Authorization","Bearer" + getAuthHeader())
                     .build();
-            client.newCall(request).enqueue(callback);
+            mClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    deliverDataFailure(request, e, callBack);
+                }
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String result = response.body().string();
+                    deliverDataSuccess(result, callBack);
+                }
+            });
         }
 
     }

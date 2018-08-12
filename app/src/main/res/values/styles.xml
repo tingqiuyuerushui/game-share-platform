@@ -27,7 +27,7 @@
     </style>
 
     <style name="bnve_primary_bg" parent="bnve">
-        <item name="android:background">@android:color/black</item>
+        <item name="android:background">@color/colorMain</item>
     </style>
     <style name="ProgressDialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
