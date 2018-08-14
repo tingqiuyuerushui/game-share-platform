@@ -1,29 +1,34 @@
 package com.mine.shortvideo;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.mine.shortvideo.activity.LoginActivity;
+import com.mine.shortvideo.PopupWindow.CommonPopupWindow;
 import com.mine.shortvideo.activity.SearchActivity;
 import com.mine.shortvideo.customview.BottomNavigationViewEx;
-import com.mine.shortvideo.customview.CommomDialog;
 import com.mine.shortvideo.fragment.FragmentTabAdapter;
 import com.mine.shortvideo.fragment.HomeFragment;
 import com.mine.shortvideo.fragment.MessageFragment;
 import com.mine.shortvideo.fragment.MineFragment;
 import com.mine.shortvideo.fragment.VideoFragment;
+import com.mine.shortvideo.utils.ToastUtils;
+import com.mine.shortvideo.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements CommonPopupWindow.ViewInterface {
 
     @BindView(R.id.bnve_center_icon_only)
     BottomNavigationViewEx bnveCenterIconOnly;
@@ -52,6 +57,7 @@ public class MainActivity extends Activity {
     public static final int MESSAGEFRAGMENT = 2;
     public static final int MINEFRAGMENT = 3;
     private static boolean ISUPPULL = false;
+    private CommonPopupWindow popupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,15 +89,16 @@ public class MainActivity extends Activity {
                         tabAdapter.getRadioGroup(VIDEOFRAGMENT);
                         return true;
                     case R.id.menu_add:
-                        new CommomDialog(context, R.style.dialog, "确定删除", new CommomDialog.OnCloseListener() {
-                            @Override
-                            public void onClick(Dialog dialog, boolean confirm) {
-                                if(confirm){
-                                    Toast.makeText(context,"点击确定", Toast.LENGTH_SHORT).show();
-                                    dialog.dismiss();
-                                }
-                            }
-                        }).setTitle("删除提示").show();
+                        showAll();
+//                        new CommomDialog(context, R.style.dialog, "确定删除", new CommomDialog.OnCloseListener() {
+//                            @Override
+//                            public void onClick(Dialog dialog, boolean confirm) {
+//                                if(confirm){
+//                                    Toast.makeText(context,"点击确定", Toast.LENGTH_SHORT).show();
+//                                    dialog.dismiss();
+//                                }
+//                            }
+//                        }).setTitle("删除提示").show();
 //                        Intent intent = new Intent();
 //                        intent.setClass(context, LoginActivity.class);
 //                        startActivity(intent);
@@ -124,6 +131,22 @@ public class MainActivity extends Activity {
         bnve.enableItemShiftingMode(false);
     }
 
+    //全屏弹出
+    public void showAll() {
+        if (popupWindow != null && popupWindow.isShowing()) return;
+        View upView = LayoutInflater.from(this).inflate(R.layout.popup_up, null);
+        //测量View的宽高
+        Utils.measureWidthAndHeight(upView);
+        popupWindow = new CommonPopupWindow.Builder(this)
+                .setView(R.layout.popup_up)
+                .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, upView.getMeasuredHeight())
+                .setBackGroundLevel(0.5f)//取值范围0.0f-1.0f 值越小越暗
+                .setAnimationStyle(R.style.AnimUp)
+                .setViewOnclickListener(this)
+                .create();
+        popupWindow.showAtLocation(findViewById(android.R.id.content), Gravity.BOTTOM, 0, 0);
+    }
+
     private long exitTime = 0;
 
     @Override
@@ -151,14 +174,67 @@ public class MainActivity extends Activity {
                 startActivity(intent);
                 break;
             case R.id.btn_pull:
-                if (ISUPPULL){
+                if (ISUPPULL) {
                     btnPull.setImageResource(R.mipmap.icon_down_pull);
                     ISUPPULL = false;
-                }else {
+                } else {
                     btnPull.setImageResource(R.mipmap.icon_up_pull);
                     ISUPPULL = true;
                 }
                 break;
+        }
+    }
+
+    @Override
+    public void getChildView(View view, int layoutResId) {
+        switch (layoutResId) {
+            case R.layout.popup_up:
+                ViewHolder viewHolder = new ViewHolder(view);
+                view.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (popupWindow != null) {
+                            popupWindow.dismiss();
+                        }
+                        return true;
+                    }
+                });
+                break;
+        }
+    }
+
+    class ViewHolder {
+        @OnClick(R.id.ll_score)
+        public void showToast(){
+            ToastUtils.show("急速上分");
+            if (popupWindow != null) {
+                popupWindow.dismiss();
+            }
+        }
+        @OnClick(R.id.ll_gold)
+        public void showToast1(){
+            ToastUtils.show("任务赏金");
+            if (popupWindow != null) {
+                popupWindow.dismiss();
+            }
+        }
+        @OnClick(R.id.ll_tutorial)
+        public void showToast2(){
+            ToastUtils.show("大神教程");
+            if (popupWindow != null) {
+                popupWindow.dismiss();
+            }
+        }
+        @OnClick(R.id.ll_free)
+        public void showToast3(){
+            ToastUtils.show("完美脱单");
+            if (popupWindow != null) {
+                popupWindow.dismiss();
+            }
+        }
+
+        ViewHolder(View view) {
+            ButterKnife.bind(this, view);
         }
     }
 }

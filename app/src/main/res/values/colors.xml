@@ -14,4 +14,6 @@
     <color name="font_common_1">#424242</color>
     <color name="font_common_2">#a1a1a1</color>
     <color name="font_blue">#42369a</color>
+    <color name="gray_holo_light">#ffd0d0d0</color>
+    <color name="white">#ffffffff</color>
 </resources>

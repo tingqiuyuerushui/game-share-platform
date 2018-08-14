@@ -3,6 +3,7 @@ package com.mine.shortvideo.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.view.View;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -83,5 +84,15 @@ public class Utils {
         } else {
             return fnum.format(i / 1024 / 1024) + " M";
         }
+    }
+    /**
+     * 测量View的宽高
+     *
+     * @param view View
+     */
+    public static void measureWidthAndHeight(View view) {
+        int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        view.measure(widthMeasureSpec, heightMeasureSpec);
     }
 }
