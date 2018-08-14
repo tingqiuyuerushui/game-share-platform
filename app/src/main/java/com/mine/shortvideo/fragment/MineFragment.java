@@ -1,5 +1,6 @@
 package com.mine.shortvideo.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.mine.shortvideo.R;
 import com.mine.shortvideo.activity.MinePlayVideoActivity;
@@ -16,6 +19,7 @@ import com.mine.shortvideo.activity.SelectVideoListActivity;
 import com.mine.shortvideo.adapter.UserGameThumbRecyclerViewAdapter;
 import com.mine.shortvideo.adapter.UserVideoListAdapter;
 import com.mine.shortvideo.constant.Const;
+import com.mine.shortvideo.customview.CommomDialog;
 import com.mine.shortvideo.myInterface.MyItemOnClickListener;
 import com.mine.shortvideo.photopicker.PhotoPicker;
 import com.mine.shortvideo.utils.Code;
@@ -29,12 +33,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.Request;
-import okhttp3.Response;
-import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -44,7 +45,10 @@ public class MineFragment extends BaseFragment {
     RecyclerView pictureRecycler;
     @BindView(R.id.video_recycler)
     RecyclerView videoRecycler;
-    Unbinder unbinder;
+    @BindView(R.id.btn_share)
+    ImageView btnShare;
+    @BindView(R.id.btn_delete)
+    ImageView btnDelete;
 
     private Context context;
     private UserGameThumbRecyclerViewAdapter gameThumbRecyclerViewAdapter;
@@ -99,20 +103,22 @@ public class MineFragment extends BaseFragment {
                 if (postion == 3) {
                     Intent intent = new Intent(getActivity(), SelectVideoListActivity.class);
                     startActivityForResult(intent, Code.LOCAL_VIDEO_REQUEST);
-                }else {
+                } else {
                     Intent intent = new Intent();
                     intent.setClass(context, MinePlayVideoActivity.class);
-                    intent.putExtra("VideoIndex",postion);
+                    intent.putExtra("VideoIndex", postion);
                     startActivity(intent);
                 }
             }
         });
     }
+
     private Map<String, String> addParams() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("vin", "111111");
         return params;
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -138,4 +144,22 @@ public class MineFragment extends BaseFragment {
         }
     }
 
+    @OnClick({R.id.btn_share, R.id.btn_delete})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.btn_share:
+                break;
+            case R.id.btn_delete:
+                new CommomDialog(context, R.style.dialog, "确定删除", new CommomDialog.OnCloseListener() {
+                    @Override
+                    public void onClick(Dialog dialog, boolean confirm) {
+                        if(confirm){
+                            Toast.makeText(context,"点击确定", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    }
+                }).setTitle("删除提示").show();
+                break;
+        }
+    }
 }

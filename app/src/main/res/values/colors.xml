@@ -9,4 +9,9 @@
     <color name="colorGray">#ccc</color>
     <color name="text_color">#141d26</color>
     <color name="login_line_color">#bebebe</color>
+    <color name="commom_background">#f3f3f3</color>
+
+    <color name="font_common_1">#424242</color>
+    <color name="font_common_2">#a1a1a1</color>
+    <color name="font_blue">#42369a</color>
 </resources>

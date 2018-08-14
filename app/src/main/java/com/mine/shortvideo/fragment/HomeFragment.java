@@ -1,6 +1,7 @@
 package com.mine.shortvideo.fragment;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -8,10 +9,13 @@ import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.mine.shortvideo.R;
 import com.mine.shortvideo.adapter.ContentFragmentAdapter;
+import com.mine.shortvideo.application.MyApplication;
 import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.customview.OrientedViewPager;
+import com.mine.shortvideo.entity.RequestJsonParameter;
 import com.mine.shortvideo.entity.UserInfoEntity;
 import com.mine.shortvideo.transformer.VerticalStackTransformer;
+import com.mine.shortvideo.utils.MySharedData;
 import com.mine.shortvideo.utils.OkHttpUtils;
 
 import java.io.IOException;
@@ -28,6 +32,12 @@ public class HomeFragment extends BaseFragment {
     OrientedViewPager viewPager;
     private ContentFragmentAdapter mContentFragmentAdapter;
     private List<Fragment> mFragments = new ArrayList<>();
+    private boolean QUESTAUTH = true;
+    private boolean QUESTNOAUTH = false;
+    private Context context;
+    private String nickName = "hello12";
+    private String numPhone = "17839997735";
+    private String password = "1234";
 
     @Override
     protected int getLayoutId() {
@@ -36,6 +46,7 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     protected void init(Bundle savedInstanceState) {
+        context = getActivity();
         for (int i = 0; i < 10; i++) {
             mFragments.add(CardFragment.newInstance(i + 1));
         }
@@ -48,18 +59,10 @@ public class HomeFragment extends BaseFragment {
         //设置transformer
         viewPager.setPageTransformer(true, new VerticalStackTransformer(getActivity()));
         viewPager.setAdapter(mContentFragmentAdapter);
-        getToken();
+//        getToken();
         getUserInfo();
-        String postJsonData = "{ \"name\":{\"value\":\"" +
-                "17839997702" +
-                "\"}, \"pass\":{\"value\":\"" +
-                "123456" +
-                "\"}, \"field_user_mobile\":[{\"value\":\"" +
-                "17839997702" +
-                "\"}], \"field_user_nickname\":[{\"value\":\"" +
-                "乌拉圭的大青蛙" +
-                "\"}], \"roles\": [ { \"target_id\": \"authenticated\" } ], \"status\": [ { \"value\": true } ] }";
-        creatUser(postJsonData);
+        creatUser(RequestJsonParameter.loadCreateUserJsonParameter(numPhone,password,nickName));
+
     }
     private void creatUser(String postJsonData){
         OkHttpUtils.postJsonAsync(Const.createUser, postJsonData, new OkHttpUtils.DataCallBack() {
@@ -71,11 +74,12 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void requestSuccess(String result) throws Exception {
                 Timber.e("create user" + result);
+
             }
         });
     }
     private void getToken() {
-        OkHttpUtils.getAsync(Const.getTokenUrl, new OkHttpUtils.DataCallBack() {
+        OkHttpUtils.getAsync(Const.getTokenUrl,QUESTNOAUTH, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
 
@@ -83,13 +87,15 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void requestSuccess(String result) throws Exception {
+                MySharedData.sharedata_WriteString(MyApplication.getAppContext(),"token",result);
                 Timber.e("token" + result);
+                creatUser(RequestJsonParameter.loadCreateUserJsonParameter(numPhone,password,nickName));
             }
         });
     }
 
     private void getUserInfo(){
-        OkHttpUtils.getAsync(Const.getUserInfoUrl, new OkHttpUtils.DataCallBack() {
+        OkHttpUtils.getAsync(Const.getUserInfoUrl, QUESTAUTH,new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
                 Timber.e("获取数据失败");

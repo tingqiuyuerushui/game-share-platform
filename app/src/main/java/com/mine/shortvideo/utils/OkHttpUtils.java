@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONType;
+import com.mine.shortvideo.application.MyApplication;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -167,8 +168,12 @@ public class OkHttpUtils {
     }
 
     //-------------------------异步的方式请求数据--------------------------
-    public static void getAsync(String url, DataCallBack callBack) {
-        getInstance().inner_getAsync(url, callBack);
+    public static void getAsync(String url,boolean isAuth, DataCallBack callBack) {
+        if(isAuth){
+            getInstance().inner_getAsync(url, callBack);
+        }else{
+            getInstance().inner_getAsync_noAuth(url, callBack);
+        }
     }
 
     /**
@@ -183,6 +188,30 @@ public class OkHttpUtils {
                 .Builder()
                 .url(url)
                 .addHeader("Authorization","Basic " + getAuthHeader())
+                .build();
+
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                deliverDataFailure(request, e, callBack);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = null;
+                try {
+                    result = response.body().string();
+                } catch (IOException e) {
+                    deliverDataFailure(request, e, callBack);
+                }
+                deliverDataSuccess(result, callBack);
+            }
+        });
+    }
+    private void inner_getAsync_noAuth(String url, final DataCallBack callBack) {
+        final Request request = new Request
+                .Builder()
+                .url(url)
                 .build();
 
         mClient.newCall(request).enqueue(new Callback() {
@@ -358,6 +387,7 @@ public class OkHttpUtils {
                 .url(url)
                 .post(body)
                 .addHeader("Authorization","Basic " + getAuthHeader())
+                .addHeader("X-CSRF-Token",MySharedData.sharedata_ReadString(MyApplication.getAppContext(),"token"))
                 .build();
         mClient.newCall(request).enqueue(new Callback() {
             @Override

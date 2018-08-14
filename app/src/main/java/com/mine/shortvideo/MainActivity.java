@@ -1,6 +1,7 @@
 package com.mine.shortvideo;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.mine.shortvideo.activity.LoginActivity;
 import com.mine.shortvideo.activity.SearchActivity;
 import com.mine.shortvideo.customview.BottomNavigationViewEx;
+import com.mine.shortvideo.customview.CommomDialog;
 import com.mine.shortvideo.fragment.FragmentTabAdapter;
 import com.mine.shortvideo.fragment.HomeFragment;
 import com.mine.shortvideo.fragment.MessageFragment;
@@ -81,9 +83,18 @@ public class MainActivity extends Activity {
                         tabAdapter.getRadioGroup(VIDEOFRAGMENT);
                         return true;
                     case R.id.menu_add:
-                        Intent intent = new Intent();
-                        intent.setClass(context, LoginActivity.class);
-                        startActivity(intent);
+                        new CommomDialog(context, R.style.dialog, "确定删除", new CommomDialog.OnCloseListener() {
+                            @Override
+                            public void onClick(Dialog dialog, boolean confirm) {
+                                if(confirm){
+                                    Toast.makeText(context,"点击确定", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                }
+                            }
+                        }).setTitle("删除提示").show();
+//                        Intent intent = new Intent();
+//                        intent.setClass(context, LoginActivity.class);
+//                        startActivity(intent);
 //                            tabAdapter.getRadioGroup(USERFRAGMENT);
                         return true;
                     case R.id.i_message:

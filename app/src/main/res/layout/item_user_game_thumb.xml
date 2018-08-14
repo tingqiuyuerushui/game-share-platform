@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorMain">
     <ImageView
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="match_parent"
         android:id="@+id/img_game_thumb"
         android:layout_marginLeft="2dp"
