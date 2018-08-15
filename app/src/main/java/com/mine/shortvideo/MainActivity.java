@@ -14,9 +14,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mine.shortvideo.PopupWindow.CommonPopupWindow;
@@ -58,6 +58,7 @@ public class MainActivity extends Activity implements CommonPopupWindow.ViewInte
     public static final int MINEFRAGMENT = 3;
     private static boolean ISUPPULL = false;
     private CommonPopupWindow popupWindow;
+    private CommonPopupWindow popupWindow1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,17 +135,33 @@ public class MainActivity extends Activity implements CommonPopupWindow.ViewInte
     //全屏弹出
     public void showAll() {
         if (popupWindow != null && popupWindow.isShowing()) return;
-        View upView = LayoutInflater.from(this).inflate(R.layout.popup_up, null);
+        View upView = LayoutInflater.from(this).inflate(R.layout.add_task_type, null);
         //测量View的宽高
         Utils.measureWidthAndHeight(upView);
         popupWindow = new CommonPopupWindow.Builder(this)
-                .setView(R.layout.popup_up)
+                .setView(R.layout.add_task_type)
                 .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, upView.getMeasuredHeight())
                 .setBackGroundLevel(0.5f)//取值范围0.0f-1.0f 值越小越暗
                 .setAnimationStyle(R.style.AnimUp)
                 .setViewOnclickListener(this)
                 .create();
         popupWindow.showAtLocation(findViewById(android.R.id.content), Gravity.BOTTOM, 0, 0);
+    }
+
+    //全屏弹出
+    public void showPublishTask() {
+        if (popupWindow1 != null && popupWindow1.isShowing()) return;
+        View upView = LayoutInflater.from(this).inflate(R.layout.publish_task, null);
+        //测量View的宽高
+        Utils.measureWidthAndHeight(upView);
+        popupWindow1 = new CommonPopupWindow.Builder(this)
+                .setView(R.layout.publish_task)
+                .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, upView.getMeasuredHeight())
+                .setBackGroundLevel(0.5f)//取值范围0.0f-1.0f 值越小越暗
+                .setAnimationStyle(R.style.AnimUp)
+                .setViewOnclickListener(this)
+                .create();
+        popupWindow1.showAtLocation(findViewById(android.R.id.content), Gravity.BOTTOM, 0, 0);
     }
 
     private long exitTime = 0;
@@ -188,7 +205,7 @@ public class MainActivity extends Activity implements CommonPopupWindow.ViewInte
     @Override
     public void getChildView(View view, int layoutResId) {
         switch (layoutResId) {
-            case R.layout.popup_up:
+            case R.layout.add_task_type:
                 ViewHolder viewHolder = new ViewHolder(view);
                 view.setOnTouchListener(new View.OnTouchListener() {
                     @Override
@@ -200,33 +217,40 @@ public class MainActivity extends Activity implements CommonPopupWindow.ViewInte
                     }
                 });
                 break;
+            case R.layout.publish_task:
+                ViewHolder1 viewHolder1 = new ViewHolder1(view);
+                break;
         }
     }
 
-    class ViewHolder {
+     class ViewHolder {
         @OnClick(R.id.ll_score)
-        public void showToast(){
+        public void showToast() {
             ToastUtils.show("急速上分");
             if (popupWindow != null) {
                 popupWindow.dismiss();
             }
         }
+
         @OnClick(R.id.ll_gold)
-        public void showToast1(){
+        public void showToast1() {
             ToastUtils.show("任务赏金");
             if (popupWindow != null) {
                 popupWindow.dismiss();
             }
         }
+
         @OnClick(R.id.ll_tutorial)
-        public void showToast2(){
+        public void showToast2() {
             ToastUtils.show("大神教程");
             if (popupWindow != null) {
                 popupWindow.dismiss();
             }
         }
+
         @OnClick(R.id.ll_free)
-        public void showToast3(){
+        public void showToast3() {
+            showPublishTask();
             ToastUtils.show("完美脱单");
             if (popupWindow != null) {
                 popupWindow.dismiss();
@@ -234,6 +258,26 @@ public class MainActivity extends Activity implements CommonPopupWindow.ViewInte
         }
 
         ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
+    }
+
+    class ViewHolder1 {
+        @OnClick(R.id.btn_publish)
+        public void publishTask() {
+            ToastUtils.show("发布任务");
+            if (popupWindow1 != null) {
+                popupWindow1.dismiss();
+            }
+        }
+        @OnClick(R.id.img_close)
+        public void closePop() {
+            if (popupWindow1 != null) {
+                popupWindow1.dismiss();
+            }
+        }
+
+        ViewHolder1(View view) {
             ButterKnife.bind(this, view);
         }
     }
