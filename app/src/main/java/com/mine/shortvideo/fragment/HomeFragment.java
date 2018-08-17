@@ -1,8 +1,8 @@
 package com.mine.shortvideo.fragment;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
@@ -19,7 +19,6 @@ import com.mine.shortvideo.utils.MySharedData;
 import com.mine.shortvideo.utils.OkHttpUtils;
 
 import java.io.IOException;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +50,7 @@ public class HomeFragment extends BaseFragment {
             mFragments.add(CardFragment.newInstance(i + 1));
         }
 
-        mContentFragmentAdapter = new ContentFragmentAdapter(getActivity().getFragmentManager(), mFragments);
+        mContentFragmentAdapter = new ContentFragmentAdapter(getActivity().getSupportFragmentManager(), mFragments);
         //设置viewpager的方向为竖直
         viewPager.setOrientation(OrientedViewPager.Orientation.VERTICAL);
         //设置limit

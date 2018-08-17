@@ -1,12 +1,14 @@
 package com.mine.shortvideo;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,6 +23,8 @@ import android.widget.Toast;
 
 import com.mine.shortvideo.PopupWindow.CommonPopupWindow;
 import com.mine.shortvideo.activity.SearchActivity;
+import com.mine.shortvideo.application.MyApplication;
+import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.customview.BottomNavigationViewEx;
 import com.mine.shortvideo.fragment.FragmentTabAdapter;
 import com.mine.shortvideo.fragment.HomeFragment;
@@ -36,8 +40,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.rong.imkit.RongIM;
+import io.rong.imlib.RongIMClient;
+import timber.log.Timber;
 
-public class MainActivity extends Activity implements CommonPopupWindow.ViewInterface {
+public class MainActivity extends FragmentActivity implements CommonPopupWindow.ViewInterface {
 
     @BindView(R.id.bnve_center_icon_only)
     BottomNavigationViewEx bnveCenterIconOnly;
@@ -70,6 +77,7 @@ public class MainActivity extends Activity implements CommonPopupWindow.ViewInte
     }
 
     private void initView() {
+        connectRongIM(Const.tokenRongIM1);
         disableAllAnimation(bnveCenterIconOnly);
         int centerPosition = 2;
         bnveCenterIconOnly.setIconVisibility(false);
@@ -91,19 +99,6 @@ public class MainActivity extends Activity implements CommonPopupWindow.ViewInte
                         return true;
                     case R.id.menu_add:
                         showAll();
-//                        new CommomDialog(context, R.style.dialog, "确定删除", new CommomDialog.OnCloseListener() {
-//                            @Override
-//                            public void onClick(Dialog dialog, boolean confirm) {
-//                                if(confirm){
-//                                    Toast.makeText(context,"点击确定", Toast.LENGTH_SHORT).show();
-//                                    dialog.dismiss();
-//                                }
-//                            }
-//                        }).setTitle("删除提示").show();
-//                        Intent intent = new Intent();
-//                        intent.setClass(context, LoginActivity.class);
-//                        startActivity(intent);
-//                            tabAdapter.getRadioGroup(USERFRAGMENT);
                         return true;
                     case R.id.i_message:
                         tabAdapter.getRadioGroup(MESSAGEFRAGMENT);
@@ -163,7 +158,39 @@ public class MainActivity extends Activity implements CommonPopupWindow.ViewInte
                 .create();
         popupWindow1.showAtLocation(findViewById(android.R.id.content), Gravity.BOTTOM, 0, 0);
     }
+    private void connectRongIM(String token) {
+        if (getApplicationInfo().packageName.equals(MyApplication.getCurProcessName(getApplicationContext()))) {
+            RongIM.connect(token, new RongIMClient.ConnectCallback() {
 
+                /**
+                 * Token 错误。可以从下面两点检查 1.  Token 是否过期，如果过期您需要向 App Server 重新请求一个新的 Token
+                 *                  2.  token 对应的 appKey 和工程里设置的 appKey 是否一致
+                 */
+                @Override
+                public void onTokenIncorrect() {
+                    Timber.e("Token错误");
+                }
+
+                /**
+                 * 连接融云成功
+                 * @param userid 当前 token 对应的用户 id
+                 */
+                @Override
+                public void onSuccess(String userid) {
+                    Timber.e("userid" + userid);
+                }
+
+                /**
+                 * 连接融云失败
+                 * @param errorCode 错误码，可到官网 查看错误码对应的注释
+                 */
+                @Override
+                public void onError(RongIMClient.ErrorCode errorCode) {
+                    Timber.e("连接融云失败");
+                }
+            });
+        }
+    }
     private long exitTime = 0;
 
     @Override

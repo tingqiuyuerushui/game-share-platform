@@ -1,11 +1,13 @@
 package com.mine.shortvideo.application;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import com.umeng.socialize.Config;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 
+import io.rong.imkit.RongIM;
 import timber.log.BuildConfig;
 import timber.log.Timber;
 
@@ -31,6 +33,7 @@ public class MyApplication extends Application {
         }else{
             Timber.plant(new Timber.DebugTree());
         }
+        RongIM.init(this);
     }
     private void initPlatformConfig(){
         PlatformConfig.setWeixin("wxdc1e388c3822c80b", "3baf1193c85774b3fd9d18447d76cab0");
@@ -47,4 +50,16 @@ public class MyApplication extends Application {
         PlatformConfig.setVKontakte("5764965", "5My6SNliAaLxEm3Lyd9J");
         PlatformConfig.setDropbox("oz8v5apet3arcdy", "h7p2pjbzkkxt02a");
     }
+
+    public static String getCurProcessName(Context context) {
+        int pid = android.os.Process.myPid();
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningAppProcessInfo appProcess : activityManager.getRunningAppProcesses()) {
+            if (appProcess.pid == pid) {
+                return appProcess.processName;
+            }
+        }
+        return null;
+    }
+
 }

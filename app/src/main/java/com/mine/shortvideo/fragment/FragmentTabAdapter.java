@@ -2,8 +2,9 @@ package com.mine.shortvideo.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,19 +15,20 @@ import java.util.List;
 
 public class FragmentTabAdapter {
     private List<Fragment> fragments;
-    private Activity fragmentActivity;
+    private FragmentActivity fragmentActivity;
     private int fragmentContentId; // Activity中所要被替换的区域的id
     private int currentTab = 0; // 当前Tab页面索引
     private ArrayList<String> FragmentTagList;//给fragment设置标签方便Activity找到
-    public FragmentTabAdapter(Activity fragmentActivity, List<Fragment> fragments, int fragmentContentId, ArrayList<String> FragmentTagList) {
+    public FragmentTabAdapter(FragmentActivity fragmentActivity, List<Fragment> fragments, int fragmentContentId, ArrayList<String> FragmentTagList) {
         this.fragments = fragments;
         this.fragmentActivity = fragmentActivity;
         this.fragmentContentId = fragmentContentId;
         this.FragmentTagList = FragmentTagList;
         // 默认显示第一个fragment
-        FragmentTransaction ft = fragmentActivity.getFragmentManager().beginTransaction();
-        ft.add(fragmentContentId, fragments.get(0),FragmentTagList.get(0));
-        ft.commit();
+        fragmentActivity.getSupportFragmentManager().beginTransaction().add(fragmentContentId,fragments.get(0)).commit();
+//        FragmentTransaction ft = fragmentActivity.getFragmentManager().beginTransaction();
+//        ft.add(fragmentContentId, fragments.get(0),FragmentTagList.get(0));
+//        ft.commit();
     }
     public void getRadioGroup(int i) {
         Fragment fragment = fragments.get(i);
@@ -67,7 +69,7 @@ public class FragmentTabAdapter {
      */
     @SuppressLint("ResourceType")
     private FragmentTransaction obtainFragmentTransaction(int index){
-        FragmentTransaction ft = fragmentActivity.getFragmentManager().beginTransaction();
+        FragmentTransaction ft = fragmentActivity.getSupportFragmentManager().beginTransaction();
 //        // 设置切换动画
 //        if(index > currentTab){
 //            ft.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_left_out);

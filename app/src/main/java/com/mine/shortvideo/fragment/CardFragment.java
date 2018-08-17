@@ -1,8 +1,8 @@
 package com.mine.shortvideo.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +17,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.rong.imkit.RongIM;
+import io.rong.imlib.model.Conversation;
 
 /**
  * 作者：created by lun.zhang on 8/8/2018 14:42
@@ -68,6 +70,7 @@ public class CardFragment extends Fragment {
         switch (view.getId()){
             case R.id.tv_match:
                 ToastUtils.show("匹配");
+                RongIM.getInstance().startConversation(getActivity(), Conversation.ConversationType.PRIVATE,"ios","ios");
                 break;
         }
     }
