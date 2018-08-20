@@ -13,10 +13,16 @@ import android.widget.VideoView;
 
 import com.mine.shortvideo.R;
 import com.mine.shortvideo.adapter.VideoRecycleViewAdapter;
+import com.mine.shortvideo.constant.Const;
+import com.mine.shortvideo.utils.OkHttpUtils;
 import com.mine.shortvideo.viewpager.OnViewPagerListener;
 import com.mine.shortvideo.viewpager.ViewPagerLayoutManager;
 
+import java.io.IOException;
+
 import butterknife.BindView;
+import okhttp3.Request;
+import timber.log.Timber;
 
 public class VideoFragment extends BaseFragment {
     @BindView(R.id.recycler)
@@ -40,7 +46,34 @@ public class VideoFragment extends BaseFragment {
         recycler.setLayoutManager(mLayoutManager);
         recycler.setAdapter(mAdapter);
         initListener();
+        initNetworkData();
     }
+
+    private void initNetworkData() {
+        OkHttpUtils.getAsync(Const.getVideoList, false, new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void requestSuccess(String result) throws Exception {
+                Timber.e("videolist:" + result);
+            }
+        });
+        OkHttpUtils.getAsync(Const.getVideoComment, false, new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void requestSuccess(String result) throws Exception {
+                Timber.e("video comment:" + result);
+            }
+        });
+    }
+
     private void initListener() {
         mLayoutManager.setOnViewPagerListener(new OnViewPagerListener() {
 
@@ -134,8 +167,8 @@ public class VideoFragment extends BaseFragment {
             //TODO now visible to user
         } else {
             //TODO now invisible to user
-            if(videoView != null)
-                videoView.start();
+//            if(videoView != null)
+////                videoView.start();
         }
     }
 }

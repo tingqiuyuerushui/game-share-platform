@@ -13,4 +13,12 @@ public class Const {
     public static final String getUserInfoUrl = baseUrl + "/api/v1/user/mobile/13812340001?_format=json";
     //创建用户
     public static final String createUser = baseUrl + "/entity/user?_format=json";
+    //保留
+    public static final String getStatus = baseUrl + "/node/12?_format=json";
+    //上传视频
+    public static final String uploadVideoUrl = baseUrl + "/file/upload/node/uservideo/field_user_video?_format=json";
+    //获取视频
+    public static final String getVideoList = baseUrl + "/api/v1/uservideo?_format=json";
+    //获取视频评论
+    public static final String getVideoComment = baseUrl + "/api/v2/comments/node/9?_format=json";
 }

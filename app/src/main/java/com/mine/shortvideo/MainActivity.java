@@ -1,6 +1,7 @@
 package com.mine.shortvideo;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,19 +22,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.mine.shortvideo.PopupWindow.CommonPopupWindow;
 import com.mine.shortvideo.activity.SearchActivity;
 import com.mine.shortvideo.application.MyApplication;
 import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.customview.BottomNavigationViewEx;
+import com.mine.shortvideo.customview.CommomDialog;
 import com.mine.shortvideo.fragment.FragmentTabAdapter;
 import com.mine.shortvideo.fragment.HomeFragment;
 import com.mine.shortvideo.fragment.MessageFragment;
 import com.mine.shortvideo.fragment.MineFragment;
 import com.mine.shortvideo.fragment.VideoFragment;
+import com.mine.shortvideo.utils.OkHttpUtils;
 import com.mine.shortvideo.utils.ToastUtils;
 import com.mine.shortvideo.utils.Utils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +49,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
+import okhttp3.Request;
 import timber.log.Timber;
 
 public class MainActivity extends FragmentActivity implements CommonPopupWindow.ViewInterface {
@@ -66,6 +74,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     private static boolean ISUPPULL = false;
     private CommonPopupWindow popupWindow;
     private CommonPopupWindow popupWindow1;
+    private static int APPSTATUS = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +83,30 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         context = this;
         ButterKnife.bind(this);
         initView();
+        initNetworkData();
+    }
+
+    private void initNetworkData() {
+        OkHttpUtils.getAsync(Const.getStatus, true, new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void requestSuccess(String result) throws Exception {
+                Timber.e(result);
+                JSONObject jsonObject = JSON.parseObject(result);
+                JSONArray jsonArray = jsonObject.getJSONArray("field_value");
+                JSONObject jsonValue = JSONObject.parseObject(jsonArray.getString(0));
+                APPSTATUS = jsonValue.getInteger("value");
+//                Timber.e(jsonValue.getString("value"));
+            }
+        });
     }
 
     private void initView() {
-        connectRongIM(Const.tokenRongIM1);
+        connectRongIM(Const.tokenRongIM);
         disableAllAnimation(bnveCenterIconOnly);
         int centerPosition = 2;
         bnveCenterIconOnly.setIconVisibility(false);
@@ -90,22 +119,24 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         bnveCenterIconOnly.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.i_home:
-                        tabAdapter.getRadioGroup(HOMEFRAGMENT);
-                        return true;
-                    case R.id.i_video:
-                        tabAdapter.getRadioGroup(VIDEOFRAGMENT);
-                        return true;
-                    case R.id.menu_add:
-                        showAll();
-                        return true;
-                    case R.id.i_message:
-                        tabAdapter.getRadioGroup(MESSAGEFRAGMENT);
-                        return true;
-                    case R.id.i_mine:
-                        tabAdapter.getRadioGroup(MINEFRAGMENT);
-                        return true;
+                if(APPSTATUS == 2) {
+                    switch (item.getItemId()) {
+                        case R.id.i_home:
+                            tabAdapter.getRadioGroup(HOMEFRAGMENT);
+                            return true;
+                        case R.id.i_video:
+                            tabAdapter.getRadioGroup(VIDEOFRAGMENT);
+                            return true;
+                        case R.id.menu_add:
+                            showAll();
+                            return true;
+                        case R.id.i_message:
+                            tabAdapter.getRadioGroup(MESSAGEFRAGMENT);
+                            return true;
+                        case R.id.i_mine:
+                            tabAdapter.getRadioGroup(MINEFRAGMENT);
+                            return true;
+                    }
                 }
                 return false;
             }
@@ -130,10 +161,10 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     //全屏弹出
     public void showAll() {
         if (popupWindow != null && popupWindow.isShowing()) return;
-        View upView = LayoutInflater.from(this).inflate(R.layout.add_task_type, null);
+        View upView = LayoutInflater.from(context).inflate(R.layout.add_task_type, null);
         //测量View的宽高
         Utils.measureWidthAndHeight(upView);
-        popupWindow = new CommonPopupWindow.Builder(this)
+        popupWindow = new CommonPopupWindow.Builder(context)
                 .setView(R.layout.add_task_type)
                 .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, upView.getMeasuredHeight())
                 .setBackGroundLevel(0.5f)//取值范围0.0f-1.0f 值越小越暗
@@ -250,7 +281,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         }
     }
 
-     class ViewHolder {
+    class ViewHolder {
         @OnClick(R.id.ll_score)
         public void showToast() {
             ToastUtils.show("急速上分");

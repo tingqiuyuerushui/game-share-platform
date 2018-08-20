@@ -14,7 +14,7 @@ import com.mine.shortvideo.myInterface.MyItemOnClickListener;
 public class UserGameThumbRecyclerViewAdapter extends RecyclerView.Adapter<UserGameThumbRecyclerViewAdapter.ViewHolder>{
     private Context context;
     private MyItemOnClickListener mMyItemOnClickListener;
-    private int[] imgs = {R.mipmap.timg_0,R.mipmap.timg_1,R.mipmap.timg_2,R.mipmap.icon_add};
+    private int[] imgs = {R.mipmap.demo_1,R.mipmap.demo_2,R.mipmap.demo_3,R.mipmap.icon_add};
     public UserGameThumbRecyclerViewAdapter(Context context) {
         this.context = context;
     }

@@ -13,8 +13,8 @@ import android.widget.VideoView;
 import com.mine.shortvideo.R;
 
 public class VideoRecycleViewAdapter extends RecyclerView.Adapter<VideoRecycleViewAdapter.ViewHolder>{
-    private int[] imgs = {R.mipmap.img_video_1,R.mipmap.timg_0,R.mipmap.timg_2};
-    private int[] videos = {R.raw.video_1,R.raw.video_3,R.raw.video_2};
+    private int[] imgs = {R.mipmap.timg_0,R.mipmap.timg_2};
+    private int[] videos = {R.raw.video_3,R.raw.video_2};
     private Context context;
     public VideoRecycleViewAdapter(Context context){
         this.context = context;
@@ -29,13 +29,13 @@ public class VideoRecycleViewAdapter extends RecyclerView.Adapter<VideoRecycleVi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.img_thumb.setImageResource(imgs[position]);
-        holder.videoView.setVideoURI(Uri.parse("android.resource://"+context.getPackageName()+"/"+ videos[position]));
+        holder.img_thumb.setImageResource(imgs[position/2]);
+        holder.videoView.setVideoURI(Uri.parse("android.resource://"+context.getPackageName()+"/"+ videos[position/2]));
     }
 
     @Override
     public int getItemCount() {
-        return 3;
+        return 4;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

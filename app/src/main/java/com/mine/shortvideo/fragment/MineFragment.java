@@ -35,7 +35,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import me.iwf.photopicker.PhotoPreview;
 import okhttp3.Request;
+import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -49,7 +51,7 @@ public class MineFragment extends BaseFragment {
     ImageView btnShare;
     @BindView(R.id.btn_delete)
     ImageView btnDelete;
-
+    public Unbinder unbinder;
     private Context context;
     private UserGameThumbRecyclerViewAdapter gameThumbRecyclerViewAdapter;
     private UserVideoListAdapter userVideoListAdapter;
@@ -65,6 +67,7 @@ public class MineFragment extends BaseFragment {
     @Override
     protected void init(Bundle savedInstanceState) {
         context = getActivity();
+        unbinder = ButterKnife.bind(this,rootView);
         gameThumbRecyclerViewAdapter = new UserGameThumbRecyclerViewAdapter(context);
         layoutManager1 = new LinearLayoutManager(context);
         layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -82,13 +85,11 @@ public class MineFragment extends BaseFragment {
                             .setShowGif(true)
                             .setPreviewEnabled(false)
                             .start(context, MineFragment.this, PhotoPicker.REQUEST_CODE);
-                } else {
-                    Intent intent = new Intent(getActivity(), SelectVideoListActivity.class);
-                    startActivityForResult(intent, 101);
-//                    PhotoPreview.builder()
-//                            .setPhotos(photos)
-//                            .setCurrentItem(0)
-//                            .start(getActivity());
+                } else if (photos != null && photos.size() > 0){
+                    PhotoPreview.builder()
+                            .setPhotos(photos)
+                            .setCurrentItem(0)
+                            .start(getActivity());
                 }
             }
         });
@@ -134,7 +135,7 @@ public class MineFragment extends BaseFragment {
 
                     @Override
                     public void requestSuccess(String result) throws Exception {
-
+                        Timber.e("result"+result);
                     }
                 });
             }
@@ -160,6 +161,13 @@ public class MineFragment extends BaseFragment {
                     }
                 }).setTitle("删除提示").show();
                 break;
+        }
+    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (unbinder != null){
+            unbinder.unbind();
         }
     }
 }
