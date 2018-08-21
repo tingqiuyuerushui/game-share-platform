@@ -1,5 +1,6 @@
 package com.mine.shortvideo;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -164,6 +166,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         View upView = LayoutInflater.from(context).inflate(R.layout.add_task_type, null);
         //测量View的宽高
         Utils.measureWidthAndHeight(upView);
+//        darkenBackground(0.5f);
         popupWindow = new CommonPopupWindow.Builder(context)
                 .setView(R.layout.add_task_type)
                 .setWidthAndHeight(ViewGroup.LayoutParams.MATCH_PARENT, upView.getMeasuredHeight())
@@ -171,9 +174,19 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                 .setAnimationStyle(R.style.AnimUp)
                 .setViewOnclickListener(this)
                 .create();
-        popupWindow.showAtLocation(findViewById(android.R.id.content), Gravity.BOTTOM, 0, 0);
+        popupWindow.showAtLocation(findViewById(R.id.main_activity), Gravity.BOTTOM, 0, 0);
     }
+    private void darkenBackground(Float bgcolor){
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = bgcolor;
+        if(bgcolor == 1.0f){
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }else{
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
+        getWindow().setAttributes(lp);
 
+    }
     //全屏弹出
     public void showPublishTask() {
         if (popupWindow1 != null && popupWindow1.isShowing()) return;
@@ -270,6 +283,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                     public boolean onTouch(View v, MotionEvent event) {
                         if (popupWindow != null) {
                             popupWindow.dismiss();
+//                            darkenBackground(1f);
                         }
                         return true;
                     }

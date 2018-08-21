@@ -71,6 +71,11 @@ class PopupController {
     void setBackGroundLevel(float level) {
         mWindow = ((Activity) context).getWindow();
         WindowManager.LayoutParams params = mWindow.getAttributes();
+//        if(level == 1.0f){
+//            mWindow.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+//        }else{
+//            mWindow.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+//        }
         params.alpha = level;
         mWindow.setAttributes(params);
     }
