@@ -57,6 +57,7 @@
         <activity
             android:name="com.mine.shortvideo.activity.ConversationActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Skid_1"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

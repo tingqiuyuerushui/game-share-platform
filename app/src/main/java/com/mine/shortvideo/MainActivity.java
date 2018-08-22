@@ -86,6 +86,8 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         ButterKnife.bind(this);
         initView();
         initNetworkData();
+//        if(RongIM.getInstance() != null)
+//            RongIM.getInstance().startConversationList(context);
     }
 
     private void initNetworkData() {
