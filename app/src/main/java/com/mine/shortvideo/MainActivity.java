@@ -28,6 +28,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mine.shortvideo.PopupWindow.CommonPopupWindow;
+import com.mine.shortvideo.activity.LoginActivity;
 import com.mine.shortvideo.activity.SearchActivity;
 import com.mine.shortvideo.application.MyApplication;
 import com.mine.shortvideo.constant.Const;
@@ -86,6 +87,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         ButterKnife.bind(this);
         initView();
         initNetworkData();
+
 //        if(RongIM.getInstance() != null)
 //            RongIM.getInstance().startConversationList(context);
     }
@@ -132,7 +134,13 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                             tabAdapter.getRadioGroup(VIDEOFRAGMENT);
                             return true;
                         case R.id.menu_add:
-                            showAll();
+                            if(Utils.isUserLogin(context)){
+                                showAll();
+                            }else{
+                                Intent intent = new Intent();
+                                intent.setClass(context, LoginActivity.class);
+                                startActivity(intent);
+                            }
                             return true;
                         case R.id.i_message:
                             tabAdapter.getRadioGroup(MESSAGEFRAGMENT);
@@ -272,6 +280,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                     ISUPPULL = true;
                 }
                 break;
+
         }
     }
 

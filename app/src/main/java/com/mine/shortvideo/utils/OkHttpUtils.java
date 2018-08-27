@@ -2,6 +2,7 @@ package com.mine.shortvideo.utils;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
@@ -387,7 +388,7 @@ public class OkHttpUtils {
                 .url(url)
                 .post(body)
                 .addHeader("Authorization","Basic " + getAuthHeader())
-                .addHeader("X-CSRF-Token",MySharedData.sharedata_ReadString(MyApplication.getAppContext(),"token"))
+//                .addHeader("X-CSRF-Token",MySharedData.sharedata_ReadString(MyApplication.getAppContext(),"token"))
                 .build();
         mClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -472,7 +473,14 @@ public class OkHttpUtils {
 
     }
     private static String getAuthHeader(){
-        String auth = "admin" + ":" + "admin";
+        String auth;
+        String userName = MySharedData.sharedata_ReadString(MyApplication.getAppContext(),"userId");
+        String password = MySharedData.sharedata_ReadString(MyApplication.getAppContext(),"password");
+        if(!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(password)){
+            auth = userName + password;
+        }else{
+            auth = "admin" + ":" + "admin";
+        }
 //        String auth = "d8admin@163.com" + ":" + "uaes,1234";
 //        byte[] encodedAuth = Base64.encode(auth.getBytes(StandardCharsets.UTF_8),);
         String authHeader = Base64.encodeToString(auth.getBytes(StandardCharsets.UTF_8),Base64.NO_WRAP);

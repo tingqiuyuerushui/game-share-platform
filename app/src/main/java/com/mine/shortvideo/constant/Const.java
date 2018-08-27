@@ -10,7 +10,7 @@ public class Const {
     //上传文件接口
     public static final String uploadUrl = baseUrl + "/file/upload/node/article/field_hero_image?_format=json";
     //获取用户信息接口
-    public static final String getUserInfoUrl = baseUrl + "/api/v1/user/mobile/13812340001?_format=json";
+    public static final String getUserInfoUrl = baseUrl + "/api/v1/user/mobile/";
     //创建用户
     public static final String createUser = baseUrl + "/entity/user?_format=json";
     //保留

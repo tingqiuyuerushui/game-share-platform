@@ -58,24 +58,9 @@ public class HomeFragment extends BaseFragment {
         //设置transformer
         viewPager.setPageTransformer(true, new VerticalStackTransformer(getActivity()));
         viewPager.setAdapter(mContentFragmentAdapter);
-//        getToken();
+        getToken();
         getUserInfo();
-        creatUser(RequestJsonParameter.loadCreateUserJsonParameter(numPhone,password,nickName));
 
-    }
-    private void creatUser(String postJsonData){
-        OkHttpUtils.postJsonAsync(Const.createUser, postJsonData, new OkHttpUtils.DataCallBack() {
-            @Override
-            public void requestFailure(Request request, IOException e) {
-
-            }
-
-            @Override
-            public void requestSuccess(String result) throws Exception {
-                Timber.e("create user" + result);
-
-            }
-        });
     }
     private void getToken() {
         OkHttpUtils.getAsync(Const.getTokenUrl,QUESTNOAUTH, new OkHttpUtils.DataCallBack() {
@@ -88,13 +73,12 @@ public class HomeFragment extends BaseFragment {
             public void requestSuccess(String result) throws Exception {
                 MySharedData.sharedata_WriteString(MyApplication.getAppContext(),"token",result);
                 Timber.e("token" + result);
-                creatUser(RequestJsonParameter.loadCreateUserJsonParameter(numPhone,password,nickName));
             }
         });
     }
 
     private void getUserInfo(){
-        OkHttpUtils.getAsync(Const.getUserInfoUrl, QUESTAUTH,new OkHttpUtils.DataCallBack() {
+        OkHttpUtils.getAsync(Const.getUserInfoUrl+"17839997702"+"?_format=json", QUESTAUTH,new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
                 Timber.e("获取数据失败");
@@ -102,7 +86,7 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void requestSuccess(String result) throws Exception {
-                Timber.e(result);
+//                Timber.e(result);
                 StringBuilder sb = new StringBuilder();
                 sb.append("{");
                 sb.append("\"data\":");

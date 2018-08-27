@@ -11,7 +11,7 @@ public class RequestJsonParameter {
                 "\"}, \"pass\":{\"value\":\"" +
                 password +
                 "\"}, \"field_user_mobile\":[{\"value\":\"" +
-                "17839997702" +
+                numPhone +
                 "\"}], \"field_user_nickname\":[{\"value\":\"" +
                 nickName +
                 "\"}], \"roles\": [ { \"target_id\": \"authenticated\" } ], \"status\": [ { \"value\": true } ] }";

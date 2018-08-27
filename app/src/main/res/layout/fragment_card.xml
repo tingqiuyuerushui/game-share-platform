@@ -15,11 +15,11 @@
         android:layout_marginRight="@dimen/right_margin"
         android:layout_marginTop="@dimen/top_margin"
         android:focusable="false"
-        card_view:cardBackgroundColor="#5B6DAB"
         card_view:cardElevation="@dimen/card_elevation">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@mipmap/img_home_bg"
             android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"

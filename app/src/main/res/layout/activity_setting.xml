@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/colorMain">
+    <include layout="@layout/layout_title"/>
+    <View style="@style/user_setting_line"
+        android:layout_marginTop="15dp"/>
+    <LinearLayout
+        android:id="@+id/ll_account_setting"
+        style="@style/user_setting_ll">
+        <TextView
+            android:id="@+id/tv_account_setting"
+            android:text="账号设置"
+            style="@style/user_setting_tv"/>
+    </LinearLayout>
+    <View style="@style/user_setting_line"/>
+    <LinearLayout
+        style="@style/user_setting_ll">
+        <TextView
+            android:text="钱包"
+            style="@style/user_setting_tv"/>
+    </LinearLayout>
+    <View style="@style/user_setting_line"/>
+    <LinearLayout
+        style="@style/user_setting_ll">
+        <TextView
+            android:text="分享个人名片"
+            style="@style/user_setting_tv"/>
+    </LinearLayout>
+    <View style="@style/user_setting_line"/>
+    <LinearLayout
+        style="@style/user_setting_ll">
+        <TextView
+            android:text="通知设置"
+            style="@style/user_setting_tv"/>
+    </LinearLayout>
+    <View style="@style/user_setting_line"/>
+    <LinearLayout
+        style="@style/user_setting_ll">
+        <TextView
+            android:text="隐私设置"
+            style="@style/user_setting_tv"/>
+    </LinearLayout>
+    <View style="@style/user_setting_line"/>
+    <LinearLayout
+        style="@style/user_setting_ll">
+        <TextView
+            android:text="关于佩佩"
+            style="@style/user_setting_tv"/>
+    </LinearLayout>
+    <View style="@style/user_setting_line"/>
+    <LinearLayout
+        style="@style/user_setting_ll">
+        <TextView
+            android:text="反馈与帮助"
+            style="@style/user_setting_tv"/>
+    </LinearLayout>
+    <View style="@style/user_setting_line"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="vertical"
+        android:layout_marginTop="40dp"
+        android:gravity="center">
+        <TextView
+            android:text="退出登入"
+            style="@style/user_setting_tv"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:text="注销账号"
+            style="@style/user_setting_tv"/>
+    </LinearLayout>
+</LinearLayout>

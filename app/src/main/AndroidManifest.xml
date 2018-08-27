@@ -122,6 +122,12 @@
         <activity android:name=".activity.LoginActivity"
                   android:screenOrientation="portrait"
                   android:theme="@style/AppTheme.Skid_1"/>
+        <activity android:name=".activity.UserSettingActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/AppTheme.Skid_1"/>
+        <activity android:name=".activity.AccountSettingActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/AppTheme.Skid_1"/>
     </application>
 
 </manifest>

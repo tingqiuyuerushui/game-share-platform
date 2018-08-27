@@ -116,6 +116,7 @@
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:id="@+id/btn_private_msg"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/mine_icon_bg_shape"
@@ -126,6 +127,7 @@
                         android:src="@mipmap/icon_private_letter"/>
 
                     <ImageView
+                        android:id="@+id/btn_attention"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
@@ -137,6 +139,7 @@
                         android:src="@mipmap/icon_attention"/>
 
                     <ImageView
+                        android:id="@+id/btn_more"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"

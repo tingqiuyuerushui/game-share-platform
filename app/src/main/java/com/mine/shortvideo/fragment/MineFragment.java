@@ -11,11 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.mine.shortvideo.R;
 import com.mine.shortvideo.activity.MinePlayVideoActivity;
 import com.mine.shortvideo.activity.SelectVideoListActivity;
+import com.mine.shortvideo.activity.UserSettingActivity;
 import com.mine.shortvideo.adapter.UserGameThumbRecyclerViewAdapter;
 import com.mine.shortvideo.adapter.UserVideoListAdapter;
 import com.mine.shortvideo.constant.Const;
@@ -51,7 +53,14 @@ public class MineFragment extends BaseFragment {
     ImageView btnShare;
     @BindView(R.id.btn_delete)
     ImageView btnDelete;
-    public Unbinder unbinder;
+    @BindView(R.id.rc_rate)
+    RatingBar rcRate;
+    @BindView(R.id.btn_private_msg)
+    ImageView btnPrivateMsg;
+    @BindView(R.id.btn_attention)
+    ImageView btnAttention;
+    @BindView(R.id.btn_more)
+    ImageView btnMore;
     private Context context;
     private UserGameThumbRecyclerViewAdapter gameThumbRecyclerViewAdapter;
     private UserVideoListAdapter userVideoListAdapter;
@@ -67,7 +76,7 @@ public class MineFragment extends BaseFragment {
     @Override
     protected void init(Bundle savedInstanceState) {
         context = getActivity();
-        unbinder = ButterKnife.bind(this,rootView);
+        unbinder = ButterKnife.bind(this, rootView);
         gameThumbRecyclerViewAdapter = new UserGameThumbRecyclerViewAdapter(context);
         layoutManager1 = new LinearLayoutManager(context);
         layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -85,7 +94,7 @@ public class MineFragment extends BaseFragment {
                             .setShowGif(true)
                             .setPreviewEnabled(false)
                             .start(context, MineFragment.this, PhotoPicker.REQUEST_CODE);
-                } else if (photos != null && photos.size() > 0){
+                } else if (photos != null && photos.size() > 0) {
                     PhotoPreview.builder()
                             .setPhotos(photos)
                             .setCurrentItem(0)
@@ -135,7 +144,7 @@ public class MineFragment extends BaseFragment {
 
                     @Override
                     public void requestSuccess(String result) throws Exception {
-                        Timber.e("result"+result);
+                        Timber.e("result" + result);
                     }
                 });
             }
@@ -145,8 +154,9 @@ public class MineFragment extends BaseFragment {
         }
     }
 
-    @OnClick({R.id.btn_share, R.id.btn_delete})
+    @OnClick({R.id.btn_share, R.id.btn_delete,R.id.btn_private_msg, R.id.btn_attention, R.id.btn_more})
     public void onViewClicked(View view) {
+        Intent intent = new Intent();
         switch (view.getId()) {
             case R.id.btn_share:
                 break;
@@ -154,20 +164,23 @@ public class MineFragment extends BaseFragment {
                 new CommomDialog(context, R.style.dialog, "确定删除", new CommomDialog.OnCloseListener() {
                     @Override
                     public void onClick(Dialog dialog, boolean confirm) {
-                        if(confirm){
-                            Toast.makeText(context,"点击确定", Toast.LENGTH_SHORT).show();
+                        if (confirm) {
+                            Toast.makeText(context, "点击确定", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                         }
                     }
                 }).setTitle("删除提示").show();
                 break;
+            case R.id.btn_private_msg:
+                break;
+            case R.id.btn_attention:
+                break;
+            case R.id.btn_more:
+                intent.setClass(context, UserSettingActivity.class);
+                startActivity(intent);
+                break;
         }
     }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (unbinder != null){
-            unbinder.unbind();
-        }
-    }
+
+
 }
