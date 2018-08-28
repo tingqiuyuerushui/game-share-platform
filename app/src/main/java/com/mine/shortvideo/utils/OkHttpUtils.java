@@ -185,6 +185,7 @@ public class OkHttpUtils {
      * @return
      */
     private void inner_getAsync(String url, final DataCallBack callBack) {
+        Timber.e("请求链接："+url);
         final Request request = new Request
                 .Builder()
                 .url(url)
@@ -210,6 +211,7 @@ public class OkHttpUtils {
         });
     }
     private void inner_getAsync_noAuth(String url, final DataCallBack callBack) {
+        Timber.e("请求链接："+url);
         final Request request = new Request
                 .Builder()
                 .url(url)

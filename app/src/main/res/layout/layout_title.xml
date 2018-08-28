@@ -31,7 +31,6 @@
         android:layout_alignBottom="@+id/img_left"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10dp"
-        android:padding="10dp"
         android:textColor="@color/white"
         android:text="完成"
         android:visibility="gone"/>

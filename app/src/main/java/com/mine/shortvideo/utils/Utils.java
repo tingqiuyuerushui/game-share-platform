@@ -3,14 +3,20 @@ package com.mine.shortvideo.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <pre>
@@ -66,6 +72,12 @@ public class Utils {
             retriever.release();
         }
         return bitmap;
+    }
+    public static void sendHandleMsg(int what, Object obj , Handler handler) {
+        Message msg = new Message();
+        msg.what = what;
+        msg.obj = obj;
+        handler.sendMessage(msg);
     }
     public static int Dp2Px(Context context, float dp) {
         final float scale = context.getResources().getDisplayMetrics().density;
@@ -147,5 +159,72 @@ public class Utils {
             }
         }
         return val;
+    }
+
+    /**
+     *
+     * @param s
+     * @return 获得链接
+     */
+    public static String getLink(final String s)
+    {
+        if(s.startsWith("http")){
+            return s;
+        }
+        String regex;
+        final List<String> list = new ArrayList<String>();
+//        regex = "<a[^>]*href=(\"([^\"]*)\"|\'([^\']*)\'|([^\\s>]*))[^>]*>(.*?)</a>";
+        regex ="http://.*?mp4";
+        final Pattern pa = Pattern.compile(regex, Pattern.DOTALL);
+        final Matcher ma = pa.matcher(s);
+        while (ma.find())
+        {
+            list.add(ma.group());
+        }
+        return list.get(0);
+    }
+    /**
+     *
+     * @param s
+     * @return 获得title
+     */
+    public static String getTitle(final String s)
+    {
+        if(!s.startsWith("<a href=")){
+            return s;
+        }
+        String regex;
+        final List<String> list = new ArrayList<String>();
+//        regex = "<a[^>]*href=(\"([^\"]*)\"|\'([^\']*)\'|([^\\s>]*))[^>]*>(.*?)</a>";
+        regex =">.*?</a>";
+        final Pattern pa = Pattern.compile(regex, Pattern.DOTALL);
+        final Matcher ma = pa.matcher(s);
+        while (ma.find())
+        {
+            list.add(ma.group());
+        }
+        return list.get(0).replaceAll(">|</a>","");
+    }
+    /**
+     *
+     * @param s
+     * @return 获得图片URL
+     */
+    public static String getImgUrl(final String s)
+    {
+        if(s.startsWith("/d86")){
+            return s;
+        }
+        String regex;
+        final List<String> list = new ArrayList<String>();
+//        regex = "<a[^>]*href=(\"([^\"]*)\"|\'([^\']*)\'|([^\\s>]*))[^>]*>(.*?)</a>";
+        regex ="/d86.*?\"";
+        final Pattern pa = Pattern.compile(regex, Pattern.DOTALL);
+        final Matcher ma = pa.matcher(s);
+        while (ma.find())
+        {
+            list.add(ma.group());
+        }
+        return list.get(0).replaceAll("\"","");
     }
 }

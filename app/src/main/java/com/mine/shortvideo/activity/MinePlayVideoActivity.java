@@ -50,11 +50,11 @@ public class MinePlayVideoActivity extends Activity {
         Intent intent = getIntent();
         index = intent.getIntExtra("VideoIndex", 0);
         Timber.e(index + "");
-        mLayoutManager = new ViewPagerLayoutManager(context, OrientationHelper.VERTICAL);
-        mAdapter = new VideoRecycleViewAdapter(context);
-        recycler.setLayoutManager(mLayoutManager);
-        recycler.setAdapter(mAdapter);
-        initListener();
+//        mLayoutManager = new ViewPagerLayoutManager(context, OrientationHelper.VERTICAL);
+//        mAdapter = new VideoRecycleViewAdapter(context);
+//        recycler.setLayoutManager(mLayoutManager);
+//        recycler.setAdapter(mAdapter);
+//        initListener();
     }
 
     private void initListener() {
