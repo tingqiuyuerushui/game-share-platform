@@ -1,9 +1,13 @@
 package com.mine.shortvideo.fragment;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.mine.shortvideo.R;
 import com.mine.shortvideo.activity.MinePlayVideoActivity;
 import com.mine.shortvideo.activity.SelectVideoListActivity;
@@ -22,15 +27,24 @@ import com.mine.shortvideo.adapter.UserGameThumbRecyclerViewAdapter;
 import com.mine.shortvideo.adapter.UserVideoListAdapter;
 import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.customview.CommomDialog;
+import com.mine.shortvideo.entity.LinkFileRequestEntity;
+import com.mine.shortvideo.entity.RequestJsonParameter;
+import com.mine.shortvideo.entity.UploadFileResultEntity;
+import com.mine.shortvideo.entity.UserInfoEntity;
 import com.mine.shortvideo.myInterface.MyItemOnClickListener;
 import com.mine.shortvideo.photopicker.PhotoPicker;
 import com.mine.shortvideo.utils.Code;
+import com.mine.shortvideo.utils.CommonDialogUtils;
+import com.mine.shortvideo.utils.GetProgressDialog;
 import com.mine.shortvideo.utils.OkHttpUtils;
 import com.mine.shortvideo.utils.ToastUtils;
+import com.mine.shortvideo.utils.Utils;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -67,6 +81,12 @@ public class MineFragment extends BaseFragment {
     private LinearLayoutManager layoutManager1;
     private LinearLayoutManager layoutManager2;
     private ArrayList<String> photos;
+    private MyHandler handler;
+    private CommonDialogUtils dialogUtils;
+    private UploadFileResultEntity uploadFileResultEntity;
+    private boolean QUESTAUTH = true;
+    private boolean QUESTNOAUTH = false;
+    private static int userId = 0;
 
     @Override
     protected int getLayoutId() {
@@ -77,6 +97,8 @@ public class MineFragment extends BaseFragment {
     protected void init(Bundle savedInstanceState) {
         context = getActivity();
         unbinder = ButterKnife.bind(this, rootView);
+        dialogUtils = new CommonDialogUtils();
+        handler = new MyHandler(getActivity());
         gameThumbRecyclerViewAdapter = new UserGameThumbRecyclerViewAdapter(context);
         layoutManager1 = new LinearLayoutManager(context);
         layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -87,7 +109,6 @@ public class MineFragment extends BaseFragment {
             public void onItemOnClick(View view, int postion) {
                 ToastUtils.show("点击了" + postion);
                 if (postion == 3) {
-
                     PhotoPicker.builder()
                             .setPhotoCount(9)
                             .setShowCamera(true)
@@ -121,12 +142,72 @@ public class MineFragment extends BaseFragment {
                 }
             }
         });
+        getUserInfo();
+        getUserVideoList();
+    }
+
+    private void getUserInfo(){
+        OkHttpUtils.getAsync(Const.getUserInfoUrl+"17839997702"+"?_format=json", QUESTAUTH,new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+                Timber.e("获取数据失败");
+            }
+
+            @Override
+            public void requestSuccess(String result) throws Exception {
+//                Timber.e(result);
+                StringBuilder sb = new StringBuilder();
+                sb.append("{");
+                sb.append("\"data\":");
+                sb.append(result);
+                sb.append("}");
+                Gson gson = new Gson();
+                UserInfoEntity userInfoEntity = gson.fromJson(sb.toString(),UserInfoEntity.class);
+                Timber.e(userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue()+"");
+                userId = userInfoEntity.getData().get(0).getUid().get(0).getValue();
+            }
+        });
+    }
+    private void getUserVideoList(){
+        OkHttpUtils.getAsync(Const.getUserVideoList+"17839997702"+"?_format=json", QUESTAUTH,new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+                Timber.e("获取数据失败");
+            }
+
+            @Override
+            public void requestSuccess(String result) throws Exception {
+                Timber.e(result);
+//                StringBuilder sb = new StringBuilder();
+//                sb.append("{");
+//                sb.append("\"data\":");
+//                sb.append(result);
+//                sb.append("}");
+//                Gson gson = new Gson();
+//                UserInfoEntity userInfoEntity = gson.fromJson(sb.toString(),UserInfoEntity.class);
+//                Timber.e(userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue()+"");
+//                userId = userInfoEntity.getData().get(0).getUid().get(0).getValue();
+            }
+        });
     }
 
     private Map<String, String> addParams() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("vin", "111111");
         return params;
+    }
+    private void linkFile(int targetId){
+        OkHttpUtils.patchJsonAsync(Const.linkFile + userId + "?_format=json", RequestJsonParameter.linkFile(targetId), new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void requestSuccess(String result) throws Exception {
+                Timber.e("link file result" + result);
+            }
+        });
     }
 
     @Override
@@ -136,6 +217,7 @@ public class MineFragment extends BaseFragment {
         if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
             if (data != null) {
                 photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
+                dialogUtils.showProgress(context,"正在上传，请稍后");
                 OkHttpUtils.postFileAsync(Const.uploadUrl, addParams(), photos.get(0), new OkHttpUtils.DataCallBack() {
                     @Override
                     public void requestFailure(Request request, IOException e) {
@@ -145,12 +227,38 @@ public class MineFragment extends BaseFragment {
                     @Override
                     public void requestSuccess(String result) throws Exception {
                         Timber.e("result" + result);
+                        Gson gson = new Gson();
+                        uploadFileResultEntity = gson.fromJson(result,UploadFileResultEntity.class);
+                        linkFile(uploadFileResultEntity.getFid().get(0).getValue());
+                        Utils.sendHandleMsg(4,"上传成功",handler);
                     }
                 });
             }
         } else if (requestCode == Code.LOCAL_VIDEO_REQUEST && resultCode == Code.LOCAL_VIDEO_RESULT) {
             String filPaths = data.getStringExtra("path");
             Log.e("video Path", filPaths);
+            dialogUtils.showProgress(context,"正在上传，请稍后");
+            OkHttpUtils.postFileAsyncNoParameter(Const.uploadVideoUrl, filPaths, new OkHttpUtils.ProgressListener() {
+                @Override
+                public void onProgress(long totalSize, long currSize, boolean done, int id) {
+
+                    Timber.e("当前上传"+currSize + "----总大小"+totalSize);
+                    if(done){
+                        Utils.sendHandleMsg(4,"上传成功",handler);
+                    }
+                }
+            }, new OkHttpUtils.DataCallBack() {
+                @Override
+                public void requestFailure(Request request, IOException e) {
+
+                }
+
+                @Override
+                public void requestSuccess(String result) throws Exception {
+
+                    Timber.e("上传视频成功返回："+result);
+                }
+            });
         }
     }
 
@@ -181,6 +289,37 @@ public class MineFragment extends BaseFragment {
                 break;
         }
     }
+    public class MyHandler extends Handler {
+        private WeakReference<Activity> reference;
 
+        public MyHandler(Activity activity) {
+            reference = new WeakReference<Activity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            if(reference.get() != null) {
+                dismissProgress();
+                switch (msg.what) {
+                    case 1:
+                        break;
+                    case 2:
+                        ToastUtils.show(msg.obj.toString(),Toast.LENGTH_SHORT);
+                        break;
+                    case 3:
+                        ToastUtils.show("",Toast.LENGTH_SHORT);
+                        break;
+                    case 4:
+                        ToastUtils.show(msg.obj.toString(),Toast.LENGTH_SHORT);
+                        break;
+                }
+            }
+        }
+    }
+    private void dismissProgress(){
+        if(dialogUtils!=null){
+            dialogUtils.dismissProgress();
+        }
+    }
 
 }

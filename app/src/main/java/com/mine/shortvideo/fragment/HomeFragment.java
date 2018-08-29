@@ -37,6 +37,7 @@ public class HomeFragment extends BaseFragment {
     private String nickName = "hello12";
     private String numPhone = "17839997735";
     private String password = "1234";
+    private int page = 0;
 
     @Override
     protected int getLayoutId() {
@@ -59,7 +60,8 @@ public class HomeFragment extends BaseFragment {
         viewPager.setPageTransformer(true, new VerticalStackTransformer(getActivity()));
         viewPager.setAdapter(mContentFragmentAdapter);
         getToken();
-        getUserInfo();
+        getPublishTaskList();
+
 
     }
     private void getToken() {
@@ -76,27 +78,20 @@ public class HomeFragment extends BaseFragment {
             }
         });
     }
-
-    private void getUserInfo(){
-        OkHttpUtils.getAsync(Const.getUserInfoUrl+"17839997702"+"?_format=json", QUESTAUTH,new OkHttpUtils.DataCallBack() {
+    private void getPublishTaskList() {
+        OkHttpUtils.getAsync(Const.getTaskList+"&page="+page,QUESTNOAUTH, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
-                Timber.e("获取数据失败");
+
             }
 
             @Override
             public void requestSuccess(String result) throws Exception {
-//                Timber.e(result);
-                StringBuilder sb = new StringBuilder();
-                sb.append("{");
-                sb.append("\"data\":");
-                sb.append(result);
-                sb.append("}");
-                Gson gson = new Gson();
-                UserInfoEntity userInfoEntity = gson.fromJson(sb.toString(),UserInfoEntity.class);
-                Timber.e(userInfoEntity.getData().get(0).getField_user_statement().get(0).getValue()+"");
+                Timber.e("publish task=" + result);
             }
         });
     }
+
+
 
 }

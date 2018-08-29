@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
+import android.util.MutableByte;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONType;
@@ -32,6 +33,10 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okio.Buffer;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Source;
 import timber.log.Timber;
 
 /**
@@ -235,51 +240,7 @@ public class OkHttpUtils {
             }
         });
     }
-//        private void inner_getAsync(String url, final DataCallBack callBack) {
-//        final Request request = new Request.Builder()
-//                .url(url)
-//                .addHeader("Content-Type", "application/json")
-//                .addHeader("Authorization","Basic " + getAuthHeader())
-//                .build();
-//
-//        mClient.newCall(request).enqueue(new Callback() {
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                deliverDataFailure(request, e, callBack);
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//                String result = null;
-//                try {
-//                    result = zipInputStream(response.body().byteStream());
-//                    ResponseBody body = response.body();
-//                    Log.e("result", "onResponse: "+body);
-//                } catch (IOException e) {
-//                    deliverDataFailure(request, e, callBack);
-//                }
-//                deliverDataSuccess(result, callBack);
-//            }
-//        });
-//    }
 
-    /**
-     * 处理gzip,deflate返回流
-     *
-     * @param is
-     * @return
-     * @throws IOException
-     */
-    private String zipInputStream(InputStream is) throws IOException {
-        GZIPInputStream gzip = new GZIPInputStream(is);
-        BufferedReader in = new BufferedReader(new InputStreamReader(gzip, "UTF-8"));
-        StringBuffer buffer = new StringBuffer();
-        String line;
-        while ((line = in.readLine()) != null)
-            buffer.append(line + "\n");
-        is.close();
-        return buffer.toString();
-    }
     /**
      * 分发失败的时候调用
      *
@@ -385,12 +346,40 @@ public class OkHttpUtils {
         getInstance().inner_postJsonAsync(url, json, callBack);
     }
     private void inner_postJsonAsync(String url, String json, final DataCallBack callBack) {
+        Timber.e("postJson url=="+url);
+        Timber.e("json parameter=="+json);
         RequestBody body = RequestBody.create(JSONTYPE, json);
         final Request request = new Request.Builder()
                 .url(url)
                 .post(body)
                 .addHeader("Authorization","Basic " + getAuthHeader())
-//                .addHeader("X-CSRF-Token",MySharedData.sharedata_ReadString(MyApplication.getAppContext(),"token"))
+                .addHeader("X-CSRF-Token",MySharedData.sharedata_ReadString(MyApplication.getAppContext(),"token"))
+                .build();
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                deliverDataFailure(request, e, callBack);
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                deliverDataSuccess(result, callBack);
+            }
+        });
+    }
+    //-------------------------patch修改json--------------------------
+    public static void patchJsonAsync(String url, String json, DataCallBack callBack) {
+        getInstance().inner_patchJsonAsync(url, json, callBack);
+    }
+    private void inner_patchJsonAsync(String url, String json, final DataCallBack callBack) {
+        Timber.e("postJson url=="+url);
+        Timber.e("json parameter=="+json);
+        RequestBody body = RequestBody.create(JSONTYPE, json);
+        final Request request = new Request.Builder()
+                .url(url)
+                .patch(body)
+                .addHeader("Authorization","Basic " + getAuthHeader())
+                .addHeader("X-CSRF-Token",MySharedData.sharedata_ReadString(MyApplication.getAppContext(),"token"))
                 .build();
         mClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -406,12 +395,21 @@ public class OkHttpUtils {
     }
     //-------------------------上传文件--------------------------
     /**
+     * 不带参数上传文件
+     *
+     * */
+    public static void postFileAsyncNoParameter(String url,String filePath,ProgressListener listener, DataCallBack callBack) {
+        getInstance().inner_postFileAsyncNoParameter(url,filePath,listener, callBack);
+    }
+
+    /**
      * 带参数上传文件
      *
      * */
     public static void postFileAsync(String url, Map<String,String> map,String filePath, DataCallBack callBack) {
         getInstance().inner_postFileAsync(url, map,filePath, callBack);
     }
+
     private void inner_postFileAsync(String url, Map<String,String> map,String filePath, final DataCallBack callBack)
     {
         MultipartBody.Builder builder = new MultipartBody.Builder();
@@ -427,12 +425,6 @@ public class OkHttpUtils {
         if(file.exists()){
             String TYPE = "application/octet-stream";
             RequestBody fileBody = RequestBody.create(MediaType.parse(TYPE),file);
-            //添加form表单参数
-//            RequestBody requestBody = builder
-//                    .setType(MultipartBody.FORM)
-//                    .addFormDataPart("detail_image",file.getName(),fileBody)
-//                    .build();
-
             final Request request = new Request.Builder()
                     .url(url)
                     .post(fileBody)
@@ -474,6 +466,34 @@ public class OkHttpUtils {
         }
 
     }
+    private void inner_postFileAsyncNoParameter(String url,String filePath,final ProgressListener listener, final DataCallBack callBack)
+    {
+        File file = new File(filePath);
+        if(file.exists()){
+            String TYPE = "application/octet-stream";
+            ProgressRequestBody fileBody = new ProgressRequestBody(0,MediaType.parse(TYPE),file,listener);
+            final Request request = new Request.Builder()
+                    .url(url)
+                    .post(fileBody)
+                    .addHeader("Authorization","Basic " + getAuthHeader())
+                    .addHeader("Content-Disposition","file; filename=" + "\""+file.getName() + "\"")
+                    .build();
+            mClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    deliverDataFailure(request, e, callBack);
+                }
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String result = response.body().string();
+                    deliverDataSuccess(result, callBack);
+                }
+            });
+        }else {
+            Timber.e("post3: 文件不存在");
+        }
+
+    }
     private static String getAuthHeader(){
         String auth;
         String userName = MySharedData.sharedata_ReadString(MyApplication.getAppContext(),"userId");
@@ -483,6 +503,7 @@ public class OkHttpUtils {
         }else{
             auth = "admin" + ":" + "admin";
         }
+//        auth = "admin" + ":" + "admin";
 //        String auth = "d8admin@163.com" + ":" + "uaes,1234";
 //        byte[] encodedAuth = Base64.encode(auth.getBytes(StandardCharsets.UTF_8),);
         String authHeader = Base64.encodeToString(auth.getBytes(StandardCharsets.UTF_8),Base64.NO_WRAP);
@@ -550,7 +571,67 @@ public class OkHttpUtils {
 
         });
     }
+    /**
+     * 继承RequestBody,实现上传的进度监听
+     */
+    private class ProgressRequestBody extends RequestBody {
+        MediaType contentType;
+        File file;
+        ProgressListener listener;
+        int id;
 
+        /**
+         * 构造函数
+         *
+         * @param id          一次可以上传多个文件,id表示本文件在这一批文件当中的编号
+         * @param contentType MIME类型
+         * @param file        要上传的文件
+         * @param listener    传输进度监听器
+         */
+        public ProgressRequestBody(int id, MediaType contentType, File file, ProgressListener listener) {
+            this.id = id;
+            this.contentType = contentType;
+            this.file = file;
+            this.listener = listener;
+        }
+
+
+        @Override
+        public MediaType contentType() {
+            return contentType;
+        }
+
+        @Override
+        public long contentLength() throws IOException {
+            return file.length();
+        }
+
+        @Override
+        public void writeTo(BufferedSink sink) throws IOException {
+            Source source;
+            long len;//记录本次读了多少数据
+            long currSize = 0;//记录目前一共读了多少数据
+            long totalSize = contentLength();//一共有多少数据
+
+            try {
+                source = Okio.source(file);
+                Buffer buffer = new Buffer();
+
+                while ((len = source.read(buffer, 2048)) != -1) {
+                    sink.write(buffer, len);
+                    sink.flush();
+                    currSize += len;
+
+                    //回调,进度监听
+                    listener.onProgress(totalSize, currSize, totalSize == currSize, id);
+                }
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     /**
      * 根据文件url获取文件的路径名字
      *
@@ -561,6 +642,12 @@ public class OkHttpUtils {
         int separatorIndex = url.lastIndexOf("/");
         String path = (separatorIndex < 0) ? url : url.substring(separatorIndex + 1, url.length());
         return path;
+    }
+    /**
+     * 传输进度监听器
+     */
+    public interface ProgressListener {
+        void onProgress(long totalSize, long currSize, boolean done, int id);
     }
 
 

@@ -17,4 +17,10 @@ public class RequestJsonParameter {
                 "\"}], \"roles\": [ { \"target_id\": \"authenticated\" } ], \"status\": [ { \"value\": true } ] }";
         return postJsonData;
     }
+    public static String linkFile(int targetId){
+        String postJsonData = "{\"user_picture\": [{\"target_id\": " +
+                targetId +
+                ",\"description\": \"The most fascinating image ever!\"}]}";
+        return postJsonData;
+    }
 }
