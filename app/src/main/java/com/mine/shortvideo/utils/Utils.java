@@ -227,4 +227,43 @@ public class Utils {
         }
         return list.get(0).replaceAll("\"","");
     }
+    /**
+     *
+     * @param s
+     * @return 获得用户lable
+     */
+    public static String getUserLable(final String s)
+    {
+        if(!s.startsWith("<a href=")){
+            return s;
+        }
+        String regex;
+        String result = "";
+        final List<String> list = new ArrayList<String>();
+//        regex = "<a[^>]*href=(\"([^\"]*)\"|\'([^\']*)\'|([^\\s>]*))[^>]*>(.*?)</a>";
+        regex =">.*?</a>";
+        final Pattern pa = Pattern.compile(regex, Pattern.DOTALL);
+        final Matcher ma = pa.matcher(s);
+        while (ma.find())
+        {
+            list.add(ma.group());
+            result = result + ma.group().replaceAll(">|</a>","")+"  ";
+        }
+        return result;
+    }
+    /**
+     *
+     * @param s
+     * @return 获得预约时间
+     */
+    public static String getBookTime(String s){
+        if(!s.contains("-")){
+            return s;
+        }
+        int index = s.indexOf("-");
+        String result = s.substring(index+1);
+
+        return result;
+
+    }
 }

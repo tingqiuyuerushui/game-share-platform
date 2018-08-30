@@ -16,13 +16,13 @@ public class Const {
     //保留
     public static final String getStatus = baseUrl + "/node/12?_format=json";
     //上传视频
-    public static final String uploadVideoUrl = baseUrl + "/file/upload/node/user_video/field_user_video?_format=json";
+    public static final String uploadVideoUrl = baseUrl + "/file/upload/media/user_video/field_media_video_file?_format=json";
     //获取视频
     public static final String getVideoList = baseUrl + "/api/v1/uservideo?_format=json";
     //获取视频评论
     public static final String getVideoComment = baseUrl + "/api/v2/comments/node/9?_format=json";
     //获取发布的任务
-    public static final String getTaskList = baseUrl + "/api/v1/playtogether?_format=json";
+    public static final String getTaskList = baseUrl + "/api/v3/playtogether?_format=json";
     //关联上传的文件到服务器
     public static final String linkFile = baseUrl + "/user/";
     //获取用户视频
