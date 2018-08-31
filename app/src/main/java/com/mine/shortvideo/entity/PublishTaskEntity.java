@@ -1,5 +1,7 @@
 package com.mine.shortvideo.entity;
 
+import android.text.TextUtils;
+
 import com.mine.shortvideo.utils.Utils;
 
 import java.util.List;
@@ -268,7 +270,8 @@ public class PublishTaskEntity {
         }
 
         public String getUser_picture() {
-            user_picture =  Utils.getImgUrl(user_picture);
+            if(!TextUtils.isEmpty(user_picture))
+                user_picture =  Utils.getImgUrl(user_picture);
             return user_picture;
         }
 

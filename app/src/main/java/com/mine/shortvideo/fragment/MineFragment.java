@@ -87,6 +87,8 @@ public class MineFragment extends BaseFragment {
     private boolean QUESTAUTH = true;
     private boolean QUESTNOAUTH = false;
     private static int userId = 0;
+    private static int VIDEOTYPE = 1;
+    private static int IMGTYPE = 0;
 
     @Override
     protected int getLayoutId() {
@@ -196,8 +198,14 @@ public class MineFragment extends BaseFragment {
         params.put("vin", "111111");
         return params;
     }
-    private void linkFile(int targetId){
-        OkHttpUtils.patchJsonAsync(Const.linkFile + userId + "?_format=json", RequestJsonParameter.linkFile(targetId), new OkHttpUtils.DataCallBack() {
+    private void linkFile(int targetId,int fileType){
+        String jsonStr;
+        if(fileType == VIDEOTYPE){
+            jsonStr = RequestJsonParameter.linkVideoFile(targetId);
+        }else {
+            jsonStr = RequestJsonParameter.linkFile(targetId);
+        }
+        OkHttpUtils.patchJsonAsync(Const.linkFile + userId + "?_format=json", jsonStr, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
 
@@ -206,6 +214,7 @@ public class MineFragment extends BaseFragment {
             @Override
             public void requestSuccess(String result) throws Exception {
                 Timber.e("link file result" + result);
+                Utils.sendHandleMsg(4,"上传成功",handler);
             }
         });
     }
@@ -229,7 +238,7 @@ public class MineFragment extends BaseFragment {
                         Timber.e("result" + result);
                         Gson gson = new Gson();
                         uploadFileResultEntity = gson.fromJson(result,UploadFileResultEntity.class);
-                        linkFile(uploadFileResultEntity.getFid().get(0).getValue());
+                        linkFile(uploadFileResultEntity.getFid().get(0).getValue(),IMGTYPE);
                         Utils.sendHandleMsg(4,"上传成功",handler);
                     }
                 });
@@ -244,7 +253,7 @@ public class MineFragment extends BaseFragment {
 
                     Timber.e("当前上传"+currSize + "----总大小"+totalSize);
                     if(done){
-                        Utils.sendHandleMsg(4,"上传成功",handler);
+//                        Utils.sendHandleMsg(4,"上传成功",handler);
                     }
                 }
             }, new OkHttpUtils.DataCallBack() {
@@ -257,6 +266,9 @@ public class MineFragment extends BaseFragment {
                 public void requestSuccess(String result) throws Exception {
 
                     Timber.e("上传视频成功返回："+result);
+                    Gson gson = new Gson();
+                    uploadFileResultEntity = gson.fromJson(result,UploadFileResultEntity.class);
+                    linkFile(uploadFileResultEntity.getFid().get(0).getValue(),VIDEOTYPE);
                 }
             });
         }

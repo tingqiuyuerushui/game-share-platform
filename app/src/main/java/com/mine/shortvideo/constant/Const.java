@@ -16,7 +16,7 @@ public class Const {
     //保留
     public static final String getStatus = baseUrl + "/node/12?_format=json";
     //上传视频
-    public static final String uploadVideoUrl = baseUrl + "/file/upload/media/user_video/field_media_video_file?_format=json";
+    public static final String uploadVideoUrl = baseUrl + "/file/upload/media/video/field_media_video_file?_format=json";
     //获取视频
     public static final String getVideoList = baseUrl + "/api/v1/uservideo?_format=json";
     //获取视频评论
@@ -27,4 +27,6 @@ public class Const {
     public static final String linkFile = baseUrl + "/user/";
     //获取用户视频
     public static final String getUserVideoList = baseUrl + "/api/v1/myvideo/";
+    //发布完美脱单
+    public static final String publishTask = baseUrl + "/node?_format=json";
 }

@@ -1,16 +1,15 @@
 package com.mine.shortvideo;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -33,23 +32,32 @@ import com.mine.shortvideo.activity.SearchActivity;
 import com.mine.shortvideo.application.MyApplication;
 import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.customview.BottomNavigationViewEx;
-import com.mine.shortvideo.customview.CommomDialog;
+import com.mine.shortvideo.entity.RequestJsonParameter;
 import com.mine.shortvideo.fragment.FragmentTabAdapter;
 import com.mine.shortvideo.fragment.HomeFragment;
 import com.mine.shortvideo.fragment.MessageFragment;
 import com.mine.shortvideo.fragment.MineFragment;
 import com.mine.shortvideo.fragment.VideoFragment;
+import com.mine.shortvideo.utils.CommonDialogUtils;
+import com.mine.shortvideo.utils.MySharedData;
 import com.mine.shortvideo.utils.OkHttpUtils;
 import com.mine.shortvideo.utils.ToastUtils;
 import com.mine.shortvideo.utils.Utils;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.qqtheme.framework.picker.TimePicker;
+import cn.qqtheme.framework.util.ConvertUtils;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
 import okhttp3.Request;
@@ -65,6 +73,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     ImageView btnSearch;
     @BindView(R.id.btn_pull)
     ImageView btnPull;
+
     private Context context;
     private static final String TAG = "MainActivity";
     private List<Fragment> fragments = new ArrayList<>();
@@ -78,12 +87,17 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     private CommonPopupWindow popupWindow;
     private CommonPopupWindow popupWindow1;
     private static int APPSTATUS = 0;
+    private CommonDialogUtils dialogUtils;
+    private MyHandler handler = null;
+    private String date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_bn);
         context = this;
+        handler = new MyHandler(this);
+        dialogUtils = new CommonDialogUtils();
         ButterKnife.bind(this);
         initView();
         initNetworkData();
@@ -125,7 +139,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         bnveCenterIconOnly.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if(APPSTATUS == 2) {
+                if (APPSTATUS == 2) {
                     switch (item.getItemId()) {
                         case R.id.i_home:
                             tabAdapter.getRadioGroup(HOMEFRAGMENT);
@@ -134,9 +148,9 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                             tabAdapter.getRadioGroup(VIDEOFRAGMENT);
                             return true;
                         case R.id.menu_add:
-                            if(Utils.isUserLogin(context)){
+                            if (Utils.isUserLogin(context)) {
                                 showAll();
-                            }else{
+                            } else {
                                 Intent intent = new Intent();
                                 intent.setClass(context, LoginActivity.class);
                                 startActivity(intent);
@@ -186,17 +200,19 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                 .create();
         popupWindow.showAtLocation(findViewById(R.id.main_activity), Gravity.BOTTOM, 0, 0);
     }
-    private void darkenBackground(Float bgcolor){
+
+    private void darkenBackground(Float bgcolor) {
         WindowManager.LayoutParams lp = getWindow().getAttributes();
         lp.alpha = bgcolor;
-        if(bgcolor == 1.0f){
+        if (bgcolor == 1.0f) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        }else{
+        } else {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         }
         getWindow().setAttributes(lp);
 
     }
+
     //全屏弹出
     public void showPublishTask() {
         if (popupWindow1 != null && popupWindow1.isShowing()) return;
@@ -212,6 +228,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                 .create();
         popupWindow1.showAtLocation(findViewById(android.R.id.content), Gravity.BOTTOM, 0, 0);
     }
+
     private void connectRongIM(String token) {
         if (getApplicationInfo().packageName.equals(MyApplication.getCurProcessName(getApplicationContext()))) {
             RongIM.connect(token, new RongIMClient.ConnectCallback() {
@@ -245,23 +262,81 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
             });
         }
     }
-    private long exitTime = 0;
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-            if ((System.currentTimeMillis() - exitTime) > 2000) {
-                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
-                exitTime = System.currentTimeMillis();
-            } else {
-                finish();
-//                System.exit(0);
+    public void onTimePicker(View view) {
+        final TextView tvBookTime = view.findViewById(R.id.tv_booktime);
+        TimePicker picker = new TimePicker(this, TimePicker.HOUR_24);
+        picker.setUseWeight(false);
+        picker.setCycleDisable(false);
+        picker.setRangeStart(0, 0);//00:00
+        picker.setRangeEnd(23, 59);//23:59
+        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int currentMinute = Calendar.getInstance().get(Calendar.MINUTE);
+        picker.setSelectedItem(currentHour, currentMinute);
+        picker.setTopLineVisible(false);
+        picker.setTextPadding(ConvertUtils.toPx(this, 15));
+        picker.setOnTimePickListener(new TimePicker.OnTimePickListener() {
+            @Override
+            public void onTimePicked(String hour, String minute) {
+                tvBookTime.setText( hour + ":" + minute);
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                date = simpleDateFormat.format(new Date());
+            }
+        });
+        picker.show();
+    }
+    private void publishTask(String jsonStr){
+        dialogUtils.showProgress(context);
+        OkHttpUtils.postJsonAsync(Const.publishTask, jsonStr, new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
 
             }
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
+
+            @Override
+            public void requestSuccess(String result) throws Exception {
+                Timber.e("publish task result -->" + result);
+                if (popupWindow1 != null) {
+                    popupWindow1.dismiss();
+                }
+                Utils.sendHandleMsg(4,"发布成功",handler);
+            }
+        });
+
     }
+    public class MyHandler extends Handler {
+        private WeakReference<Activity> reference;
+
+        public MyHandler(Activity activity) {
+            reference = new WeakReference<Activity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            if(reference.get() != null) {
+                dismissProgress();
+                switch (msg.what) {
+                    case 1:
+                        break;
+                    case 2:
+                        ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
+                        break;
+                    case 3:
+                        ToastUtils.show("",Toast.LENGTH_SHORT);
+                        break;
+                    case 4:
+                        ToastUtils.show(msg.obj.toString(),Toast.LENGTH_SHORT);
+//                        LoadDataToView();
+                        break;
+                }
+            }
+        }
+    }
+    private void dismissProgress(){
+        if(dialogUtils!=null){
+            dialogUtils.dismissProgress();
+        }
+    }
+
 
     @OnClick({R.id.btn_search, R.id.btn_pull})
     public void onViewClicked(View view) {
@@ -346,13 +421,36 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     }
 
     class ViewHolder1 {
+        @BindView(R.id.tv_nickname)
+        TextView tvNickname;
+        @BindView(R.id.tv_gamename)
+        TextView tvGamename;
+        @BindView(R.id.tv_game_platform)
+        TextView tvGamePlatform;
+        @BindView(R.id.tv_game_level)
+        TextView tvGameLevel;
+        @BindView(R.id.tv_booktime)
+        TextView tvBooktime;
+        View view = null;
         @OnClick(R.id.btn_publish)
-        public void publishTask() {
+        public void publish() {
             ToastUtils.show("发布任务");
-            if (popupWindow1 != null) {
-                popupWindow1.dismiss();
-            }
+            String jsonStr = RequestJsonParameter.publishTask(
+                    "完美脱单 by"+ MySharedData.sharedata_ReadString(context,"userId"),
+                    tvGameLevel.getText().toString(),
+                    tvGamePlatform.getText().toString(),
+                    tvGamename.getText().toString(),
+                    date + "T"+tvBooktime.getText().toString()+":00+00:00"
+                    );
+            publishTask(jsonStr);
+
         }
+
+        @OnClick(R.id.tv_booktime)
+        public void bookTime() {
+            onTimePicker(view);
+        }
+
         @OnClick(R.id.img_close)
         public void closePop() {
             if (popupWindow1 != null) {
@@ -362,6 +460,24 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
 
         ViewHolder1(View view) {
             ButterKnife.bind(this, view);
+            this.view = view;
         }
+    }
+    private long exitTime = 0;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                finish();
+//                System.exit(0);
+
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

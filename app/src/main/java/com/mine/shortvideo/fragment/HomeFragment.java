@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -44,6 +46,7 @@ public class HomeFragment extends BaseFragment {
     private List<PublishTaskEntity.DataBean> listTaskList;
     private CommonDialogUtils dialogUtils;
     private MyHandler handler = null;
+    private int TASK_COUNT = 0;
 
     @Override
     protected int getLayoutId() {
@@ -86,7 +89,11 @@ public class HomeFragment extends BaseFragment {
             }
             @Override
             public void requestSuccess(String result) throws Exception {
-//                Timber.e("publish task=" + result);
+                Timber.e("publish task=" + result);
+                if(result.length() < 5){
+                    Utils.sendHandleMsg(2,"没有数据了",handler);
+                    return;
+                }
                 StringBuilder sb = new StringBuilder();
                 sb.append("{");
                 sb.append("\"data\":");
@@ -100,10 +107,8 @@ public class HomeFragment extends BaseFragment {
                 for (int i = 0; i < publishTaskEntity.getData().size(); i++) {
                     listTaskList.add(publishTaskEntity.getData().get(i));
                 }
-//                listTaskList.addAll(publishTaskEntity.getData());
-
+                page++;
                 Utils.sendHandleMsg(4,"获取数据成功",handler);
-//                Timber.e("publishTaskEntity==" + publishTaskEntity.getData().get(0).getUser_picture());
             }
         });
     }
@@ -122,6 +127,7 @@ public class HomeFragment extends BaseFragment {
                 dismissProgress();
                 switch (msg.what) {
                     case 1:
+                        getPublishTaskList();
                         break;
                     case 2:
                         ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
@@ -139,18 +145,49 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void LoadDataToView() {
-        for (int i = 0; i < listTaskList.size(); i++) {
-            mFragments.add(CardFragment.newInstance(i + 1,listTaskList.get(i)));
+        for (; TASK_COUNT < listTaskList.size(); TASK_COUNT++) {
+            mFragments.add(CardFragment.newInstance(TASK_COUNT + 1,listTaskList,handler));
         }
 
-        mContentFragmentAdapter = new ContentFragmentAdapter(getActivity().getSupportFragmentManager(), mFragments);
-        //设置viewpager的方向为竖直
-        viewPager.setOrientation(OrientedViewPager.Orientation.VERTICAL);
-        //设置limit
-        viewPager.setOffscreenPageLimit(3);
-        //设置transformer
-        viewPager.setPageTransformer(true, new VerticalStackTransformer(getActivity()));
-        viewPager.setAdapter(mContentFragmentAdapter);
+        if(mContentFragmentAdapter == null){
+            mContentFragmentAdapter = new ContentFragmentAdapter(getActivity().getSupportFragmentManager(), mFragments);
+            //设置viewpager的方向为竖直
+            viewPager.setOrientation(OrientedViewPager.Orientation.VERTICAL);
+            //设置limit
+            viewPager.setOffscreenPageLimit(3);
+            //设置transformer
+            viewPager.setPageTransformer(true, new VerticalStackTransformer(getActivity()));
+            viewPager.setAdapter(mContentFragmentAdapter);
+            viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                int limitValue = 0;
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//                    if(position == TASK_COUNT-1 && limitValue ==0 ){
+//                        limitValue = 0;
+//                        getPublishTaskList();
+//                    }
+                    limitValue++;
+//                    Timber.e("page scroll position" + position + ";positionOffset-->" + positionOffset +
+//                            ";positionOffsetPixels-->" + positionOffsetPixels);
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    Timber.e("page Selected position" + position);
+                    if(position == TASK_COUNT-1){
+                        getPublishTaskList();
+                    }
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+//                    Timber.e("page scroll state" + state);
+                }
+            });
+
+        }else {
+            mContentFragmentAdapter.notifyDataSetChanged();
+        }
 }
 
     private void dismissProgress(){
