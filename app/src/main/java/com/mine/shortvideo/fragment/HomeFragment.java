@@ -17,6 +17,7 @@ import com.mine.shortvideo.application.MyApplication;
 import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.customview.OrientedViewPager;
 import com.mine.shortvideo.entity.PublishTaskEntity;
+import com.mine.shortvideo.entity.UserInfoEntity;
 import com.mine.shortvideo.transformer.VerticalStackTransformer;
 import com.mine.shortvideo.utils.CommonDialogUtils;
 import com.mine.shortvideo.utils.MySharedData;
@@ -47,7 +48,6 @@ public class HomeFragment extends BaseFragment {
     private CommonDialogUtils dialogUtils;
     private MyHandler handler = null;
     private int TASK_COUNT = 0;
-
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_home;
@@ -56,8 +56,9 @@ public class HomeFragment extends BaseFragment {
     @Override
     protected void init(Bundle savedInstanceState) {
         context = getActivity();
-        handler = new MyHandler(getActivity());
+
         dialogUtils = new CommonDialogUtils();
+        handler = new MyHandler(getActivity());
 
         initNetWorkData();
 
@@ -80,6 +81,7 @@ public class HomeFragment extends BaseFragment {
             }
         });
     }
+
     private void getPublishTaskList() {
         dialogUtils.showProgress(context);
         OkHttpUtils.getAsync(Const.getTaskList+"&page="+page,QUESTNOAUTH, new OkHttpUtils.DataCallBack() {

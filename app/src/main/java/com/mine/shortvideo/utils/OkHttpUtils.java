@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -466,17 +467,17 @@ public class OkHttpUtils {
         }
 
     }
-    private void inner_postFileAsyncNoParameter(String url,String filePath,final ProgressListener listener, final DataCallBack callBack)
-    {
+    private void inner_postFileAsyncNoParameter(String url,String filePath,final ProgressListener listener, final DataCallBack callBack) {
         File file = new File(filePath);
         if(file.exists()){
+            String fileName = encodeHeadInfo(file.getName());
             String TYPE = "application/octet-stream";
             ProgressRequestBody fileBody = new ProgressRequestBody(0,MediaType.parse(TYPE),file,listener);
             final Request request = new Request.Builder()
                     .url(url)
                     .post(fileBody)
                     .addHeader("Authorization","Basic " + getAuthHeader())
-                    .addHeader("Content-Disposition","file; filename=" + "\""+file.getName() + "\"")
+                    .addHeader("Content-Disposition","file; filename=" + "\""+fileName + "\"")
                     .build();
             mClient.newCall(request).enqueue(new Callback() {
                 @Override
@@ -509,7 +510,18 @@ public class OkHttpUtils {
         String authHeader = Base64.encodeToString(auth.getBytes(StandardCharsets.UTF_8),Base64.NO_WRAP);
         return  authHeader;
     }
-
+    private static String encodeHeadInfo( String headInfo ) {
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int i = 0, length = headInfo.length(); i < length; i++) {
+            char c = headInfo.charAt(i);
+            if (c <= '\u001f' || c >= '\u007f') {
+                stringBuffer.append( String.format ("\\u%04x", (int)c) );
+            } else {
+                stringBuffer.append(c);
+            }
+        }
+        return stringBuffer.toString();
+    }
     //-------------------------文件下载--------------------------
     public static void downloadAsync(String url, String desDir, DataCallBack callBack) {
         getInstance().inner_downloadAsync(url, desDir, callBack);

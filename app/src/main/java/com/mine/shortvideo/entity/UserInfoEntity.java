@@ -14,7 +14,6 @@ public class UserInfoEntity {
     public List<DataBean> getData() {
         return data;
     }
-
     public void setData(List<DataBean> data) {
         this.data = data;
     }
@@ -36,20 +35,25 @@ public class UserInfoEntity {
         private List<?> init;
         private List<?> roles;
         private List<DefaultLangcodeBean> default_langcode;
-        private List<?> field_user_age;
+        private List<FieldPersonalpicshowBean> field_personalpicshow;
+        private List<FieldUserAgeBean> field_user_age;
+        private List<FieldUserGameLevelBean> field_user_game_level;
+        private List<?> field_user_game_platform;
+        private List<FieldUserGamenameBean> field_user_gamename;
         private List<FieldUserGenderBean> field_user_gender;
         private List<FieldUserIsvipBean> field_user_isvip;
-        private List<?> field_user_level;
+        private List<FieldUserLevelBean> field_user_level;
         private List<?> field_user_location;
-        private List<?> field_user_matches;
+        private List<FieldUserMatchesBean> field_user_matches;
         private List<FieldUserMobileBean> field_user_mobile;
         private List<FieldUserNicknameBean> field_user_nickname;
-        private List<?> field_user_point;
-        private List<?> field_user_stars;
+        private List<FieldUserPlatformBean> field_user_platform;
+        private List<FieldUserPointBean> field_user_point;
+        private List<FieldUserStarsBean> field_user_stars;
         private List<FieldUserStarsignBean> field_user_starsign;
         private List<FieldUserStatementBean> field_user_statement;
-        private List<FieldUserTagsBean> field_user_tags;
-        private List<?> field_user_voice;
+        private List<?> field_user_tags;
+        private List<FieldUserVoiceBean> field_user_voice;
         private List<UserPictureBean> user_picture;
 
         public List<UidBean> getUid() {
@@ -180,12 +184,44 @@ public class UserInfoEntity {
             this.default_langcode = default_langcode;
         }
 
-        public List<?> getField_user_age() {
+        public List<FieldPersonalpicshowBean> getField_personalpicshow() {
+            return field_personalpicshow;
+        }
+
+        public void setField_personalpicshow(List<FieldPersonalpicshowBean> field_personalpicshow) {
+            this.field_personalpicshow = field_personalpicshow;
+        }
+
+        public List<FieldUserAgeBean> getField_user_age() {
             return field_user_age;
         }
 
-        public void setField_user_age(List<?> field_user_age) {
+        public void setField_user_age(List<FieldUserAgeBean> field_user_age) {
             this.field_user_age = field_user_age;
+        }
+
+        public List<FieldUserGameLevelBean> getField_user_game_level() {
+            return field_user_game_level;
+        }
+
+        public void setField_user_game_level(List<FieldUserGameLevelBean> field_user_game_level) {
+            this.field_user_game_level = field_user_game_level;
+        }
+
+        public List<?> getField_user_game_platform() {
+            return field_user_game_platform;
+        }
+
+        public void setField_user_game_platform(List<?> field_user_game_platform) {
+            this.field_user_game_platform = field_user_game_platform;
+        }
+
+        public List<FieldUserGamenameBean> getField_user_gamename() {
+            return field_user_gamename;
+        }
+
+        public void setField_user_gamename(List<FieldUserGamenameBean> field_user_gamename) {
+            this.field_user_gamename = field_user_gamename;
         }
 
         public List<FieldUserGenderBean> getField_user_gender() {
@@ -204,11 +240,11 @@ public class UserInfoEntity {
             this.field_user_isvip = field_user_isvip;
         }
 
-        public List<?> getField_user_level() {
+        public List<FieldUserLevelBean> getField_user_level() {
             return field_user_level;
         }
 
-        public void setField_user_level(List<?> field_user_level) {
+        public void setField_user_level(List<FieldUserLevelBean> field_user_level) {
             this.field_user_level = field_user_level;
         }
 
@@ -220,11 +256,11 @@ public class UserInfoEntity {
             this.field_user_location = field_user_location;
         }
 
-        public List<?> getField_user_matches() {
+        public List<FieldUserMatchesBean> getField_user_matches() {
             return field_user_matches;
         }
 
-        public void setField_user_matches(List<?> field_user_matches) {
+        public void setField_user_matches(List<FieldUserMatchesBean> field_user_matches) {
             this.field_user_matches = field_user_matches;
         }
 
@@ -244,19 +280,27 @@ public class UserInfoEntity {
             this.field_user_nickname = field_user_nickname;
         }
 
-        public List<?> getField_user_point() {
+        public List<FieldUserPlatformBean> getField_user_platform() {
+            return field_user_platform;
+        }
+
+        public void setField_user_platform(List<FieldUserPlatformBean> field_user_platform) {
+            this.field_user_platform = field_user_platform;
+        }
+
+        public List<FieldUserPointBean> getField_user_point() {
             return field_user_point;
         }
 
-        public void setField_user_point(List<?> field_user_point) {
+        public void setField_user_point(List<FieldUserPointBean> field_user_point) {
             this.field_user_point = field_user_point;
         }
 
-        public List<?> getField_user_stars() {
+        public List<FieldUserStarsBean> getField_user_stars() {
             return field_user_stars;
         }
 
-        public void setField_user_stars(List<?> field_user_stars) {
+        public void setField_user_stars(List<FieldUserStarsBean> field_user_stars) {
             this.field_user_stars = field_user_stars;
         }
 
@@ -276,19 +320,19 @@ public class UserInfoEntity {
             this.field_user_statement = field_user_statement;
         }
 
-        public List<FieldUserTagsBean> getField_user_tags() {
+        public List<?> getField_user_tags() {
             return field_user_tags;
         }
 
-        public void setField_user_tags(List<FieldUserTagsBean> field_user_tags) {
+        public void setField_user_tags(List<?> field_user_tags) {
             this.field_user_tags = field_user_tags;
         }
 
-        public List<?> getField_user_voice() {
+        public List<FieldUserVoiceBean> getField_user_voice() {
             return field_user_voice;
         }
 
-        public void setField_user_voice(List<?> field_user_voice) {
+        public void setField_user_voice(List<FieldUserVoiceBean> field_user_voice) {
             this.field_user_voice = field_user_voice;
         }
 
@@ -456,7 +500,7 @@ public class UserInfoEntity {
 
         public static class ChangedBean {
             /**
-             * value : 2018-08-09T14:38:00+00:00
+             * value : 2018-08-31T08:26:34+00:00
              * format : Y-m-d\TH:i:sP
              */
 
@@ -482,7 +526,7 @@ public class UserInfoEntity {
 
         public static class AccessBean {
             /**
-             * value : 1970-01-01T00:00:00+00:00
+             * value : 2018-08-31T22:59:15+00:00
              * format : Y-m-d\TH:i:sP
              */
 
@@ -508,7 +552,7 @@ public class UserInfoEntity {
 
         public static class LoginBean {
             /**
-             * value : 1970-01-01T00:00:00+00:00
+             * value : 2018-08-27T10:48:54+00:00
              * format : Y-m-d\TH:i:sP
              */
 
@@ -548,9 +592,143 @@ public class UserInfoEntity {
             }
         }
 
+        public static class FieldPersonalpicshowBean {
+            /**
+             * target_id : 22
+             * alt : alternatice text 1
+             * title :
+             * width : 750
+             * height : 1334
+             * target_type : file
+             * target_uuid : 774e7120-13c6-47eb-899f-433cc71dddcf
+             * url : http://www.uaes.site:8088/d86/sites/default/files/2018-08/98464533.jpg
+             */
+
+            private int target_id;
+            private String alt;
+            private String title;
+            private int width;
+            private int height;
+            private String target_type;
+            private String target_uuid;
+            private String url;
+
+            public int getTarget_id() {
+                return target_id;
+            }
+
+            public void setTarget_id(int target_id) {
+                this.target_id = target_id;
+            }
+
+            public String getAlt() {
+                return alt;
+            }
+
+            public void setAlt(String alt) {
+                this.alt = alt;
+            }
+
+            public String getTitle() {
+                return title;
+            }
+
+            public void setTitle(String title) {
+                this.title = title;
+            }
+
+            public int getWidth() {
+                return width;
+            }
+
+            public void setWidth(int width) {
+                this.width = width;
+            }
+
+            public int getHeight() {
+                return height;
+            }
+
+            public void setHeight(int height) {
+                this.height = height;
+            }
+
+            public String getTarget_type() {
+                return target_type;
+            }
+
+            public void setTarget_type(String target_type) {
+                this.target_type = target_type;
+            }
+
+            public String getTarget_uuid() {
+                return target_uuid;
+            }
+
+            public void setTarget_uuid(String target_uuid) {
+                this.target_uuid = target_uuid;
+            }
+
+            public String getUrl() {
+                return url;
+            }
+
+            public void setUrl(String url) {
+                this.url = url;
+            }
+        }
+
+        public static class FieldUserAgeBean {
+            /**
+             * value : 18
+             */
+
+            private int value;
+
+            public int getValue() {
+                return value;
+            }
+
+            public void setValue(int value) {
+                this.value = value;
+            }
+        }
+
+        public static class FieldUserGameLevelBean {
+            /**
+             * value : 15
+             */
+
+            private String value;
+
+            public String getValue() {
+                return value;
+            }
+
+            public void setValue(String value) {
+                this.value = value;
+            }
+        }
+
+        public static class FieldUserGamenameBean {
+            /**
+             * value : 王者荣耀
+             */
+
+            private String value;
+
+            public String getValue() {
+                return value;
+            }
+
+            public void setValue(String value) {
+                this.value = value;
+            }
+        }
+
         public static class FieldUserGenderBean {
             /**
-             * value : 男
+             * value : 女
              */
 
             private String value;
@@ -566,7 +744,7 @@ public class UserInfoEntity {
 
         public static class FieldUserIsvipBean {
             /**
-             * value : false
+             * value : true
              */
 
             private boolean value;
@@ -576,6 +754,38 @@ public class UserInfoEntity {
             }
 
             public void setValue(boolean value) {
+                this.value = value;
+            }
+        }
+
+        public static class FieldUserLevelBean {
+            /**
+             * value : 16.00
+             */
+
+            private String value;
+
+            public String getValue() {
+                return value;
+            }
+
+            public void setValue(String value) {
+                this.value = value;
+            }
+        }
+
+        public static class FieldUserMatchesBean {
+            /**
+             * value : 46
+             */
+
+            private int value;
+
+            public int getValue() {
+                return value;
+            }
+
+            public void setValue(int value) {
                 this.value = value;
             }
         }
@@ -612,6 +822,54 @@ public class UserInfoEntity {
             }
         }
 
+        public static class FieldUserPlatformBean {
+            /**
+             * value : 安卓微信
+             */
+
+            private String value;
+
+            public String getValue() {
+                return value;
+            }
+
+            public void setValue(String value) {
+                this.value = value;
+            }
+        }
+
+        public static class FieldUserPointBean {
+            /**
+             * value : 100
+             */
+
+            private int value;
+
+            public int getValue() {
+                return value;
+            }
+
+            public void setValue(int value) {
+                this.value = value;
+            }
+        }
+
+        public static class FieldUserStarsBean {
+            /**
+             * value : 20
+             */
+
+            private int value;
+
+            public int getValue() {
+                return value;
+            }
+
+            public void setValue(int value) {
+                this.value = value;
+            }
+        }
+
         public static class FieldUserStarsignBean {
             /**
              * value : 白羊座
@@ -644,12 +902,18 @@ public class UserInfoEntity {
             }
         }
 
-        public static class FieldUserTagsBean {
+        public static class FieldUserVoiceBean {
             /**
-             * target_id : 11
+             * target_id : 1
+             * target_type : media
+             * target_uuid : ac7825f3-88ed-46ac-b6e5-3207665fb413
+             * url : /d86/media/1
              */
 
             private int target_id;
+            private String target_type;
+            private String target_uuid;
+            private String url;
 
             public int getTarget_id() {
                 return target_id;
@@ -657,6 +921,30 @@ public class UserInfoEntity {
 
             public void setTarget_id(int target_id) {
                 this.target_id = target_id;
+            }
+
+            public String getTarget_type() {
+                return target_type;
+            }
+
+            public void setTarget_type(String target_type) {
+                this.target_type = target_type;
+            }
+
+            public String getTarget_uuid() {
+                return target_uuid;
+            }
+
+            public void setTarget_uuid(String target_uuid) {
+                this.target_uuid = target_uuid;
+            }
+
+            public String getUrl() {
+                return url;
+            }
+
+            public void setUrl(String url) {
+                this.url = url;
             }
         }
 

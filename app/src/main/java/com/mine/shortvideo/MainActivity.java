@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.mine.shortvideo.PopupWindow.CommonPopupWindow;
 import com.mine.shortvideo.activity.LoginActivity;
 import com.mine.shortvideo.activity.SearchActivity;
@@ -33,6 +34,7 @@ import com.mine.shortvideo.application.MyApplication;
 import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.customview.BottomNavigationViewEx;
 import com.mine.shortvideo.entity.RequestJsonParameter;
+import com.mine.shortvideo.entity.UserInfoEntity;
 import com.mine.shortvideo.fragment.FragmentTabAdapter;
 import com.mine.shortvideo.fragment.HomeFragment;
 import com.mine.shortvideo.fragment.MessageFragment;
@@ -90,12 +92,17 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     private CommonDialogUtils dialogUtils;
     private MyHandler handler = null;
     private String date;
+    private String userName;
+    private boolean QUESTAUTH = true;
+    private boolean QUESTNOAUTH = false;
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_bn);
         context = this;
+        userName = MySharedData.sharedata_ReadString(context, "userId");
         handler = new MyHandler(this);
         dialogUtils = new CommonDialogUtils();
         ButterKnife.bind(this);
@@ -107,6 +114,9 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     }
 
     private void initNetworkData() {
+        if(userName != null){
+            getUserInfo();
+        }
         OkHttpUtils.getAsync(Const.getStatus, true, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
@@ -160,7 +170,13 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                             tabAdapter.getRadioGroup(MESSAGEFRAGMENT);
                             return true;
                         case R.id.i_mine:
-                            tabAdapter.getRadioGroup(MINEFRAGMENT);
+                            if (Utils.isUserLogin(context)) {
+                                tabAdapter.getRadioGroup(MINEFRAGMENT);
+                            }else{
+                                Intent intent = new Intent();
+                                intent.setClass(context, LoginActivity.class);
+                                startActivity(intent);
+                            }
                             return true;
                     }
                 }
@@ -228,7 +244,30 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                 .create();
         popupWindow1.showAtLocation(findViewById(android.R.id.content), Gravity.BOTTOM, 0, 0);
     }
+    private void getUserInfo() {
+        dialogUtils.showProgress(context);
+        OkHttpUtils.getAsync(Const.getUserInfoUrl + userName + "?_format=json", QUESTAUTH, new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+                Timber.e("获取数据失败");
+            }
 
+            @Override
+            public void requestSuccess(String result) throws Exception {
+//                Timber.e(result);
+                StringBuilder sb = new StringBuilder();
+                sb.append("{");
+                sb.append("\"data\":");
+                sb.append(result);
+                sb.append("}");
+                Gson gson = new Gson();
+                UserInfoEntity userInfoEntity = gson.fromJson(sb.toString(), UserInfoEntity.class);
+                Timber.e(userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue() + "");
+                userId = userInfoEntity.getData().get(0).getUid().get(0).getValue();
+                Utils.sendHandleMsg(1, userInfoEntity, handler);
+            }
+        });
+    }
     private void connectRongIM(String token) {
         if (getApplicationInfo().packageName.equals(MyApplication.getCurProcessName(getApplicationContext()))) {
             RongIM.connect(token, new RongIMClient.ConnectCallback() {
@@ -441,7 +480,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                     tvGamePlatform.getText().toString(),
                     tvGamename.getText().toString(),
                     date + "T"+tvBooktime.getText().toString()+":00+00:00"
-                    );
+            );
             publishTask(jsonStr);
 
         }

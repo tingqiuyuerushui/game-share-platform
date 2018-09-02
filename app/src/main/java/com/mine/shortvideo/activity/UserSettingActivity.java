@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mine.shortvideo.R;
+import com.mine.shortvideo.utils.MySharedData;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,7 +47,7 @@ public class UserSettingActivity extends Activity {
         tvTitle.setText("设置");
     }
 
-    @OnClick({R.id.tv_account_setting, R.id.ll_account_setting,R.id.img_left})
+    @OnClick({R.id.tv_account_setting, R.id.ll_account_setting,R.id.img_left,R.id.ll_user_exit,R.id.tv_user_exit})
     public void onViewClicked(View view) {
         Intent intent = new Intent();
         switch (view.getId()) {
@@ -55,9 +56,16 @@ public class UserSettingActivity extends Activity {
                 intent.setClass(context,AccountSettingActivity.class);
                 startActivity(intent);
                 break;
-                case R.id.img_left:
-                    finish();
-                    break;
+            case R.id.img_left:
+                finish();
+                break;
+            case R.id.ll_user_exit:
+            case R.id.tv_user_exit:
+                MySharedData.sharedata_WriteString(context,"userId","");
+                MySharedData.sharedata_WriteString(context,"password","");
+                finish();
+                break;
+
         }
     }
 }

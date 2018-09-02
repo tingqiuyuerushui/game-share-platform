@@ -15,8 +15,12 @@ public class Const {
     public static final String createUser = baseUrl + "/entity/user?_format=json";
     //保留
     public static final String getStatus = baseUrl + "/node/12?_format=json";
-    //上传视频
+    //上传视频第一步
     public static final String uploadVideoUrl = baseUrl + "/file/upload/media/video/field_media_video_file?_format=json";
+    //上传视频第二步
+    public static final String CreateMediaVideoUrl = baseUrl + "/entity/media?_format=json";
+    //上传视频第三步
+    public static final String CreateUserVideoUrl = baseUrl + "/node?_format=json";
     //获取视频
     public static final String getVideoList = baseUrl + "/api/v1/uservideo?_format=json";
     //获取视频评论

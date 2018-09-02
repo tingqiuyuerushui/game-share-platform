@@ -60,12 +60,14 @@
     <View style="@style/user_setting_line"/>
 
     <LinearLayout
+        android:id="@+id/ll_user_exit"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:orientation="vertical"
         android:layout_marginTop="40dp"
         android:gravity="center">
         <TextView
+            android:id="@+id/tv_user_exit"
             android:text="退出登入"
             style="@style/user_setting_tv"/>
     </LinearLayout>

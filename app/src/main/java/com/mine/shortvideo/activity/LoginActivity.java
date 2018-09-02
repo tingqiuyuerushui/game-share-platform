@@ -95,6 +95,12 @@ public class LoginActivity extends Activity {
                     Timber.e(registResultEntity.getData().getField_user_mobile().get(0).getValue()+"");
                     MySharedData.sharedata_WriteString(context,"userId",registResultEntity.getData().getField_user_mobile().get(0).getValue());
                     MySharedData.sharedata_WriteString(context,"password",password);
+                }else {
+                    Timber.e("create result" + result);
+                    if(result.contains("is already taken")){
+                    MySharedData.sharedata_WriteString(context,"userId",numPhone);
+                    MySharedData.sharedata_WriteString(context,"password",password);
+                    }
                     finish();
                 }
 

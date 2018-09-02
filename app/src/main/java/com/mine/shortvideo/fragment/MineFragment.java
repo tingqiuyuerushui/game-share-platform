@@ -2,7 +2,6 @@ package com.mine.shortvideo.fragment;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,14 +9,20 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.mine.shortvideo.R;
 import com.mine.shortvideo.activity.MinePlayVideoActivity;
@@ -27,7 +32,6 @@ import com.mine.shortvideo.adapter.UserGameThumbRecyclerViewAdapter;
 import com.mine.shortvideo.adapter.UserVideoListAdapter;
 import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.customview.CommomDialog;
-import com.mine.shortvideo.entity.LinkFileRequestEntity;
 import com.mine.shortvideo.entity.RequestJsonParameter;
 import com.mine.shortvideo.entity.UploadFileResultEntity;
 import com.mine.shortvideo.entity.UserInfoEntity;
@@ -35,16 +39,16 @@ import com.mine.shortvideo.myInterface.MyItemOnClickListener;
 import com.mine.shortvideo.photopicker.PhotoPicker;
 import com.mine.shortvideo.utils.Code;
 import com.mine.shortvideo.utils.CommonDialogUtils;
-import com.mine.shortvideo.utils.GetProgressDialog;
+import com.mine.shortvideo.utils.MySharedData;
 import com.mine.shortvideo.utils.OkHttpUtils;
 import com.mine.shortvideo.utils.ToastUtils;
 import com.mine.shortvideo.utils.Utils;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -75,6 +79,42 @@ public class MineFragment extends BaseFragment {
     ImageView btnAttention;
     @BindView(R.id.btn_more)
     ImageView btnMore;
+    @BindView(R.id.tv_lv)
+    TextView tvLv;
+    @BindView(R.id.tv_nickname)
+    TextView tvNickname;
+    @BindView(R.id.tv_user_id)
+    TextView tvUserId;
+    @BindView(R.id.tv_signature)
+    TextView tvSignature;
+    @BindView(R.id.tv_lable)
+    TextView tvLable;
+    @BindView(R.id.tv_distance)
+    TextView tvDistance;
+    @BindView(R.id.tv_star)
+    TextView tvStar;
+    @BindView(R.id.tv_score)
+    TextView tvScore;
+    @BindView(R.id.tv_like_count)
+    TextView tvLikeCount;
+    @BindView(R.id.tv_attention_count)
+    TextView tvAttentionCount;
+    @BindView(R.id.tv_fans_count)
+    TextView tvFansCount;
+    @BindView(R.id.tv_gamename)
+    TextView tvGamename;
+    @BindView(R.id.tv_game_platform)
+    TextView tvGamePlatform;
+    @BindView(R.id.tv_game_level)
+    TextView tvGameLevel;
+    @BindView(R.id.tv_target_score)
+    TextView tvTargetScore;
+    @BindView(R.id.tv_reward)
+    TextView tvReward;
+    @BindView(R.id.tv_booktime)
+    TextView tvBooktime;
+    @BindView(R.id.img_user_portrait)
+    ImageView imgUserPortrait;
     private Context context;
     private UserGameThumbRecyclerViewAdapter gameThumbRecyclerViewAdapter;
     private UserVideoListAdapter userVideoListAdapter;
@@ -89,6 +129,7 @@ public class MineFragment extends BaseFragment {
     private static int userId = 0;
     private static int VIDEOTYPE = 1;
     private static int IMGTYPE = 0;
+    private String userName;
 
     @Override
     protected int getLayoutId() {
@@ -98,6 +139,7 @@ public class MineFragment extends BaseFragment {
     @Override
     protected void init(Bundle savedInstanceState) {
         context = getActivity();
+        userName = MySharedData.sharedata_ReadString(context, "userId");
         unbinder = ButterKnife.bind(this, rootView);
         dialogUtils = new CommonDialogUtils();
         handler = new MyHandler(getActivity());
@@ -148,8 +190,9 @@ public class MineFragment extends BaseFragment {
         getUserVideoList();
     }
 
-    private void getUserInfo(){
-        OkHttpUtils.getAsync(Const.getUserInfoUrl+"17839997702"+"?_format=json", QUESTAUTH,new OkHttpUtils.DataCallBack() {
+    private void getUserInfo() {
+        dialogUtils.showProgress(context);
+        OkHttpUtils.getAsync(Const.getUserInfoUrl + userName + "?_format=json", QUESTAUTH, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
                 Timber.e("获取数据失败");
@@ -164,14 +207,16 @@ public class MineFragment extends BaseFragment {
                 sb.append(result);
                 sb.append("}");
                 Gson gson = new Gson();
-                UserInfoEntity userInfoEntity = gson.fromJson(sb.toString(),UserInfoEntity.class);
-                Timber.e(userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue()+"");
+                UserInfoEntity userInfoEntity = gson.fromJson(sb.toString(), UserInfoEntity.class);
+                Timber.e(userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue() + "");
                 userId = userInfoEntity.getData().get(0).getUid().get(0).getValue();
+                Utils.sendHandleMsg(1, userInfoEntity, handler);
             }
         });
     }
-    private void getUserVideoList(){
-        OkHttpUtils.getAsync(Const.getUserVideoList+"17839997702"+"?_format=json", QUESTAUTH,new OkHttpUtils.DataCallBack() {
+
+    private void getUserVideoList() {
+        OkHttpUtils.getAsync(Const.getUserVideoList + userName + "?_format=json", QUESTNOAUTH, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
                 Timber.e("获取数据失败");
@@ -179,7 +224,7 @@ public class MineFragment extends BaseFragment {
 
             @Override
             public void requestSuccess(String result) throws Exception {
-                Timber.e(result);
+                Timber.e("获取用户视频" + result);
 //                StringBuilder sb = new StringBuilder();
 //                sb.append("{");
 //                sb.append("\"data\":");
@@ -198,14 +243,18 @@ public class MineFragment extends BaseFragment {
         params.put("vin", "111111");
         return params;
     }
-    private void linkFile(int targetId,int fileType){
+
+    private void linkFile(int targetId, int fileType) {
         String jsonStr;
-        if(fileType == VIDEOTYPE){
-            jsonStr = RequestJsonParameter.linkVideoFile(targetId);
-        }else {
+        String url;
+        if (fileType == VIDEOTYPE) {
+            jsonStr = RequestJsonParameter.CreateMediaJsonStr(userId, targetId);
+            url = Const.CreateMediaVideoUrl;
+        } else {
             jsonStr = RequestJsonParameter.linkFile(targetId);
+            url = Const.linkFile + userId + "?_format=json";
         }
-        OkHttpUtils.patchJsonAsync(Const.linkFile + userId + "?_format=json", jsonStr, new OkHttpUtils.DataCallBack() {
+        OkHttpUtils.patchJsonAsync(url, jsonStr, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
 
@@ -214,7 +263,46 @@ public class MineFragment extends BaseFragment {
             @Override
             public void requestSuccess(String result) throws Exception {
                 Timber.e("link file result" + result);
-                Utils.sendHandleMsg(4,"上传成功",handler);
+                Utils.sendHandleMsg(4, "上传成功", handler);
+            }
+        });
+    }
+
+    private void linkVideoFile(final int targetId) {
+        String jsonStr;
+        String url;
+        jsonStr = RequestJsonParameter.CreateMediaJsonStr(userId, targetId);
+        url = Const.CreateMediaVideoUrl;
+        OkHttpUtils.postJsonAsync(url, jsonStr, new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void requestSuccess(String result) throws Exception {
+                Timber.e("上传视频第二步成功返回" + result);
+                JSONObject jsonObject = JSON.parseObject(result);
+                JSONArray jsonArray = jsonObject.getJSONArray("mid");
+                JSONObject jsonValue = JSONObject.parseObject(jsonArray.getString(0));
+                int mid = jsonValue.getInteger("value");
+                Timber.e("link file result mid" + mid);
+                OkHttpUtils.postJsonAsync(Const.CreateUserVideoUrl, RequestJsonParameter.CreateUserVideoJsonStr(mid), new OkHttpUtils.DataCallBack() {
+                    @Override
+                    public void requestFailure(Request request, IOException e) {
+
+                    }
+
+                    @Override
+                    public void requestSuccess(String result) throws Exception {
+                        if (result.length() > 100) {
+                            Utils.sendHandleMsg(4, "上传成功", handler);
+                        }
+                        Utils.sendHandleMsg(4, "失败", handler);
+                        Timber.e("上传视频第三步成功返回：" + result);
+                    }
+                });
+
             }
         });
     }
@@ -226,7 +314,7 @@ public class MineFragment extends BaseFragment {
         if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
             if (data != null) {
                 photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
-                dialogUtils.showProgress(context,"正在上传，请稍后");
+                dialogUtils.showProgress(context, "正在上传，请稍后");
                 OkHttpUtils.postFileAsync(Const.uploadUrl, addParams(), photos.get(0), new OkHttpUtils.DataCallBack() {
                     @Override
                     public void requestFailure(Request request, IOException e) {
@@ -237,22 +325,22 @@ public class MineFragment extends BaseFragment {
                     public void requestSuccess(String result) throws Exception {
                         Timber.e("result" + result);
                         Gson gson = new Gson();
-                        uploadFileResultEntity = gson.fromJson(result,UploadFileResultEntity.class);
-                        linkFile(uploadFileResultEntity.getFid().get(0).getValue(),IMGTYPE);
-                        Utils.sendHandleMsg(4,"上传成功",handler);
+                        uploadFileResultEntity = gson.fromJson(result, UploadFileResultEntity.class);
+                        linkFile(uploadFileResultEntity.getFid().get(0).getValue(), IMGTYPE);
+                        Utils.sendHandleMsg(4, "上传成功", handler);
                     }
                 });
             }
         } else if (requestCode == Code.LOCAL_VIDEO_REQUEST && resultCode == Code.LOCAL_VIDEO_RESULT) {
             String filPaths = data.getStringExtra("path");
             Log.e("video Path", filPaths);
-            dialogUtils.showProgress(context,"正在上传，请稍后");
+            dialogUtils.showProgress(context, "正在上传，请稍后");
             OkHttpUtils.postFileAsyncNoParameter(Const.uploadVideoUrl, filPaths, new OkHttpUtils.ProgressListener() {
                 @Override
                 public void onProgress(long totalSize, long currSize, boolean done, int id) {
 
-                    Timber.e("当前上传"+currSize + "----总大小"+totalSize);
-                    if(done){
+                    Timber.e("当前上传" + currSize + "----总大小" + totalSize);
+                    if (done) {
 //                        Utils.sendHandleMsg(4,"上传成功",handler);
                     }
                 }
@@ -265,16 +353,16 @@ public class MineFragment extends BaseFragment {
                 @Override
                 public void requestSuccess(String result) throws Exception {
 
-                    Timber.e("上传视频成功返回："+result);
+                    Timber.e("上传视频第一步成功返回：" + result);
                     Gson gson = new Gson();
-                    uploadFileResultEntity = gson.fromJson(result,UploadFileResultEntity.class);
-                    linkFile(uploadFileResultEntity.getFid().get(0).getValue(),VIDEOTYPE);
+                    uploadFileResultEntity = gson.fromJson(result, UploadFileResultEntity.class);
+                    linkVideoFile(uploadFileResultEntity.getFid().get(0).getValue());
                 }
             });
         }
     }
 
-    @OnClick({R.id.btn_share, R.id.btn_delete,R.id.btn_private_msg, R.id.btn_attention, R.id.btn_more})
+    @OnClick({R.id.btn_share, R.id.btn_delete, R.id.btn_private_msg, R.id.btn_attention, R.id.btn_more})
     public void onViewClicked(View view) {
         Intent intent = new Intent();
         switch (view.getId()) {
@@ -310,26 +398,77 @@ public class MineFragment extends BaseFragment {
 
         @Override
         public void handleMessage(Message msg) {
-            if(reference.get() != null) {
+            if (reference.get() != null) {
                 dismissProgress();
                 switch (msg.what) {
                     case 1:
+                        UserInfoEntity userInfoEntity = (UserInfoEntity) msg.obj;
+                        LoadDataToView(userInfoEntity);
                         break;
                     case 2:
-                        ToastUtils.show(msg.obj.toString(),Toast.LENGTH_SHORT);
+                        ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
                         break;
                     case 3:
-                        ToastUtils.show("",Toast.LENGTH_SHORT);
+                        ToastUtils.show("", Toast.LENGTH_SHORT);
                         break;
                     case 4:
-                        ToastUtils.show(msg.obj.toString(),Toast.LENGTH_SHORT);
+                        ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
                         break;
                 }
             }
         }
     }
-    private void dismissProgress(){
-        if(dialogUtils!=null){
+
+    private void LoadDataToView(UserInfoEntity userInfoEntity) {
+        tvNickname.setText(userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue());
+        if (userInfoEntity.getData().get(0).getUser_picture().size() == 0) {
+            imgUserPortrait.setImageResource(R.mipmap.demo_3);
+        }else{
+            Glide.with(context)
+                    .load(userInfoEntity.getData().get(0).getUser_picture().get(0).getUrl())
+                    .into(imgUserPortrait);
+        }
+        tvDistance.setText("未知");
+        if(userInfoEntity.getData().get(0).getField_user_level().size() > 0 && !TextUtils.isEmpty(userInfoEntity.getData().get(0).getField_user_level().get(0).getValue())){
+            tvLv.setText("lv"+new BigDecimal(userInfoEntity.getData().get(0).getField_user_level().get(0).getValue()).stripTrailingZeros());
+        }else{
+            tvLv.setText("lv0");
+        }
+//        tvLable.setText("♀" +userInfoEntity.getData().get(0).getField_user_age().get(0).getValue() +
+//                userInfoEntity.getData().get(0).getField_user_tags().get(0));
+        if(userInfoEntity.getData().get(0).getField_user_starsign().size() > 0){
+            tvSignature.setText(userInfoEntity.getData().get(0).getField_user_starsign().get(0).getValue());
+        }else {
+            tvSignature.setText("本宝宝太懒，没有留下任何签名");
+        }
+        if(userInfoEntity.getData().get(0).getField_user_stars().size() > 0){
+            tvStar.setText(userInfoEntity.getData().get(0).getField_user_stars().get(0).getValue());
+            rcRate.setRating(userInfoEntity.getData().get(0).getField_user_stars().get(0).getValue());
+        }else{
+            tvStar.setText("5.0");
+            rcRate.setRating(5.0f);
+        }
+        if(userInfoEntity.getData().get(0).getField_user_point().size() > 0){
+            tvScore.setText(userInfoEntity.getData().get(0).getField_user_point().get(0).getValue());
+        }else{
+            tvScore.setText("100");
+        }
+        if(userInfoEntity.getData().get(0).getField_user_game_level().size() > 0){
+            tvGameLevel.setText(userInfoEntity.getData().get(0).getField_user_game_level().get(0).getValue());
+        }else{
+            tvGameLevel.setText("王者1星");
+        }
+        if(userInfoEntity.getData().get(0).getField_user_gamename().size() > 0){
+            tvGamename.setText(userInfoEntity.getData().get(0).getField_user_gamename().get(0).getValue());
+        }
+        if(userInfoEntity.getData().get(0).getField_user_platform().size() > 0){
+            tvGamePlatform.setText(userInfoEntity.getData().get(0).getField_user_platform().get(0).getValue());
+        }
+
+    }
+
+    private void dismissProgress() {
+        if (dialogUtils != null) {
             dialogUtils.dismissProgress();
         }
     }

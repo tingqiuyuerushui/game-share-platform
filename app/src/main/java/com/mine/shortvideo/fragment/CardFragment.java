@@ -1,5 +1,6 @@
 package com.mine.shortvideo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -15,9 +16,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mine.shortvideo.R;
+import com.mine.shortvideo.activity.LoginActivity;
 import com.mine.shortvideo.entity.PublishTaskEntity;
 import com.mine.shortvideo.utils.ToastUtils;
+import com.mine.shortvideo.utils.Utils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import butterknife.BindView;
@@ -71,6 +75,8 @@ public class CardFragment extends Fragment {
     private PublishTaskEntity.DataBean taskInfo;
     private int index = 0;
     private static Handler handler = null;
+    private String nickName;
+    private String uid;
 
     public static CardFragment newInstance(int index, List<PublishTaskEntity.DataBean> taskListInfo, Handler handler) {
         CardFragment fragment = new CardFragment();
@@ -90,6 +96,7 @@ public class CardFragment extends Fragment {
         index = bundle.getInt(INDEX_KEY);
         Timber.e("bundle id"+ index);
         taskInfo = taskListInfo.get(index-1);
+        uid = taskInfo.getUid();
         if (bundle != null) {
             Glide.with(getActivity())
                     .load("http://www.uaes.site:8088"+taskInfo.getUser_picture())
@@ -99,8 +106,13 @@ public class CardFragment extends Fragment {
             }else{
                 tvDistance.setText("未知");
             }
-            tvNickname.setText(taskInfo.getField_user_nickname());
-            lvLevel.setText(taskInfo.getField_user_level());
+            nickName = taskInfo.getField_user_nickname();
+            tvNickname.setText(nickName);
+            if(!TextUtils.isEmpty(taskInfo.getField_user_level())){
+                lvLevel.setText("lv"+new BigDecimal(taskInfo.getField_user_level()).stripTrailingZeros());
+            }else{
+                lvLevel.setText("lv0");
+            }
             tvLable.setText("♀" +taskInfo.getField_user_age() + taskInfo.getField_user_tags());
             tvSignature.setText(taskInfo.getField_user_statement());
             tvStar.setText(taskInfo.getField_user_stars());
@@ -127,7 +139,13 @@ public class CardFragment extends Fragment {
         switch (view.getId()) {
             case R.id.tv_match:
                 ToastUtils.show("匹配");
-                RongIM.getInstance().startConversation(getActivity(), Conversation.ConversationType.PRIVATE, "ios", "ios");
+                if (Utils.isUserLogin(getActivity())) {
+                    RongIM.getInstance().startConversation(getActivity(), Conversation.ConversationType.PRIVATE, uid, nickName);
+                }else{
+                    Intent intent = new Intent();
+                    intent.setClass(getActivity(), LoginActivity.class);
+                    startActivity(intent);
+                }
                 break;
         }
     }

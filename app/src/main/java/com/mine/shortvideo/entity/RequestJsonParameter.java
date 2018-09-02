@@ -47,5 +47,23 @@ public class RequestJsonParameter {
                 "\"}]}";
         return postJsonData;
     }
+    //上传视频第二步json参数
+    public static String CreateMediaJsonStr(int uid,int targerId){
+        String postJsonData = "{\"bundle\": [{\"target_id\": \"video\",\"target_type\": \"media_type\"}],\"name\": [{\"value\": \"sample2\"}],\"uid\": [{\"target_id\": " +
+                uid +
+                ",\"target_type\": \"user\"}],\"field_media_video_file\": [{\"target_type\": \"file\",\"target_id\": " +
+                targerId +
+                "}]}";
+
+        return postJsonData;
+    }
+    //上传视频第三步获得Mid
+    public static String CreateUserVideoJsonStr(int targerId){
+        String postJsonData = "{\"type\": [{\"target_id\": \"user_video\",\"target_type\": \"node_type\"}],\"title\": [{\"value\": \"sample video test\"}],\"field_user_video\": [{\"target_id\": " +
+                targerId + ",\"target_type\": \"media\"}]}";
+
+        return postJsonData;
+    }
+
 
 }
