@@ -8,15 +8,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.mine.shortvideo.R;
+import com.mine.shortvideo.entity.UserInfoEntity;
 import com.mine.shortvideo.myInterface.MyItemOnClickListener;
+
+import java.util.List;
 
 public class UserGameThumbRecyclerViewAdapter extends RecyclerView.Adapter<UserGameThumbRecyclerViewAdapter.ViewHolder>{
     private Context context;
     private MyItemOnClickListener mMyItemOnClickListener;
-    private int[] imgs = {R.mipmap.demo_1,R.mipmap.demo_2,R.mipmap.demo_3,R.mipmap.icon_add};
-    public UserGameThumbRecyclerViewAdapter(Context context) {
+    private int[] imgs = {R.mipmap.icon_add};
+    private List<UserInfoEntity.DataBean.FieldPersonalpicshowBean> personalpicshowBeanList;
+    private int listSize = 0;
+    public UserGameThumbRecyclerViewAdapter(Context context,List<UserInfoEntity.DataBean.FieldPersonalpicshowBean> personalpicshowBeanList) {
         this.context = context;
+        this.personalpicshowBeanList = personalpicshowBeanList;
+        listSize = personalpicshowBeanList.size();
     }
 
     @NonNull
@@ -28,12 +36,18 @@ public class UserGameThumbRecyclerViewAdapter extends RecyclerView.Adapter<UserG
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.imgThumb.setImageResource(imgs[position]);
+        if(position+1 >  listSize && listSize < 4){
+            holder.imgThumb.setImageResource(imgs[0]);
+        }else {
+            Glide.with(context)
+                    .load(personalpicshowBeanList.get(position).getUrl())
+                    .into(holder.imgThumb);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return imgs.length;
+        return (listSize >= 4) ? listSize : listSize+1;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{

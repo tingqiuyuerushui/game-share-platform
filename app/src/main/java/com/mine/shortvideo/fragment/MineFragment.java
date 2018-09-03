@@ -49,6 +49,7 @@ import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -130,6 +131,8 @@ public class MineFragment extends BaseFragment {
     private static int VIDEOTYPE = 1;
     private static int IMGTYPE = 0;
     private String userName;
+    private List<UserInfoEntity.DataBean.FieldPersonalpicshowBean> personalpicshowBeanList;
+    private UserInfoEntity userInfoEntity;
 
     @Override
     protected int getLayoutId() {
@@ -143,30 +146,7 @@ public class MineFragment extends BaseFragment {
         unbinder = ButterKnife.bind(this, rootView);
         dialogUtils = new CommonDialogUtils();
         handler = new MyHandler(getActivity());
-        gameThumbRecyclerViewAdapter = new UserGameThumbRecyclerViewAdapter(context);
-        layoutManager1 = new LinearLayoutManager(context);
-        layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
-        pictureRecycler.setLayoutManager(layoutManager1);
-        pictureRecycler.setAdapter(gameThumbRecyclerViewAdapter);
-        gameThumbRecyclerViewAdapter.setItemOnClickListener(new MyItemOnClickListener() {
-            @Override
-            public void onItemOnClick(View view, int postion) {
-                ToastUtils.show("点击了" + postion);
-                if (postion == 3) {
-                    PhotoPicker.builder()
-                            .setPhotoCount(9)
-                            .setShowCamera(true)
-                            .setShowGif(true)
-                            .setPreviewEnabled(false)
-                            .start(context, MineFragment.this, PhotoPicker.REQUEST_CODE);
-                } else if (photos != null && photos.size() > 0) {
-                    PhotoPreview.builder()
-                            .setPhotos(photos)
-                            .setCurrentItem(0)
-                            .start(getActivity());
-                }
-            }
-        });
+
         userVideoListAdapter = new UserVideoListAdapter(context);
         layoutManager2 = new LinearLayoutManager(context);
         layoutManager2.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -207,7 +187,7 @@ public class MineFragment extends BaseFragment {
                 sb.append(result);
                 sb.append("}");
                 Gson gson = new Gson();
-                UserInfoEntity userInfoEntity = gson.fromJson(sb.toString(), UserInfoEntity.class);
+                userInfoEntity = gson.fromJson(sb.toString(), UserInfoEntity.class);
                 Timber.e(userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue() + "");
                 userId = userInfoEntity.getData().get(0).getUid().get(0).getValue();
                 Utils.sendHandleMsg(1, userInfoEntity, handler);
@@ -385,6 +365,9 @@ public class MineFragment extends BaseFragment {
                 break;
             case R.id.btn_more:
                 intent.setClass(context, UserSettingActivity.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putSerializable("UserInfo",userInfoEntity);
+//                intent.putExtra("bundle",bundle);
                 startActivity(intent);
                 break;
         }
@@ -422,7 +405,7 @@ public class MineFragment extends BaseFragment {
     private void LoadDataToView(UserInfoEntity userInfoEntity) {
         tvNickname.setText(userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue());
         if (userInfoEntity.getData().get(0).getUser_picture().size() == 0) {
-            imgUserPortrait.setImageResource(R.mipmap.demo_3);
+            imgUserPortrait.setImageResource(R.mipmap.img_user_example);
         }else{
             Glide.with(context)
                     .load(userInfoEntity.getData().get(0).getUser_picture().get(0).getUrl())
@@ -463,6 +446,37 @@ public class MineFragment extends BaseFragment {
         }
         if(userInfoEntity.getData().get(0).getField_user_platform().size() > 0){
             tvGamePlatform.setText(userInfoEntity.getData().get(0).getField_user_platform().get(0).getValue());
+        }
+        if(userInfoEntity.getData().get(0).getField_personalpicshow().size() >= 0){
+            if (personalpicshowBeanList == null){
+                personalpicshowBeanList = new ArrayList<>();
+            }else{
+                personalpicshowBeanList.addAll(userInfoEntity.getData().get(0).getField_personalpicshow());
+            }
+            gameThumbRecyclerViewAdapter = new UserGameThumbRecyclerViewAdapter(context,personalpicshowBeanList);
+            layoutManager1 = new LinearLayoutManager(context);
+            layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
+            pictureRecycler.setLayoutManager(layoutManager1);
+            pictureRecycler.setAdapter(gameThumbRecyclerViewAdapter);
+            gameThumbRecyclerViewAdapter.setItemOnClickListener(new MyItemOnClickListener() {
+                @Override
+                public void onItemOnClick(View view, int postion) {
+                    ToastUtils.show("点击了" + postion);
+                    if (postion == personalpicshowBeanList.size()+1 || personalpicshowBeanList.size() == 0) {
+                        PhotoPicker.builder()
+                                .setPhotoCount(1)
+                                .setShowCamera(true)
+                                .setShowGif(true)
+                                .setPreviewEnabled(false)
+                                .start(context, MineFragment.this, PhotoPicker.REQUEST_CODE);
+                    } else if (photos != null && photos.size() > 0) {
+                        PhotoPreview.builder()
+                                .setPhotos(photos)
+                                .setCurrentItem(0)
+                                .start(getActivity());
+                    }
+                }
+            });
         }
 
     }

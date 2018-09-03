@@ -35,19 +35,19 @@ public class UserActivity extends Activity {
     }
 
     private void initView() {
-        gameThumbRecyclerViewAdapter = new UserGameThumbRecyclerViewAdapter(context);
-        layoutManager1 = new LinearLayoutManager(context);
-        layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recycler.setLayoutManager(layoutManager1);
-        recycler.setAdapter(gameThumbRecyclerViewAdapter);
-
-        userVideoListAdapter = new UserVideoListAdapter(context);
-        layoutManager2 = new LinearLayoutManager(context);
-        layoutManager2.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerList.setLayoutManager(layoutManager2);
-        recyclerList.setAdapter(userVideoListAdapter);
-        recyclerList.setHasFixedSize(true);
-        recyclerList.setNestedScrollingEnabled(false);
+//        gameThumbRecyclerViewAdapter = new UserGameThumbRecyclerViewAdapter(context);
+//        layoutManager1 = new LinearLayoutManager(context);
+//        layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
+//        recycler.setLayoutManager(layoutManager1);
+//        recycler.setAdapter(gameThumbRecyclerViewAdapter);
+//
+//        userVideoListAdapter = new UserVideoListAdapter(context);
+//        layoutManager2 = new LinearLayoutManager(context);
+//        layoutManager2.setOrientation(LinearLayoutManager.VERTICAL);
+//        recyclerList.setLayoutManager(layoutManager2);
+//        recyclerList.setAdapter(userVideoListAdapter);
+//        recyclerList.setHasFixedSize(true);
+//        recyclerList.setNestedScrollingEnabled(false);
 
     }
 }

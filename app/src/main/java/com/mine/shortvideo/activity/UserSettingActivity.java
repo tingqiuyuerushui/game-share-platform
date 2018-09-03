@@ -11,11 +11,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.mine.shortvideo.R;
+import com.mine.shortvideo.entity.UserInfoEntity;
 import com.mine.shortvideo.utils.MySharedData;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 /**
  * 作者：created by lun.zhang on 8/27/2018 19:33
@@ -33,6 +35,7 @@ public class UserSettingActivity extends Activity {
     @BindView(R.id.ll_account_setting)
     LinearLayout llAccountSetting;
     private Context context;
+    private UserInfoEntity userInfoEntity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +48,10 @@ public class UserSettingActivity extends Activity {
 
     private void initView() {
         tvTitle.setText("设置");
+//        Intent intent = getIntent();
+//        Bundle bundle = intent.getBundleExtra("bundle");
+//        userInfoEntity = (UserInfoEntity) bundle.getSerializable("UserInfo");
+//        Timber.e("UserInfoEntity serializable-->" + userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue());
     }
 
     @OnClick({R.id.tv_account_setting, R.id.ll_account_setting,R.id.img_left,R.id.ll_user_exit,R.id.tv_user_exit})

@@ -48,6 +48,7 @@ import com.mine.shortvideo.utils.Utils;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -96,6 +97,8 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     private boolean QUESTAUTH = true;
     private boolean QUESTNOAUTH = false;
     private int userId;
+    private String nickName;
+    private String userPortrait;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -264,7 +267,33 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                 UserInfoEntity userInfoEntity = gson.fromJson(sb.toString(), UserInfoEntity.class);
                 Timber.e(userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue() + "");
                 userId = userInfoEntity.getData().get(0).getUid().get(0).getValue();
+                MySharedData.sharedata_WriteInt(context,"uid",userId);
+                nickName = userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue();
+                if (userInfoEntity.getData().get(0).getUser_picture().size() > 0){
+                    userPortrait = userInfoEntity.getData().get(0).getUser_picture().get(0).getUrl();
+                }
+                getRongImToken(userId,nickName,userPortrait);
                 Utils.sendHandleMsg(1, userInfoEntity, handler);
+            }
+        });
+    }
+    private void getRongImToken(int userId,String nickName,String userPortrait){
+        OkHttpUtils.getAsync(Const.getRongToken + "?userId="+userId +
+                        "&name="+nickName +
+                        "&portraitUri=" + userPortrait
+                , QUESTNOAUTH, new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void requestSuccess(String result) throws Exception {
+                Timber.e("RongIm token--->" + result);
+                JSONObject jsonObject = JSON.parseObject(result);
+                String token = jsonObject.getString("token");
+                Const.tokenRongIM = jsonObject.getString("token");
+
             }
         });
     }

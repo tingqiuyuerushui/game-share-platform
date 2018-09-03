@@ -43,6 +43,8 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/lv_tv_shape"
                         android:text="LV15"
+                        android:paddingLeft="2dp"
+                        android:paddingRight="2dp"
                         android:textColor="@android:color/white"
                         android:textSize="12sp"/>
 
@@ -201,7 +203,7 @@
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:layout_marginTop="15dp"
-            android:background="@android:color/black"/>
+            android:background="@color/colorMain"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"

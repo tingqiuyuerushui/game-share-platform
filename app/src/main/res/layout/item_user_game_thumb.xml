@@ -10,5 +10,5 @@
         android:id="@+id/img_game_thumb"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
-        android:scaleType="fitXY"/>
+        android:scaleType="centerInside"/>
 </LinearLayout>

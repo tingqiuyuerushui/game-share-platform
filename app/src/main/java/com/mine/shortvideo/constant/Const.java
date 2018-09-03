@@ -2,9 +2,10 @@ package com.mine.shortvideo.constant;
 
 public class Const {
 
-    public static final String tokenRongIM = "IUfl58RT07nV+bevakr37kK8wVquZAqi8oaweHed+/nK2Ah2StAaMCfjuv4Qyp/j1Y95GSFPW/0N2XqjryPQ1nEodYYPvvCy";
-    public static final String tokenRongIM1 = "GNqSNjh7A5K1/IkDOuQVdNv7nwl/U+JNwTLU1jKihiEFPAIjYKXZSW15ZOFqGWEkaIV2w9euQj57DaZ9PDwe2w==";
+    public static String tokenRongIM = "IUfl58RT07nV+bevakr37kK8wVquZAqi8oaweHed+/nK2Ah2StAaMCfjuv4Qyp/j1Y95GSFPW/0N2XqjryPQ1nEodYYPvvCy";
+//    public static final String tokenRongIM1 = "GNqSNjh7A5K1/IkDOuQVdNv7nwl/U+JNwTLU1jKihiEFPAIjYKXZSW15ZOFqGWEkaIV2w9euQj57DaZ9PDwe2w==";
     public static final String baseUrl = "http://www.uaes.site:8088/d86";
+    public static final String base = "http://121.196.197.77:8060";
     //获取token接口
     public static final String getTokenUrl = baseUrl + "/rest/session/token?_format=json";
     //上传图片接口
@@ -33,4 +34,8 @@ public class Const {
     public static final String getUserVideoList = baseUrl + "/api/v1/myvideo/";
     //发布完美脱单
     public static final String publishTask = baseUrl + "/node?_format=json";
+    //获取融云Token
+    public static final String getRongToken = base + "/peipei/getUserToken";
+    //更新融云用户信息
+    public static final String updateRongUserInfo = base + "/peipei/refreshUserInfo";
 }

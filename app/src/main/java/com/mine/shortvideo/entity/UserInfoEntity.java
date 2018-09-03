@@ -1,12 +1,13 @@
 package com.mine.shortvideo.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * 作者：created by lun.zhang on 8/10/2018 10:44
  * 邮箱：zhanglun_study@163.com
  */
-public class UserInfoEntity {
+public class UserInfoEntity{
 
 
     private List<DataBean> data;
