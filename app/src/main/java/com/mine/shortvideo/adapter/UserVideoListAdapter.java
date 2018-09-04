@@ -10,15 +10,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mine.shortvideo.R;
+import com.mine.shortvideo.entity.MyVideoEntity;
 import com.mine.shortvideo.myInterface.MyItemOnClickListener;
+
+import java.util.List;
 
 public class UserVideoListAdapter extends RecyclerView.Adapter<UserVideoListAdapter.ViewHolder>{
     private Context context;
     private MyItemOnClickListener mMyItemOnClickListener;
-    private int[] imgs = {R.mipmap.img_list_example_thumb_1,R.mipmap.img_list_example_thumb_0,R.mipmap.img_list_example_thumb_1,R.mipmap.icon_add};
-
-    public UserVideoListAdapter(Context context) {
+    private int[] imgs = {R.mipmap.img_list_example_thumb_1,R.mipmap.img_list_example_thumb_0,R.mipmap.timg_0,R.mipmap.timg_1};
+    private List<MyVideoEntity.DataBean> myVideoList;
+    public UserVideoListAdapter(Context context,List<MyVideoEntity.DataBean> myVideoList) {
         this.context = context;
+        this.myVideoList = myVideoList;
     }
 
     @NonNull
@@ -30,22 +34,32 @@ public class UserVideoListAdapter extends RecyclerView.Adapter<UserVideoListAdap
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.imgUserVideoListItemThumb.setImageResource(imgs[position]);
+        if(position +1 > myVideoList.size()){
+            holder.imgAdd.setVisibility(View.VISIBLE);
+            holder.imgUserVideoListItemThumb.setVisibility(View.GONE);
+            holder.imgAdd.setImageResource(R.mipmap.icon_add);
+        }else{
+            holder.imgAdd.setVisibility(View.GONE);
+            holder.imgUserVideoListItemThumb.setVisibility(View.VISIBLE);
+            holder.imgUserVideoListItemThumb.setImageResource(imgs[position % 4]);
+        }
     }
 
     @Override
 
     public int getItemCount() {
-        return imgs.length;
+        return myVideoList.size() + 1;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView imgUserVideoListItemThumb;
+        ImageView imgAdd;
         MyItemOnClickListener mListener;
         public ViewHolder(View itemView, MyItemOnClickListener myItemOnClickListener) {
             super(itemView);
             this.mListener = myItemOnClickListener;
             imgUserVideoListItemThumb = itemView.findViewById(R.id.img_user_video_list_item_thumb);
+            imgAdd = itemView.findViewById(R.id.img_add);
             itemView.setOnClickListener(this);
         }
 

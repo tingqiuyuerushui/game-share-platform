@@ -2,6 +2,7 @@ package com.mine.shortvideo.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.entity.RegistResultEntity;
 import com.mine.shortvideo.entity.RequestJsonParameter;
 import com.mine.shortvideo.entity.UserInfoEntity;
+import com.mine.shortvideo.utils.Code;
 import com.mine.shortvideo.utils.MySharedData;
 import com.mine.shortvideo.utils.OkHttpUtils;
 import com.mine.shortvideo.utils.ToastUtils;
@@ -70,6 +72,9 @@ public class LoginActivity extends Activity {
                 }else{
                     ToastUtils.show("手机号或密码不能为空");
                 }
+                Intent intent = getIntent();
+                intent.putExtra("userName",numPhone);
+                setResult(Code.LOGININ_RESULT,intent);
                 break;
         }
     }
@@ -101,8 +106,8 @@ public class LoginActivity extends Activity {
                     MySharedData.sharedata_WriteString(context,"userId",numPhone);
                     MySharedData.sharedata_WriteString(context,"password",password);
                     }
-                    finish();
                 }
+                finish();
 
             }
         });

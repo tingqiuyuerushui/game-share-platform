@@ -41,13 +41,13 @@ public class SearchActivity extends Activity {
     }
 
     private void initView() {
-        userVideoListAdapter = new UserVideoListAdapter(context);
-        layoutManager = new LinearLayoutManager(context);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerList.setLayoutManager(layoutManager);
-        recyclerList.setAdapter(userVideoListAdapter);
-        recyclerList.setHasFixedSize(true);
-        recyclerList.setNestedScrollingEnabled(false);
+//        userVideoListAdapter = new UserVideoListAdapter(context);
+//        layoutManager = new LinearLayoutManager(context);
+//        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//        recyclerList.setLayoutManager(layoutManager);
+//        recyclerList.setAdapter(userVideoListAdapter);
+//        recyclerList.setHasFixedSize(true);
+//        recyclerList.setNestedScrollingEnabled(false);
     }
 
     @OnClick({R.id.btn_back, R.id.btn_pull})

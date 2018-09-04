@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.mine.shortvideo.R;
+import com.mine.shortvideo.activity.LoginActivity;
 import com.mine.shortvideo.activity.MinePlayVideoActivity;
 import com.mine.shortvideo.activity.SelectVideoListActivity;
 import com.mine.shortvideo.activity.UserSettingActivity;
@@ -32,6 +34,7 @@ import com.mine.shortvideo.adapter.UserGameThumbRecyclerViewAdapter;
 import com.mine.shortvideo.adapter.UserVideoListAdapter;
 import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.customview.CommomDialog;
+import com.mine.shortvideo.entity.MyVideoEntity;
 import com.mine.shortvideo.entity.RequestJsonParameter;
 import com.mine.shortvideo.entity.UploadFileResultEntity;
 import com.mine.shortvideo.entity.UserInfoEntity;
@@ -116,6 +119,14 @@ public class MineFragment extends BaseFragment {
     TextView tvBooktime;
     @BindView(R.id.img_user_portrait)
     ImageView imgUserPortrait;
+    @BindView(R.id.btn_login)
+    ImageView btnLogin;
+    @BindView(R.id.tv_login)
+    TextView tvLogin;
+    @BindView(R.id.ll_login)
+    LinearLayout llLogin;
+    @BindView(R.id.ll_layout)
+    LinearLayout llLayout;
     private Context context;
     private UserGameThumbRecyclerViewAdapter gameThumbRecyclerViewAdapter;
     private UserVideoListAdapter userVideoListAdapter;
@@ -133,6 +144,9 @@ public class MineFragment extends BaseFragment {
     private String userName;
     private List<UserInfoEntity.DataBean.FieldPersonalpicshowBean> personalpicshowBeanList;
     private UserInfoEntity userInfoEntity;
+    private MyVideoEntity myVideoEntity;
+    private List<MyVideoEntity.DataBean> myVideoList;
+    private ArrayList<String> listShowPicUrl;
 
     @Override
     protected int getLayoutId() {
@@ -146,26 +160,6 @@ public class MineFragment extends BaseFragment {
         unbinder = ButterKnife.bind(this, rootView);
         dialogUtils = new CommonDialogUtils();
         handler = new MyHandler(getActivity());
-
-        userVideoListAdapter = new UserVideoListAdapter(context);
-        layoutManager2 = new LinearLayoutManager(context);
-        layoutManager2.setOrientation(LinearLayoutManager.HORIZONTAL);
-        videoRecycler.setLayoutManager(layoutManager2);
-        videoRecycler.setAdapter(userVideoListAdapter);
-        userVideoListAdapter.setItemOnClickListener(new MyItemOnClickListener() {
-            @Override
-            public void onItemOnClick(View view, int postion) {
-                if (postion == 3) {
-                    Intent intent = new Intent(getActivity(), SelectVideoListActivity.class);
-                    startActivityForResult(intent, Code.LOCAL_VIDEO_REQUEST);
-                } else {
-                    Intent intent = new Intent();
-                    intent.setClass(context, MinePlayVideoActivity.class);
-                    intent.putExtra("VideoIndex", postion);
-                    startActivity(intent);
-                }
-            }
-        });
         getUserInfo();
         getUserVideoList();
     }
@@ -205,15 +199,14 @@ public class MineFragment extends BaseFragment {
             @Override
             public void requestSuccess(String result) throws Exception {
                 Timber.e("获取用户视频" + result);
-//                StringBuilder sb = new StringBuilder();
-//                sb.append("{");
-//                sb.append("\"data\":");
-//                sb.append(result);
-//                sb.append("}");
-//                Gson gson = new Gson();
-//                UserInfoEntity userInfoEntity = gson.fromJson(sb.toString(),UserInfoEntity.class);
-//                Timber.e(userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue()+"");
-//                userId = userInfoEntity.getData().get(0).getUid().get(0).getValue();
+                StringBuilder sb = new StringBuilder();
+                sb.append("{");
+                sb.append("\"data\":");
+                sb.append(result);
+                sb.append("}");
+                Gson gson = new Gson();
+                myVideoEntity = gson.fromJson(sb.toString(), MyVideoEntity.class);
+                Utils.sendHandleMsg(2, myVideoEntity, handler);
             }
         });
     }
@@ -277,6 +270,7 @@ public class MineFragment extends BaseFragment {
                     public void requestSuccess(String result) throws Exception {
                         if (result.length() > 100) {
                             Utils.sendHandleMsg(4, "上传成功", handler);
+                            getUserVideoList();
                         }
                         Utils.sendHandleMsg(4, "失败", handler);
                         Timber.e("上传视频第三步成功返回：" + result);
@@ -339,10 +333,23 @@ public class MineFragment extends BaseFragment {
                     linkVideoFile(uploadFileResultEntity.getFid().get(0).getValue());
                 }
             });
+        }else if(requestCode == Code.LOGININ_REQUEST && resultCode == Code.LOGININ_RESULT){
+            userName = data.getStringExtra("userName");
+            gameThumbRecyclerViewAdapter = null;
+            layoutManager1 = null;
+            getUserInfo();
+            getUserVideoList();
+            llLogin.setVisibility(View.GONE);
+            llLayout.setVisibility(View.VISIBLE);
+
+        }else if(requestCode == Code.SETTING_REQUEST && resultCode == Code.SETTING_RESULT){
+            llLogin.setVisibility(View.VISIBLE);
+            llLayout.setVisibility(View.GONE);
+
         }
     }
 
-    @OnClick({R.id.btn_share, R.id.btn_delete, R.id.btn_private_msg, R.id.btn_attention, R.id.btn_more})
+    @OnClick({R.id.btn_share, R.id.btn_delete, R.id.btn_private_msg, R.id.btn_attention, R.id.btn_more,R.id.btn_login,R.id.tv_login})
     public void onViewClicked(View view) {
         Intent intent = new Intent();
         switch (view.getId()) {
@@ -365,13 +372,18 @@ public class MineFragment extends BaseFragment {
                 break;
             case R.id.btn_more:
                 intent.setClass(context, UserSettingActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putSerializable("UserInfo",userInfoEntity);
-//                intent.putExtra("bundle",bundle);
-                startActivity(intent);
+                startActivityForResult(intent, Code.SETTING_REQUEST);
+                break;
+            case R.id.btn_login:
+            case R.id.tv_login:
+                if (!Utils.isUserLogin(context)) {
+                    intent.setClass(context, LoginActivity.class);
+                    startActivityForResult(intent, Code.LOGININ_REQUEST);
+                }
                 break;
         }
     }
+
     public class MyHandler extends Handler {
         private WeakReference<Activity> reference;
 
@@ -389,7 +401,9 @@ public class MineFragment extends BaseFragment {
                         LoadDataToView(userInfoEntity);
                         break;
                     case 2:
-                        ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
+                        myVideoEntity = (MyVideoEntity) msg.obj;
+                        loadVideoView(myVideoEntity);
+//                        ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
                         break;
                     case 3:
                         ToastUtils.show("", Toast.LENGTH_SHORT);
@@ -402,81 +416,131 @@ public class MineFragment extends BaseFragment {
         }
     }
 
+    private void loadVideoView(final MyVideoEntity myVideoEntity) {
+        if (myVideoList == null) {
+            myVideoList = new ArrayList<>();
+        } else {
+            myVideoList.clear();
+        }
+        myVideoList.addAll(myVideoEntity.getData());
+        if (userVideoListAdapter == null && layoutManager2 == null) {
+            userVideoListAdapter = new UserVideoListAdapter(context, myVideoList);
+            layoutManager2 = new LinearLayoutManager(context);
+            layoutManager2.setOrientation(LinearLayoutManager.HORIZONTAL);
+            videoRecycler.setLayoutManager(layoutManager2);
+            videoRecycler.setAdapter(userVideoListAdapter);
+            userVideoListAdapter.setItemOnClickListener(new MyItemOnClickListener() {
+                @Override
+                public void onItemOnClick(View view, int postion) {
+                    if (postion == myVideoList.size() || myVideoList.size() == 0) {
+                        Intent intent = new Intent(getActivity(), SelectVideoListActivity.class);
+                        startActivityForResult(intent, Code.LOCAL_VIDEO_REQUEST);
+                    } else {
+                        Intent intent = new Intent();
+                        intent.setClass(context, MinePlayVideoActivity.class);
+                        intent.putExtra("VideoIndex", postion);
+                        intent.putExtra("myVideoEntity", myVideoEntity);
+                        startActivity(intent);
+                    }
+                }
+            });
+        } else {
+            userVideoListAdapter.notifyDataSetChanged();
+        }
+
+    }
+
     private void LoadDataToView(UserInfoEntity userInfoEntity) {
         tvNickname.setText(userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue());
         if (userInfoEntity.getData().get(0).getUser_picture().size() == 0) {
             imgUserPortrait.setImageResource(R.mipmap.img_user_example);
-        }else{
+        } else {
             Glide.with(context)
                     .load(userInfoEntity.getData().get(0).getUser_picture().get(0).getUrl())
                     .into(imgUserPortrait);
         }
         tvDistance.setText("未知");
-        if(userInfoEntity.getData().get(0).getField_user_level().size() > 0 && !TextUtils.isEmpty(userInfoEntity.getData().get(0).getField_user_level().get(0).getValue())){
-            tvLv.setText("lv"+new BigDecimal(userInfoEntity.getData().get(0).getField_user_level().get(0).getValue()).stripTrailingZeros());
-        }else{
+        if (userInfoEntity.getData().get(0).getField_user_level().size() > 0 && !TextUtils.isEmpty(userInfoEntity.getData().get(0).getField_user_level().get(0).getValue())) {
+            tvLv.setText("lv" + new BigDecimal(userInfoEntity.getData().get(0).getField_user_level().get(0).getValue()).stripTrailingZeros());
+        } else {
             tvLv.setText("lv0");
         }
 //        tvLable.setText("♀" +userInfoEntity.getData().get(0).getField_user_age().get(0).getValue() +
 //                userInfoEntity.getData().get(0).getField_user_tags().get(0));
-        if(userInfoEntity.getData().get(0).getField_user_starsign().size() > 0){
+        if (userInfoEntity.getData().get(0).getField_user_starsign().size() > 0) {
             tvSignature.setText(userInfoEntity.getData().get(0).getField_user_starsign().get(0).getValue());
-        }else {
+        } else {
             tvSignature.setText("本宝宝太懒，没有留下任何签名");
         }
-        if(userInfoEntity.getData().get(0).getField_user_stars().size() > 0){
-            tvStar.setText(userInfoEntity.getData().get(0).getField_user_stars().get(0).getValue());
+        if (userInfoEntity.getData().get(0).getField_user_stars().size() > 0) {
+            tvStar.setText(userInfoEntity.getData().get(0).getField_user_stars().get(0).getValue() + "");
             rcRate.setRating(userInfoEntity.getData().get(0).getField_user_stars().get(0).getValue());
-        }else{
+        } else {
             tvStar.setText("5.0");
             rcRate.setRating(5.0f);
         }
-        if(userInfoEntity.getData().get(0).getField_user_point().size() > 0){
-            tvScore.setText(userInfoEntity.getData().get(0).getField_user_point().get(0).getValue());
-        }else{
+        if (userInfoEntity.getData().get(0).getField_user_point().size() > 0) {
+            tvScore.setText(userInfoEntity.getData().get(0).getField_user_point().get(0).getValue() + "");
+        } else {
             tvScore.setText("100");
         }
-        if(userInfoEntity.getData().get(0).getField_user_game_level().size() > 0){
+        if (userInfoEntity.getData().get(0).getField_user_game_level().size() > 0) {
             tvGameLevel.setText(userInfoEntity.getData().get(0).getField_user_game_level().get(0).getValue());
-        }else{
+        } else {
             tvGameLevel.setText("王者1星");
         }
-        if(userInfoEntity.getData().get(0).getField_user_gamename().size() > 0){
+        if (userInfoEntity.getData().get(0).getField_user_gamename().size() > 0) {
             tvGamename.setText(userInfoEntity.getData().get(0).getField_user_gamename().get(0).getValue());
         }
-        if(userInfoEntity.getData().get(0).getField_user_platform().size() > 0){
+        if (userInfoEntity.getData().get(0).getField_user_platform().size() > 0) {
             tvGamePlatform.setText(userInfoEntity.getData().get(0).getField_user_platform().get(0).getValue());
         }
-        if(userInfoEntity.getData().get(0).getField_personalpicshow().size() >= 0){
-            if (personalpicshowBeanList == null){
-                personalpicshowBeanList = new ArrayList<>();
-            }else{
-                personalpicshowBeanList.addAll(userInfoEntity.getData().get(0).getField_personalpicshow());
+        if (userInfoEntity.getData().get(0).getField_personalpicshow().size() >= 0) {
+            if (listShowPicUrl == null) {
+                listShowPicUrl = new ArrayList<>();
+            } else {
+                listShowPicUrl.clear();
             }
-            gameThumbRecyclerViewAdapter = new UserGameThumbRecyclerViewAdapter(context,personalpicshowBeanList);
-            layoutManager1 = new LinearLayoutManager(context);
-            layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
-            pictureRecycler.setLayoutManager(layoutManager1);
-            pictureRecycler.setAdapter(gameThumbRecyclerViewAdapter);
-            gameThumbRecyclerViewAdapter.setItemOnClickListener(new MyItemOnClickListener() {
-                @Override
-                public void onItemOnClick(View view, int postion) {
-                    ToastUtils.show("点击了" + postion);
-                    if (postion == personalpicshowBeanList.size()+1 || personalpicshowBeanList.size() == 0) {
-                        PhotoPicker.builder()
-                                .setPhotoCount(1)
-                                .setShowCamera(true)
-                                .setShowGif(true)
-                                .setPreviewEnabled(false)
-                                .start(context, MineFragment.this, PhotoPicker.REQUEST_CODE);
-                    } else if (photos != null && photos.size() > 0) {
-                        PhotoPreview.builder()
-                                .setPhotos(photos)
-                                .setCurrentItem(0)
-                                .start(getActivity());
-                    }
+            if (personalpicshowBeanList == null) {
+                personalpicshowBeanList = new ArrayList<>();
+            } else {
+                personalpicshowBeanList.clear();
+            }
+            if (gameThumbRecyclerViewAdapter == null && layoutManager1 == null) {
+
+                personalpicshowBeanList.addAll(userInfoEntity.getData().get(0).getField_personalpicshow());
+                for (int i = 0; i < personalpicshowBeanList.size(); i++) {
+
+                    listShowPicUrl.add(personalpicshowBeanList.get(i).getUrl());
                 }
-            });
+                gameThumbRecyclerViewAdapter = new UserGameThumbRecyclerViewAdapter(context, personalpicshowBeanList);
+                layoutManager1 = new LinearLayoutManager(context);
+                layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
+                pictureRecycler.setLayoutManager(layoutManager1);
+                pictureRecycler.setAdapter(gameThumbRecyclerViewAdapter);
+
+                gameThumbRecyclerViewAdapter.setItemOnClickListener(new MyItemOnClickListener() {
+                    @Override
+                    public void onItemOnClick(View view, int postion) {
+                        ToastUtils.show("点击了" + postion);
+                        if (postion == personalpicshowBeanList.size() || personalpicshowBeanList.size() == 0) {
+                            PhotoPicker.builder()
+                                    .setPhotoCount(1)
+                                    .setShowCamera(true)
+                                    .setShowGif(true)
+                                    .setPreviewEnabled(false)
+                                    .start(context, MineFragment.this, PhotoPicker.REQUEST_CODE);
+                        } else if (listShowPicUrl != null && listShowPicUrl.size() > 0) {
+                            PhotoPreview.builder()
+                                    .setPhotos(listShowPicUrl)
+                                    .setCurrentItem(0)
+                                    .start(getActivity());
+                        }
+                    }
+                });
+            } else {
+                gameThumbRecyclerViewAdapter.notifyDataSetChanged();
+            }
         }
 
     }

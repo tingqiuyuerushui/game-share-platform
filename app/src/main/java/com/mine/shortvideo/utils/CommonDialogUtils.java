@@ -21,12 +21,16 @@ public class CommonDialogUtils {
        /* if (context == null || context.isFinishing()) {
             return;
         }*/
-        if(mProgressDialog==null){
-            mProgressDialog= new CustomProgressDialog.Builder(context)
-                    .setTheme(R.style.ProgressDialogStyle)
-                    .setMessage(msg)
-                    .build();
-        }
+        mProgressDialog= new CustomProgressDialog.Builder(context)
+                .setTheme(R.style.ProgressDialogStyle)
+                .setMessage(msg)
+                .build();
+//        if(mProgressDialog==null){
+//            mProgressDialog= new CustomProgressDialog.Builder(context)
+//                    .setTheme(R.style.ProgressDialogStyle)
+//                    .setMessage(msg)
+//                    .build();
+//        }
         if(mProgressDialog!=null&&!mProgressDialog.isShowing()) {
             mProgressDialog.show();
         }

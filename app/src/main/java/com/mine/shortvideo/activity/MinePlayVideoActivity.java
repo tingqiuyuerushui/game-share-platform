@@ -16,9 +16,13 @@ import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
 import com.mine.shortvideo.R;
-import com.mine.shortvideo.adapter.VideoRecycleViewAdapter;
+import com.mine.shortvideo.adapter.MyVideoRecycleViewAdapter;
+import com.mine.shortvideo.entity.MyVideoEntity;
 import com.mine.shortvideo.viewpager.OnViewPagerListener;
 import com.mine.shortvideo.viewpager.ViewPagerLayoutManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,12 +34,14 @@ public class MinePlayVideoActivity extends Activity {
     RecyclerView recycler;
     @BindView(R.id.btn_back)
     Button btnBack;
-    private VideoRecycleViewAdapter mAdapter;
     private ViewPagerLayoutManager mLayoutManager;
+    private MyVideoRecycleViewAdapter myVideoRecycleViewAdapter;
     private Context context;
     private static final String TAG = "MinePlayVideoActivity";
     private static boolean isPlaying = false;
     private int index = 0;
+    private MyVideoEntity myVideoEntity;
+    private List<MyVideoEntity.DataBean> listVideo;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,12 +55,18 @@ public class MinePlayVideoActivity extends Activity {
     private void init() {
         Intent intent = getIntent();
         index = intent.getIntExtra("VideoIndex", 0);
+        myVideoEntity = intent.getParcelableExtra("myVideoEntity");
         Timber.e(index + "");
-//        mLayoutManager = new ViewPagerLayoutManager(context, OrientationHelper.VERTICAL);
-//        mAdapter = new VideoRecycleViewAdapter(context);
-//        recycler.setLayoutManager(mLayoutManager);
-//        recycler.setAdapter(mAdapter);
-//        initListener();
+        Timber.e("获得MyVideoEntity parcelable-->" + myVideoEntity.getData().get(0).getTitle());
+        if(listVideo == null){
+            listVideo = new ArrayList<>();
+        }
+        listVideo.addAll(myVideoEntity.getData());
+        mLayoutManager = new ViewPagerLayoutManager(context, OrientationHelper.VERTICAL);
+        myVideoRecycleViewAdapter = new MyVideoRecycleViewAdapter(context,listVideo);
+        recycler.setLayoutManager(mLayoutManager);
+        recycler.setAdapter(myVideoRecycleViewAdapter);
+        initListener();
     }
 
     private void initListener() {

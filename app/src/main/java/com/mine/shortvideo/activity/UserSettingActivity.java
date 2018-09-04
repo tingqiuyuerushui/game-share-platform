@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.mine.shortvideo.R;
 import com.mine.shortvideo.entity.UserInfoEntity;
+import com.mine.shortvideo.utils.Code;
 import com.mine.shortvideo.utils.MySharedData;
 
 import butterknife.BindView;
@@ -70,6 +71,7 @@ public class UserSettingActivity extends Activity {
             case R.id.tv_user_exit:
                 MySharedData.sharedata_WriteString(context,"userId","");
                 MySharedData.sharedata_WriteString(context,"password","");
+                setResult(Code.SETTING_RESULT);
                 finish();
                 break;
 

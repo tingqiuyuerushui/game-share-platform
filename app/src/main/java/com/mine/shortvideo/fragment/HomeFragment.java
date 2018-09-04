@@ -176,7 +176,7 @@ public class HomeFragment extends BaseFragment {
                 @Override
                 public void onPageSelected(int position) {
                     Timber.e("page Selected position" + position);
-                    if(position == TASK_COUNT-1){
+                    if(position == TASK_COUNT-3){
                         getPublishTaskList();
                     }
                 }

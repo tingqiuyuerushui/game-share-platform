@@ -157,13 +157,16 @@ public class VideoFragment extends BaseFragment {
         final ImageView imgThumb = itemView.findViewById(R.id.img_thumb);
         final RelativeLayout rootView = itemView.findViewById(R.id.root_view);
         final MediaPlayer[] mediaPlayer = new MediaPlayer[1];
+        dialogUtils.showProgress(context,"视频缓冲中……");
         videoView.start();
+//        videoView.seekTo(1);
         isPlaying = true;
         videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
             @Override
             public boolean onInfo(MediaPlayer mp, int what, int extra) {
                 mediaPlayer[0] = mp;
                 mp.setLooping(true);
+//                mp.seekTo(1);
                 imgThumb.animate().alpha(0).setDuration(200).start();
                 return false;
             }
@@ -171,6 +174,16 @@ public class VideoFragment extends BaseFragment {
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
+
+                mp.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+                    @Override
+                    public void onBufferingUpdate(MediaPlayer mediaPlayer, int percent) {
+                        Timber.e("缓冲进度-->" + percent);
+                        if (percent > 0){
+                            dismissProgress();
+                        }
+                    }
+                });
 
             }
         });
