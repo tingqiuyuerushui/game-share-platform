@@ -225,7 +225,11 @@ public class Utils {
         {
             list.add(ma.group());
         }
-        return list.get(0).replaceAll("\"","");
+        if(list.size() > 0){
+            return list.get(0).replaceAll("\"","");
+        }else {
+            return "url is null";
+        }
     }
     /**
      *

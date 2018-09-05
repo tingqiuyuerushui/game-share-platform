@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -470,7 +471,7 @@ public class OkHttpUtils {
     private void inner_postFileAsyncNoParameter(String url,String filePath,final ProgressListener listener, final DataCallBack callBack) {
         File file = new File(filePath);
         if(file.exists()){
-            String fileName = encodeHeadInfo(file.getName());
+            String fileName = URLEncoder.encode(file.getName());
             String TYPE = "application/octet-stream";
             ProgressRequestBody fileBody = new ProgressRequestBody(0,MediaType.parse(TYPE),file,listener);
             final Request request = new Request.Builder()
@@ -507,6 +508,12 @@ public class OkHttpUtils {
 //        auth = "admin" + ":" + "admin";
 //        String auth = "d8admin@163.com" + ":" + "uaes,1234";
 //        byte[] encodedAuth = Base64.encode(auth.getBytes(StandardCharsets.UTF_8),);
+        String authHeader = Base64.encodeToString(auth.getBytes(StandardCharsets.UTF_8),Base64.NO_WRAP);
+        return  authHeader;
+    }
+    private static String getAdminAuthHeader(){
+        String auth;
+        auth = "admin" + ":" + "admin";
         String authHeader = Base64.encodeToString(auth.getBytes(StandardCharsets.UTF_8),Base64.NO_WRAP);
         return  authHeader;
     }

@@ -44,7 +44,7 @@ public class MyVideoRecycleViewAdapter extends RecyclerView.Adapter<MyVideoRecyc
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String videoUrl = listMyvideo.get(position).getField_media_video_file();
         holder.videoView.setVideoPath(videoUrl);
-        holder.imgThumb.setImageResource(imgs[position % 4]);
+//        holder.imgThumb.setImageResource(imgs[position % 4]);
         holder.imgUserPortrait.setVisibility(View.GONE);
         holder.tvCommentCount.setVisibility(View.GONE);
         holder.tvCollectCount.setVisibility(View.GONE);

@@ -117,13 +117,13 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     }
 
     private void initNetworkData() {
-        if(userName != null){
+        if(!userName.equals("")){
             getUserInfo();
         }
         OkHttpUtils.getAsync(Const.getStatus, true, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
-
+                    Utils.sendHandleMsg(1,"数据获取失败",handler);
             }
 
             @Override
@@ -253,6 +253,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
             @Override
             public void requestFailure(Request request, IOException e) {
                 Timber.e("获取数据失败");
+                Utils.sendHandleMsg(1, "数据获取失败", handler);
             }
 
             @Override
@@ -357,7 +358,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         OkHttpUtils.postJsonAsync(Const.publishTask, jsonStr, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
-
+                Utils.sendHandleMsg(1,"失败",handler);
             }
 
             @Override

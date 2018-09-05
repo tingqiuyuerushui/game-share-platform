@@ -39,6 +39,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.qqtheme.framework.picker.DatePicker;
 import cn.qqtheme.framework.util.ConvertUtils;
+import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Request;
 import timber.log.Timber;
 
@@ -55,6 +56,8 @@ public class AccountSettingActivity extends Activity {
     TextView tvRight;
     @BindView(R.id.tv_change_portrait)
     TextView tvChangePortrait;
+    @BindView(R.id.img_portrait)
+    CircleImageView imgPartrait;
     @BindView(R.id.et_nickname)
     EditText etNickname;
     @BindView(R.id.et_gender)
@@ -162,7 +165,7 @@ public class AccountSettingActivity extends Activity {
     private void linkFile(int targetId) {
         String jsonStr;
         String url;
-        jsonStr = RequestJsonParameter.linkFile(targetId);
+        jsonStr = RequestJsonParameter.linkFile(targetId,userName+"@zz.com");
         url = Const.linkFile + userId + "?_format=json";
         OkHttpUtils.patchJsonAsync(url, jsonStr, new OkHttpUtils.DataCallBack() {
             @Override
@@ -177,7 +180,7 @@ public class AccountSettingActivity extends Activity {
             }
         });
     }
-    @OnClick({R.id.img_left, R.id.tv_right, R.id.tv_change_portrait, R.id.tv_birthday})
+    @OnClick({R.id.img_left, R.id.tv_right, R.id.tv_change_portrait, R.id.tv_birthday,R.id.img_portrait})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.img_left:
@@ -186,6 +189,7 @@ public class AccountSettingActivity extends Activity {
             case R.id.tv_right:
                 break;
             case R.id.tv_change_portrait:
+            case R.id.img_portrait:
                 updateUserPortrait();
                 break;
             case R.id.tv_birthday:

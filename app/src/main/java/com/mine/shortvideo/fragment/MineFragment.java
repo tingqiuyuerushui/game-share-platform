@@ -144,7 +144,6 @@ public class MineFragment extends BaseFragment {
     private String userName;
     private List<UserInfoEntity.DataBean.FieldPersonalpicshowBean> personalpicshowBeanList;
     private UserInfoEntity userInfoEntity;
-    private MyVideoEntity myVideoEntity;
     private List<MyVideoEntity.DataBean> myVideoList;
     private ArrayList<String> listShowPicUrl;
 
@@ -205,7 +204,7 @@ public class MineFragment extends BaseFragment {
                 sb.append(result);
                 sb.append("}");
                 Gson gson = new Gson();
-                myVideoEntity = gson.fromJson(sb.toString(), MyVideoEntity.class);
+                MyVideoEntity myVideoEntity = gson.fromJson(sb.toString(), MyVideoEntity.class);
                 Utils.sendHandleMsg(2, myVideoEntity, handler);
             }
         });
@@ -224,8 +223,10 @@ public class MineFragment extends BaseFragment {
             jsonStr = RequestJsonParameter.CreateMediaJsonStr(userId, targetId);
             url = Const.CreateMediaVideoUrl;
         } else {
-            jsonStr = RequestJsonParameter.linkFile(targetId);
+            jsonStr = RequestJsonParameter.linkUserShowPic(userId,targetId);
             url = Const.linkFile + userId + "?_format=json";
+//            jsonStr = RequestJsonParameter.linkFile(targetId,userName+"@uaes.site");
+//            url = Const.linkFile + userId + "?_format=json";
         }
         OkHttpUtils.patchJsonAsync(url, jsonStr, new OkHttpUtils.DataCallBack() {
             @Override
@@ -271,8 +272,10 @@ public class MineFragment extends BaseFragment {
                         if (result.length() > 100) {
                             Utils.sendHandleMsg(4, "上传成功", handler);
                             getUserVideoList();
-                        }
+                        }else {
+
                         Utils.sendHandleMsg(4, "失败", handler);
+                        }
                         Timber.e("上传视频第三步成功返回：" + result);
                     }
                 });
@@ -286,6 +289,7 @@ public class MineFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
+            //上传个人展示图片
             if (data != null) {
                 photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
                 dialogUtils.showProgress(context, "正在上传，请稍后");
@@ -306,6 +310,7 @@ public class MineFragment extends BaseFragment {
                 });
             }
         } else if (requestCode == Code.LOCAL_VIDEO_REQUEST && resultCode == Code.LOCAL_VIDEO_RESULT) {
+            //上传视频
             String filPaths = data.getStringExtra("path");
             Log.e("video Path", filPaths);
             dialogUtils.showProgress(context, "正在上传，请稍后");
@@ -334,6 +339,7 @@ public class MineFragment extends BaseFragment {
                 }
             });
         }else if(requestCode == Code.LOGININ_REQUEST && resultCode == Code.LOGININ_RESULT){
+            //重新登录
             userName = data.getStringExtra("userName");
             gameThumbRecyclerViewAdapter = null;
             layoutManager1 = null;
@@ -401,7 +407,7 @@ public class MineFragment extends BaseFragment {
                         LoadDataToView(userInfoEntity);
                         break;
                     case 2:
-                        myVideoEntity = (MyVideoEntity) msg.obj;
+                        MyVideoEntity myVideoEntity = (MyVideoEntity) msg.obj;
                         loadVideoView(myVideoEntity);
 //                        ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
                         break;

@@ -45,7 +45,7 @@ public class HomeFragment extends BaseFragment {
     private int page = 1;
     private PublishTaskEntity publishTaskEntity;
     private List<PublishTaskEntity.DataBean> listTaskList;
-    private CommonDialogUtils dialogUtils;
+//    private CommonDialogUtils dialogUtils;
     private MyHandler handler = null;
     private int TASK_COUNT = 0;
     @Override
@@ -57,7 +57,7 @@ public class HomeFragment extends BaseFragment {
     protected void init(Bundle savedInstanceState) {
         context = getActivity();
 
-        dialogUtils = new CommonDialogUtils();
+//        dialogUtils = new CommonDialogUtils();
         handler = new MyHandler(getActivity());
 
         initNetWorkData();
@@ -83,11 +83,12 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void getPublishTaskList() {
-        dialogUtils.showProgress(context);
+//        dialogUtils.showProgress(context);
         OkHttpUtils.getAsync(Const.getTaskList+"&page="+page,QUESTNOAUTH, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
                 Timber.e("请求失败：" + e);
+                Utils.sendHandleMsg(2,"数据获取失败",handler);
             }
             @Override
             public void requestSuccess(String result) throws Exception {
@@ -126,7 +127,7 @@ public class HomeFragment extends BaseFragment {
         @Override
         public void handleMessage(Message msg) {
             if(reference.get() != null) {
-                dismissProgress();
+//                dismissProgress();
                 switch (msg.what) {
                     case 1:
                         getPublishTaskList();
@@ -192,9 +193,9 @@ public class HomeFragment extends BaseFragment {
         }
 }
 
-    private void dismissProgress(){
-        if(dialogUtils!=null){
-            dialogUtils.dismissProgress();
-        }
-    }
+//    private void dismissProgress(){
+//        if(dialogUtils!=null){
+//            dialogUtils.dismissProgress();
+//        }
+//    }
 }

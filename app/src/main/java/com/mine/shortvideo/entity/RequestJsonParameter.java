@@ -19,17 +19,32 @@ public class RequestJsonParameter {
         return postJsonData;
     }
     //关联图片json String
-    public static String linkFile(int targetId){
+    public static String linkFile(int targetId,String mail){
         String postJsonData = "{\"user_picture\": [{\"target_id\": " +
                 targetId +
                 ",\"description\": \"The most fascinating image ever!\"}]}";
         return postJsonData;
+//        String postJsonData = "{\"user_picture\": [{\"target_id\": " +
+//                targetId +
+//                ",\"description\": \"The most fascinating image ever!\"}],\"mail\": [{\"value\":\"" +
+//                mail +
+//                "\"}]}";
+//        return postJsonData;
     }
     //关联视频 json string
     public static String linkVideoFile(int targetId){
         String postJsonData = " {\"field_user_video\":[\"target_id\":" +
                 targetId +
                 ",\"target_type\":\"media\"}]}";
+        return postJsonData;
+    }
+    //关联 个人展示图片
+    public static String linkUserShowPic(int uid,int targetId){
+        String postJsonData = "{\"uid\":[{ \"value\":" +
+                uid +
+                "}],\"field_personalpicshow\":[{\"target_id\":" +
+                targetId +
+                ", \"alt\":\"alternatice text 1\"}]}";
         return postJsonData;
     }
     //发布任务json string

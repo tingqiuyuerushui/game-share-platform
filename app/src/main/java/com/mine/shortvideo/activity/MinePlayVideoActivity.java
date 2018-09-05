@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
@@ -13,14 +15,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.mine.shortvideo.R;
 import com.mine.shortvideo.adapter.MyVideoRecycleViewAdapter;
 import com.mine.shortvideo.entity.MyVideoEntity;
+import com.mine.shortvideo.fragment.VideoFragment;
+import com.mine.shortvideo.utils.CommonDialogUtils;
+import com.mine.shortvideo.utils.ToastUtils;
 import com.mine.shortvideo.viewpager.OnViewPagerListener;
 import com.mine.shortvideo.viewpager.ViewPagerLayoutManager;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +49,8 @@ public class MinePlayVideoActivity extends Activity {
     private int index = 0;
     private MyVideoEntity myVideoEntity;
     private List<MyVideoEntity.DataBean> listVideo;
+    private CommonDialogUtils dialogUtils;
+    private MyHandler handler = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,6 +58,8 @@ public class MinePlayVideoActivity extends Activity {
         context = this;
         setContentView(R.layout.activity_play_video);
         ButterKnife.bind(this);
+        handler = new MyHandler(this);
+        dialogUtils = new CommonDialogUtils();
         init();
     }
 
@@ -109,6 +120,7 @@ public class MinePlayVideoActivity extends Activity {
         final RelativeLayout rootView = itemView.findViewById(R.id.root_view);
         final MediaPlayer[] mediaPlayer = new MediaPlayer[1];
         videoView.start();
+        dialogUtils.showProgress(context,"视频缓冲中……");
         isPlaying = true;
         videoView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
             @Override
@@ -122,7 +134,15 @@ public class MinePlayVideoActivity extends Activity {
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-
+                mp.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+                    @Override
+                    public void onBufferingUpdate(MediaPlayer mediaPlayer, int percent) {
+                        Timber.e("缓冲进度-->" + percent);
+                        if (percent > 0){
+                            dismissProgress();
+                        }
+                    }
+                });
             }
         });
 
@@ -163,6 +183,43 @@ public class MinePlayVideoActivity extends Activity {
                 break;
             default:
                 break;
+        }
+    }
+    public class MyHandler extends Handler {
+        private WeakReference<Activity> reference;
+
+        public MyHandler(Activity activity) {
+            reference = new WeakReference<Activity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            if(reference.get() != null) {
+                dismissProgress();
+                switch (msg.what) {
+                    case 1:
+                        break;
+                    case 2:
+                        ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
+                        break;
+                    case 3:
+                        ToastUtils.show("",Toast.LENGTH_SHORT);
+                        break;
+                    case 4:
+                        ToastUtils.show(msg.obj.toString(),Toast.LENGTH_SHORT);
+                        LoadDataToView();
+                        break;
+                }
+            }
+        }
+    }
+
+    private void LoadDataToView() {
+    }
+
+    private void dismissProgress(){
+        if(dialogUtils!=null){
+            dialogUtils.dismissProgress();
         }
     }
 }
