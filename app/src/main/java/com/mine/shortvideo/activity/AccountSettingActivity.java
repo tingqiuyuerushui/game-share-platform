@@ -10,16 +10,21 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.mine.shortvideo.R;
 import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.entity.RequestJsonParameter;
 import com.mine.shortvideo.entity.UploadFileResultEntity;
 import com.mine.shortvideo.entity.UserInfoEntity;
-import com.mine.shortvideo.fragment.MineFragment;
 import com.mine.shortvideo.photopicker.PhotoPicker;
 import com.mine.shortvideo.utils.CommonDialogUtils;
 import com.mine.shortvideo.utils.MySharedData;
@@ -57,11 +62,9 @@ public class AccountSettingActivity extends Activity {
     @BindView(R.id.tv_change_portrait)
     TextView tvChangePortrait;
     @BindView(R.id.img_portrait)
-    CircleImageView imgPartrait;
+    CircleImageView imgPortrait;
     @BindView(R.id.et_nickname)
     EditText etNickname;
-    @BindView(R.id.et_gender)
-    EditText etGender;
     @BindView(R.id.tv_birthday)
     TextView tvBirthday;
     @BindView(R.id.tv_xingzuo)
@@ -70,6 +73,12 @@ public class AccountSettingActivity extends Activity {
     EditText etLable;
     @BindView(R.id.et_signature)
     EditText etSignature;
+    @BindView(R.id.male)
+    RadioButton male;
+    @BindView(R.id.femle)
+    RadioButton femle;
+    @BindView(R.id.rg)
+    RadioGroup rg;
 
     private Context context;
     private String xingzuo;
@@ -88,7 +97,7 @@ public class AccountSettingActivity extends Activity {
         setContentView(R.layout.activity_account_setting);
         ButterKnife.bind(this);
         context = this;
-        userId = MySharedData.sharedata_ReadInt(context,"uid");
+        userId = MySharedData.sharedata_ReadInt(context, "uid");
         userName = MySharedData.sharedata_ReadString(context, "userId");
         dialogUtils = new CommonDialogUtils();
         handler = new MyHandler(AccountSettingActivity.this);
@@ -100,6 +109,13 @@ public class AccountSettingActivity extends Activity {
         tvRight.setVisibility(View.VISIBLE);
         tvRight.setText("提交");
         tvTitle.setText("个人资料");
+        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+               String gender = checkedId == R.id.male ? "男" : "女";
+               ToastUtils.show(gender);
+            }
+        });
     }
 
     public void onYearMonthDayPicker() {
@@ -116,7 +132,7 @@ public class AccountSettingActivity extends Activity {
             public void onDatePicked(String year, String month, String day) {
                 Timber.e(year + "-" + month + "-" + day);
                 tvBirthday.setText(year + "-" + month + "-" + day);
-                xingzuo = XingZuo.getXingZuoName(Integer.parseInt(month),Integer.parseInt(day));
+                xingzuo = XingZuo.getXingZuoName(Integer.parseInt(month), Integer.parseInt(day));
                 tvXingzuo.setText(xingzuo);
             }
         });
@@ -138,6 +154,7 @@ public class AccountSettingActivity extends Activity {
         });
         picker.show();
     }
+
     private void getUserInfo() {
         dialogUtils.showProgress(context);
         OkHttpUtils.getAsync(Const.getUserInfoUrl + userName + "?_format=json", QUESTAUTH, new OkHttpUtils.DataCallBack() {
@@ -162,10 +179,11 @@ public class AccountSettingActivity extends Activity {
             }
         });
     }
+
     private void linkFile(int targetId) {
         String jsonStr;
         String url;
-        jsonStr = RequestJsonParameter.linkFile(targetId,userName+"@zz.com");
+        jsonStr = RequestJsonParameter.linkFile(targetId, userName + "@zz.com");
         url = Const.linkFile + userId + "?_format=json";
         OkHttpUtils.patchJsonAsync(url, jsonStr, new OkHttpUtils.DataCallBack() {
             @Override
@@ -176,11 +194,16 @@ public class AccountSettingActivity extends Activity {
             @Override
             public void requestSuccess(String result) throws Exception {
                 Timber.e("link file result" + result);
-                Utils.sendHandleMsg(4, "上传成功", handler);
+                JSONObject jsonObject = JSON.parseObject(result);
+                JSONArray jsonArray = jsonObject.getJSONArray("user_picture");
+                JSONObject jsonValue = JSONObject.parseObject(jsonArray.getString(0));
+                String urlPortrait = jsonValue.getString("url");
+                Utils.sendHandleMsg(4, urlPortrait, handler);
             }
         });
     }
-    @OnClick({R.id.img_left, R.id.tv_right, R.id.tv_change_portrait, R.id.tv_birthday,R.id.img_portrait})
+
+    @OnClick({R.id.img_left, R.id.tv_right, R.id.tv_change_portrait, R.id.tv_birthday, R.id.img_portrait})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.img_left:
@@ -197,19 +220,22 @@ public class AccountSettingActivity extends Activity {
                 break;
         }
     }
-    private void updateUserPortrait(){
+
+    private void updateUserPortrait() {
         PhotoPicker.builder()
                 .setPhotoCount(1)
                 .setShowCamera(true)
                 .setShowGif(true)
                 .setPreviewEnabled(false)
-                .start(AccountSettingActivity.this,PhotoPicker.REQUEST_CODE);
+                .start(AccountSettingActivity.this, PhotoPicker.REQUEST_CODE);
     }
+
     private Map<String, String> addParams() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("vin", "111111");
         return params;
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -235,6 +261,7 @@ public class AccountSettingActivity extends Activity {
             }
         }
     }
+
     public class MyHandler extends Handler {
         private WeakReference<Activity> reference;
 
@@ -258,7 +285,15 @@ public class AccountSettingActivity extends Activity {
                         ToastUtils.show("", Toast.LENGTH_SHORT);
                         break;
                     case 4:
-                        ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
+                        String urlPortrait = msg.obj.toString();
+                        if(urlPortrait.startsWith("http")){
+                            Glide.with(context)
+                                    .load(urlPortrait)
+                                    .into(imgPortrait);
+                            ToastUtils.show("更改成功", Toast.LENGTH_SHORT);
+                        }else {
+                            ToastUtils.show("更改失败", Toast.LENGTH_SHORT);
+                        }
                         break;
                 }
             }
@@ -267,14 +302,14 @@ public class AccountSettingActivity extends Activity {
 
     private void LoadDataToView(UserInfoEntity userInfoEntity) {
         etNickname.setText(userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue());
-        if(userInfoEntity.getData().get(0).getField_user_gender().size() > 0){
-            etGender.setText(userInfoEntity.getData().get(0).getField_user_gender().get(0).getValue());
-        }else{
-            etGender.setText("未知");
-        }if(userInfoEntity.getData().get(0).getField_user_statement().size() > 0){
+        if (userInfoEntity.getData().get(0).getField_user_statement().size() > 0) {
             etSignature.setText(userInfoEntity.getData().get(0).getField_user_statement().get(0).getValue());
         }
-
+        if(userInfoEntity.getData().get(0).getUser_picture().size() > 0){
+            Glide.with(context)
+                    .load(userInfoEntity.getData().get(0).getUser_picture().get(0).getUrl())
+                    .into(imgPortrait);
+        }
     }
 
     private void dismissProgress() {

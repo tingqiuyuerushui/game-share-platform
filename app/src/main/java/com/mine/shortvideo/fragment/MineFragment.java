@@ -37,6 +37,7 @@ import com.mine.shortvideo.customview.CommomDialog;
 import com.mine.shortvideo.entity.MyVideoEntity;
 import com.mine.shortvideo.entity.RequestJsonParameter;
 import com.mine.shortvideo.entity.UploadFileResultEntity;
+import com.mine.shortvideo.entity.UploadUserPicEntity;
 import com.mine.shortvideo.entity.UserInfoEntity;
 import com.mine.shortvideo.myInterface.MyItemOnClickListener;
 import com.mine.shortvideo.photopicker.PhotoPicker;
@@ -146,6 +147,10 @@ public class MineFragment extends BaseFragment {
     private UserInfoEntity userInfoEntity;
     private List<MyVideoEntity.DataBean> myVideoList;
     private ArrayList<String> listShowPicUrl;
+    private List<UploadUserPicEntity.UidBean> uidBeanList;
+    private List<UploadUserPicEntity.FieldPersonalpicshowBean> fieldPersonalpicshowBeanList;
+    private UploadUserPicEntity.FieldPersonalpicshowBean fieldPersonalpicshowBean;
+    private UploadUserPicEntity uploadUserPicEntity;
 
     @Override
     protected int getLayoutId() {
@@ -159,6 +164,9 @@ public class MineFragment extends BaseFragment {
         unbinder = ButterKnife.bind(this, rootView);
         dialogUtils = new CommonDialogUtils();
         handler = new MyHandler(getActivity());
+        if(uploadUserPicEntity == null){
+            uploadUserPicEntity = new UploadUserPicEntity();
+        }
         getUserInfo();
         getUserVideoList();
     }
@@ -183,6 +191,15 @@ public class MineFragment extends BaseFragment {
                 userInfoEntity = gson.fromJson(sb.toString(), UserInfoEntity.class);
                 Timber.e(userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue() + "");
                 userId = userInfoEntity.getData().get(0).getUid().get(0).getValue();
+                if(uidBeanList == null){
+                    uidBeanList = new ArrayList<>();
+                }else {
+                    uidBeanList.clear();
+                }
+                UploadUserPicEntity.UidBean uidBean = new UploadUserPicEntity.UidBean();
+                uidBean.setValue(userId);
+                uidBeanList.add(uidBean);
+                uploadUserPicEntity.setUid(uidBeanList);
                 Utils.sendHandleMsg(1, userInfoEntity, handler);
             }
         });
@@ -216,18 +233,20 @@ public class MineFragment extends BaseFragment {
         return params;
     }
 
-    private void linkFile(int targetId, int fileType) {
+    private void linkFile(int targetId) {
         String jsonStr;
         String url;
-        if (fileType == VIDEOTYPE) {
-            jsonStr = RequestJsonParameter.CreateMediaJsonStr(userId, targetId);
-            url = Const.CreateMediaVideoUrl;
-        } else {
-            jsonStr = RequestJsonParameter.linkUserShowPic(userId,targetId);
-            url = Const.linkFile + userId + "?_format=json";
-//            jsonStr = RequestJsonParameter.linkFile(targetId,userName+"@uaes.site");
-//            url = Const.linkFile + userId + "?_format=json";
+        if(fieldPersonalpicshowBean != null){
+            fieldPersonalpicshowBean.setTarget_id(targetId);
+            fieldPersonalpicshowBean.setAlt("alternatice text1");
+            fieldPersonalpicshowBeanList.add(fieldPersonalpicshowBean);
+            uploadUserPicEntity.setField_personalpicshow(fieldPersonalpicshowBeanList);
         }
+        Gson gson = new Gson();
+        jsonStr = gson.toJson(uploadUserPicEntity);
+        Timber.e("UploadUserPic  jsonstr -->" + jsonStr);
+//        jsonStr = RequestJsonParameter.linkUserShowPic(userId,targetId);
+        url = Const.linkFile + userId + "?_format=json";
         OkHttpUtils.patchJsonAsync(url, jsonStr, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
@@ -237,7 +256,16 @@ public class MineFragment extends BaseFragment {
             @Override
             public void requestSuccess(String result) throws Exception {
                 Timber.e("link file result" + result);
-                Utils.sendHandleMsg(4, "上传成功", handler);
+                if(result.length() > 100){
+                    JSONObject jsonObject = JSON.parseObject(result);
+                    JSONArray jsonArray = jsonObject.getJSONArray("field_personalpicshow");
+                    for (int i = 0; i < jsonArray.size() ; i++) {
+//                        JSONObject jsonValue = JSONObject.parseObject(jsonArray.getString(i));
+//                        personalpicshowBeanList.add(jsonValue);
+                    }
+                }else{
+                    Utils.sendHandleMsg(4, "上传失败", handler);
+                }
             }
         });
     }
@@ -274,7 +302,7 @@ public class MineFragment extends BaseFragment {
                             getUserVideoList();
                         }else {
 
-                        Utils.sendHandleMsg(4, "失败", handler);
+                            Utils.sendHandleMsg(4, "失败", handler);
                         }
                         Timber.e("上传视频第三步成功返回：" + result);
                     }
@@ -293,7 +321,7 @@ public class MineFragment extends BaseFragment {
             if (data != null) {
                 photos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
                 dialogUtils.showProgress(context, "正在上传，请稍后");
-                OkHttpUtils.postFileAsync(Const.uploadUrl, addParams(), photos.get(0), new OkHttpUtils.DataCallBack() {
+                OkHttpUtils.postFileAsync(Const.upUserShowPicUrl, addParams(), photos.get(0), new OkHttpUtils.DataCallBack() {
                     @Override
                     public void requestFailure(Request request, IOException e) {
 
@@ -304,8 +332,7 @@ public class MineFragment extends BaseFragment {
                         Timber.e("result" + result);
                         Gson gson = new Gson();
                         uploadFileResultEntity = gson.fromJson(result, UploadFileResultEntity.class);
-                        linkFile(uploadFileResultEntity.getFid().get(0).getValue(), IMGTYPE);
-                        Utils.sendHandleMsg(4, "上传成功", handler);
+                        linkFile(uploadFileResultEntity.getFid().get(0).getValue());
                     }
                 });
             }
@@ -512,6 +539,11 @@ public class MineFragment extends BaseFragment {
             } else {
                 personalpicshowBeanList.clear();
             }
+            if(fieldPersonalpicshowBeanList == null){
+                fieldPersonalpicshowBeanList = new ArrayList<>();
+            }else {
+                fieldPersonalpicshowBeanList.clear();
+            }
             if (gameThumbRecyclerViewAdapter == null && layoutManager1 == null) {
 
                 personalpicshowBeanList.addAll(userInfoEntity.getData().get(0).getField_personalpicshow());
@@ -546,6 +578,15 @@ public class MineFragment extends BaseFragment {
                 });
             } else {
                 gameThumbRecyclerViewAdapter.notifyDataSetChanged();
+            }
+            if(fieldPersonalpicshowBean == null){
+                fieldPersonalpicshowBean = new UploadUserPicEntity.FieldPersonalpicshowBean();
+            }
+            for (int i = 0; i < personalpicshowBeanList.size(); i++) {
+                fieldPersonalpicshowBean.setAlt("alternatice text");
+                fieldPersonalpicshowBean.setTarget_id(personalpicshowBeanList.get(i).getTarget_id());
+                fieldPersonalpicshowBean.setUrl(personalpicshowBeanList.get(0).getUrl());
+                fieldPersonalpicshowBeanList.add(fieldPersonalpicshowBean);
             }
         }
 

@@ -53,6 +53,29 @@
         <TextView
             android:text="性别"
             style="@style/user_setting_tv"/>
+        <RadioGroup
+            android:id="@+id/rg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="30dp"
+            android:layout_gravity="center_vertical">
+            <RadioButton
+                android:id="@+id/male"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:checked="true"
+                android:text="男" />
+            <RadioButton
+                android:id="@+id/femle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/white"
+                android:checked="true"
+                android:text="女"/>
+        </RadioGroup>
         <EditText
             android:id="@+id/et_gender"
             android:layout_width="wrap_content"
@@ -62,7 +85,8 @@
             android:textColor="@color/white"
             android:text="女"
             android:layout_marginLeft="30dp"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:visibility="gone"/>
     </LinearLayout>
     <LinearLayout
         style="@style/user_setting_ll"

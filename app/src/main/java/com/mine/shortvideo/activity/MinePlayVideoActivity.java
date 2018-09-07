@@ -131,6 +131,13 @@ public class MinePlayVideoActivity extends Activity {
                 return false;
             }
         });
+        videoView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                ToastUtils.show("长按视频");
+                return true;
+            }
+        });
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {

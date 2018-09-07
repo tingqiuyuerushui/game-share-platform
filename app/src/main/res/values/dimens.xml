@@ -3,7 +3,7 @@
     <!-- 边距设置 -->
     <dimen name="left_margin">20dp</dimen>
     <dimen name="right_margin">20dp</dimen>
-    <dimen name="top_margin">100dp</dimen>
+    <dimen name="top_margin">50dp</dimen>
     <dimen name="bottom_margin">40dp</dimen>
     <dimen name="left_padding">8dp</dimen>
     <dimen name="normal_padding">8dp</dimen>

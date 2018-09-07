@@ -28,11 +28,11 @@ public class MyApplication extends Application {
         /**
          * 仅在Debug时初始化Timber
          */
-//        if (BuildConfig.DEBUG) {
-//            Timber.plant(new Timber.DebugTree());
-//        }else{
-//            Timber.plant(new Timber.DebugTree());
-//        }
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        }else{
+            Timber.plant(new Timber.DebugTree());
+        }
         RongIM.init(this);
     }
     private void initPlatformConfig(){

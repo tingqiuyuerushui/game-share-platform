@@ -8,8 +8,10 @@ public class Const {
     public static final String base = "http://121.196.197.77:8060";
     //获取token接口
     public static final String getTokenUrl = baseUrl + "/rest/session/token?_format=json";
-    //上传图片接口
-    public static final String uploadUrl = baseUrl + "/file/upload/node/article/field_hero_image?_format=json";
+    //上传头像图片接口
+    public static final String uploadUrl = baseUrl + "/file/upload/user/user/user_picture?_format=json";
+    //上传个人展示图片接口
+    public static final String upUserShowPicUrl = baseUrl + "/file/upload/user/user/field_personalpicshow?_format=json";
     //获取用户信息接口
     public static final String getUserInfoUrl = baseUrl + "/api/v1/user/mobile/";
     //创建用户
