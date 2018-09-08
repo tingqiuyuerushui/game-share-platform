@@ -40,6 +40,7 @@ import com.mine.shortvideo.entity.UploadFileResultEntity;
 import com.mine.shortvideo.entity.UploadUserPicEntity;
 import com.mine.shortvideo.entity.UserInfoEntity;
 import com.mine.shortvideo.myInterface.MyItemOnClickListener;
+import com.mine.shortvideo.myInterface.MyItemOnLongClickListener;
 import com.mine.shortvideo.photopicker.PhotoPicker;
 import com.mine.shortvideo.utils.Code;
 import com.mine.shortvideo.utils.CommonDialogUtils;
@@ -140,8 +141,8 @@ public class MineFragment extends BaseFragment {
     private boolean QUESTAUTH = true;
     private boolean QUESTNOAUTH = false;
     private static int userId = 0;
-    private static int VIDEOTYPE = 1;
-    private static int IMGTYPE = 0;
+    private static int DELETE = 1;
+    private static int ADD = 0;
     private String userName;
     private List<UserInfoEntity.DataBean.FieldPersonalpicshowBean> personalpicshowBeanList;
     private UserInfoEntity userInfoEntity;
@@ -149,7 +150,6 @@ public class MineFragment extends BaseFragment {
     private ArrayList<String> listShowPicUrl;
     private List<UploadUserPicEntity.UidBean> uidBeanList;
     private List<UploadUserPicEntity.FieldPersonalpicshowBean> fieldPersonalpicshowBeanList;
-    private UploadUserPicEntity.FieldPersonalpicshowBean fieldPersonalpicshowBean;
     private UploadUserPicEntity uploadUserPicEntity;
 
     @Override
@@ -233,16 +233,21 @@ public class MineFragment extends BaseFragment {
         return params;
     }
 
-    private void linkFile(int targetId) {
+    private void linkFile(int targetId, final int operationType, int removeIndex) {
         String jsonStr;
         String url;
-        if(fieldPersonalpicshowBean != null){
+        UploadUserPicEntity.FieldPersonalpicshowBean fieldPersonalpicshowBean =
+                new UploadUserPicEntity.FieldPersonalpicshowBean();
+        if(fieldPersonalpicshowBean != null && operationType == ADD){
             fieldPersonalpicshowBean.setTarget_id(targetId);
             fieldPersonalpicshowBean.setAlt("alternatice text1");
             fieldPersonalpicshowBeanList.add(fieldPersonalpicshowBean);
             uploadUserPicEntity.setField_personalpicshow(fieldPersonalpicshowBeanList);
+        }else if(operationType == DELETE){
+            fieldPersonalpicshowBeanList.remove(removeIndex);
+            uploadUserPicEntity.setField_personalpicshow(fieldPersonalpicshowBeanList);
         }
-        Gson gson = new Gson();
+        final Gson gson = new Gson();
         jsonStr = gson.toJson(uploadUserPicEntity);
         Timber.e("UploadUserPic  jsonstr -->" + jsonStr);
 //        jsonStr = RequestJsonParameter.linkUserShowPic(userId,targetId);
@@ -250,21 +255,38 @@ public class MineFragment extends BaseFragment {
         OkHttpUtils.patchJsonAsync(url, jsonStr, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
-
+                if(operationType == ADD){
+                    Utils.sendHandleMsg(4, "上传失败", handler);
+                }else {
+                    Utils.sendHandleMsg(4, "删除失败", handler);
+                }
             }
 
             @Override
             public void requestSuccess(String result) throws Exception {
                 Timber.e("link file result" + result);
                 if(result.length() > 100){
+                    //获得上传图片成功返回的的图片信息装到用户展示图片的list中
+                    UserInfoEntity.DataBean.FieldPersonalpicshowBean personalpicshowBean;
                     JSONObject jsonObject = JSON.parseObject(result);
                     JSONArray jsonArray = jsonObject.getJSONArray("field_personalpicshow");
+                    personalpicshowBeanList.clear();
                     for (int i = 0; i < jsonArray.size() ; i++) {
-//                        JSONObject jsonValue = JSONObject.parseObject(jsonArray.getString(i));
-//                        personalpicshowBeanList.add(jsonValue);
+                        personalpicshowBean = gson.fromJson(jsonArray.getString(i),UserInfoEntity.DataBean.FieldPersonalpicshowBean.class);
+                        personalpicshowBeanList.add(personalpicshowBean);
+                    }
+                    if(operationType == ADD){
+                        Utils.sendHandleMsg(5, "上传成功", handler);
+                    }else {
+                        Utils.sendHandleMsg(5, "删除成功", handler);
                     }
                 }else{
-                    Utils.sendHandleMsg(4, "上传失败", handler);
+                    if(operationType == ADD){
+                        Utils.sendHandleMsg(4, "上传失败", handler);
+                    }else {
+                        Utils.sendHandleMsg(4, "删除失败", handler);
+                    }
+
                 }
             }
         });
@@ -332,7 +354,7 @@ public class MineFragment extends BaseFragment {
                         Timber.e("result" + result);
                         Gson gson = new Gson();
                         uploadFileResultEntity = gson.fromJson(result, UploadFileResultEntity.class);
-                        linkFile(uploadFileResultEntity.getFid().get(0).getValue());
+                        linkFile(uploadFileResultEntity.getFid().get(0).getValue(),ADD,0);
                     }
                 });
             }
@@ -444,6 +466,12 @@ public class MineFragment extends BaseFragment {
                     case 4:
                         ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
                         break;
+                    case 5:
+                        if(gameThumbRecyclerViewAdapter != null){
+                            gameThumbRecyclerViewAdapter.notifyDataSetChanged();
+                        }
+                        ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
+                        break;
                 }
             }
         }
@@ -465,7 +493,7 @@ public class MineFragment extends BaseFragment {
             userVideoListAdapter.setItemOnClickListener(new MyItemOnClickListener() {
                 @Override
                 public void onItemOnClick(View view, int postion) {
-                    if (postion == myVideoList.size() || myVideoList.size() == 0) {
+                    if (postion == 0 || myVideoList.size() == 0) {
                         Intent intent = new Intent(getActivity(), SelectVideoListActivity.class);
                         startActivityForResult(intent, Code.LOCAL_VIDEO_REQUEST);
                     } else {
@@ -474,6 +502,22 @@ public class MineFragment extends BaseFragment {
                         intent.putExtra("VideoIndex", postion);
                         intent.putExtra("myVideoEntity", myVideoEntity);
                         startActivity(intent);
+                    }
+                }
+            });
+            userVideoListAdapter.setItemOnLongClickListener(new MyItemOnLongClickListener() {
+                @Override
+                public void onItemOnLongClick(View view, final int position) {
+                    if (position != 0){
+
+                        new CommomDialog(context, R.style.dialog, "确定删除", new CommomDialog.OnCloseListener() {
+                            @Override
+                            public void onClick(Dialog dialog, boolean confirm) {
+                                if (confirm && position != 0) {
+                                    dialog.dismiss();
+                                }
+                            }
+                        }).setTitle("删除提示").show();
                     }
                 }
             });
@@ -556,12 +600,11 @@ public class MineFragment extends BaseFragment {
                 layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
                 pictureRecycler.setLayoutManager(layoutManager1);
                 pictureRecycler.setAdapter(gameThumbRecyclerViewAdapter);
-
                 gameThumbRecyclerViewAdapter.setItemOnClickListener(new MyItemOnClickListener() {
                     @Override
-                    public void onItemOnClick(View view, int postion) {
-                        ToastUtils.show("点击了" + postion);
-                        if (postion == personalpicshowBeanList.size() || personalpicshowBeanList.size() == 0) {
+                    public void onItemOnClick(View view, int position) {
+                        ToastUtils.show("点击了" + position);
+                        if (position == personalpicshowBeanList.size() || personalpicshowBeanList.size() == 0) {
                             PhotoPicker.builder()
                                     .setPhotoCount(1)
                                     .setShowCamera(true)
@@ -576,13 +619,29 @@ public class MineFragment extends BaseFragment {
                         }
                     }
                 });
+                gameThumbRecyclerViewAdapter.setItemOnLongClickListener(new MyItemOnLongClickListener() {
+                    @Override
+                    public void onItemOnLongClick(View view, final int position) {
+                        if (position != personalpicshowBeanList.size() && personalpicshowBeanList.size() != 0) {
+
+                            new CommomDialog(context, R.style.dialog, "确定删除", new CommomDialog.OnCloseListener() {
+                                @Override
+                                public void onClick(Dialog dialog, boolean confirm) {
+                                    if (confirm) {
+                                        linkFile(0,DELETE,position);
+                                        dialog.dismiss();
+                                    }
+                                }
+                            }).setTitle("删除提示").show();
+                        }
+                    }
+                });
             } else {
                 gameThumbRecyclerViewAdapter.notifyDataSetChanged();
             }
-            if(fieldPersonalpicshowBean == null){
-                fieldPersonalpicshowBean = new UploadUserPicEntity.FieldPersonalpicshowBean();
-            }
             for (int i = 0; i < personalpicshowBeanList.size(); i++) {
+                UploadUserPicEntity.FieldPersonalpicshowBean fieldPersonalpicshowBean =
+                        new UploadUserPicEntity.FieldPersonalpicshowBean();
                 fieldPersonalpicshowBean.setAlt("alternatice text");
                 fieldPersonalpicshowBean.setTarget_id(personalpicshowBeanList.get(i).getTarget_id());
                 fieldPersonalpicshowBean.setUrl(personalpicshowBeanList.get(0).getUrl());

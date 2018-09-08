@@ -1,4 +1,5 @@
 package com.mine.shortvideo.activity;
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -8,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -20,9 +22,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.github.dfqin.grantor.PermissionListener;
+import com.github.dfqin.grantor.PermissionsUtil;
 import com.mine.shortvideo.R;
 import com.mine.shortvideo.entity.VideoInfo;
 import com.mine.shortvideo.utils.Code;
+import com.mine.shortvideo.utils.ToastUtils;
 import com.mine.shortvideo.utils.Utils;
 
 import java.io.File;
@@ -45,12 +50,26 @@ public class SelectVideoListActivity extends AppCompatActivity {
         mListView = (ListView) findViewById(R.id.lv_video);
         noData = (TextView) findViewById(R.id.tv_nodata);
         btnBack = (Button) findViewById(R.id.btn_back);
-
         lastIntent = getIntent();
+        requestReadExternalStorage();
         initData();
         mListView.setOnItemClickListener(new ItemClick());
     }
+    private void requestReadExternalStorage(){
+        PermissionsUtil.requestPermission(context, new PermissionListener() {
+            @Override
+            public void permissionGranted(@NonNull String[] permission) {
+                initData();
+            }
 
+            @Override
+            public void permissionDenied(@NonNull String[] permission) {
+                ToastUtils.show("用户拒绝了读存储的权限");
+                finish();
+
+            }
+        }, Manifest.permission.READ_EXTERNAL_STORAGE);
+    }
     private void initData() {
         vList = new ArrayList<>();
         String[] mediaColumns = new String[]{MediaStore.MediaColumns.DATA,
