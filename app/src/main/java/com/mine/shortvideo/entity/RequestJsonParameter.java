@@ -79,6 +79,10 @@ public class RequestJsonParameter {
 
         return postJsonData;
     }
-
+    //删除视频
+    public static String deleteUserVideoJsonStr(){
+        String postJsonData ="{\"type\":[{\"target_id\":\"user_video\",\"target_type\":\"node_type\"}],\"field_uservideo_status\":[{\"value\": 1}]}";
+        return postJsonData;
+    }
 
 }

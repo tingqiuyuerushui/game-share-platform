@@ -226,7 +226,27 @@ public class MineFragment extends BaseFragment {
             }
         });
     }
+    private void deleteUserVideo(String nid){
+        dialogUtils.showProgress(context);
+        String jsonStr = RequestJsonParameter.deleteUserVideoJsonStr();
+        OkHttpUtils.patchJsonAsync(Const.deleteUserVideo + nid +"?_format=json",jsonStr, new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+                Utils.sendHandleMsg(4,"删除失败",handler);
+            }
 
+            @Override
+            public void requestSuccess(String result) throws Exception {
+                if(result.length() > 100){
+                    Utils.sendHandleMsg(4,"删除成功",handler);
+                    getUserVideoList();
+                }else {
+                    Utils.sendHandleMsg(4,"删除失败",handler);
+                }
+
+            }
+        });
+    }
     private Map<String, String> addParams() {
         Map<String, String> params = new HashMap<String, String>();
         params.put("vin", "111111");
@@ -514,6 +534,7 @@ public class MineFragment extends BaseFragment {
                             @Override
                             public void onClick(Dialog dialog, boolean confirm) {
                                 if (confirm && position != 0) {
+                                    deleteUserVideo(myVideoList.get(0).getNid());
                                     dialog.dismiss();
                                 }
                             }

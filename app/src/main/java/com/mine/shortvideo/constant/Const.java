@@ -34,6 +34,8 @@ public class Const {
     public static final String linkFile = baseUrl + "/user/";
     //获取用户视频
     public static final String getUserVideoList = baseUrl + "/api/v1/myvideo/";
+    //删除用户视频
+    public static final String deleteUserVideo = baseUrl + "/node/";
     //发布完美脱单
     public static final String publishTask = baseUrl + "/node?_format=json";
     //获取融云Token

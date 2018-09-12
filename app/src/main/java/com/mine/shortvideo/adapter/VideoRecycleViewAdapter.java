@@ -1,6 +1,7 @@
 package com.mine.shortvideo.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.mine.shortvideo.R;
+import com.mine.shortvideo.activity.VideoCommentActivity;
 import com.mine.shortvideo.entity.VideoEntity;
 
 import java.util.List;
@@ -104,6 +106,26 @@ public class VideoRecycleViewAdapter extends RecyclerView.Adapter<VideoRecycleVi
                 setDrawable(R.mipmap.icon_red_heart);
                 isClicked = true;
             }
+        }
+        @OnClick(R.id.tv_collect_count)
+        public void share(){
+//            Intent wechatIntent = new Intent(Intent.ACTION_SEND);
+//            wechatIntent.setPackage("com.tencent.mm");
+//            wechatIntent.setType("text/plain");
+//            wechatIntent.putExtra(Intent.EXTRA_TEXT, "分享到微信的内容");
+//            context.startActivity(wechatIntent);
+//            Intent shareIntent = new Intent();
+//            shareIntent.setAction(Intent.ACTION_SEND);            //分享视频只能单个分享
+//            shareIntent.putExtra(Intent.EXTRA_STREAM,"www.uaes.site:8088/d86//sites//default/files/2018-09/%25E5%258D%25A2%25E5%25B8%2583.mp4");
+//            shareIntent.setType("audio/*");
+//            context.startActivity(Intent.createChooser(shareIntent, "分享到"));
+        }
+        @OnClick(R.id.tv_comment_count)
+        public void comment(){
+            Intent intent = new Intent();
+            intent.setClass(context, VideoCommentActivity.class);
+            context.startActivity(intent);
+
         }
         ViewHolder(View view) {
             super(view);

@@ -129,6 +129,9 @@
         <activity android:name=".activity.AccountSettingActivity"
                   android:screenOrientation="portrait"
                   android:theme="@style/AppTheme.Skid_1"/>
+        <activity android:name=".activity.VideoCommentActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/myTransparent"/>
     </application>
 
 </manifest>

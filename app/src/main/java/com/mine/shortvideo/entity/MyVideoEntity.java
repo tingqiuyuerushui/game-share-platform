@@ -35,6 +35,7 @@ public class MyVideoEntity implements Parcelable {
          */
 
         private String title;
+        private String nid;
         private String field_media_video_file;
         private String field_media_oembed_video;
 
@@ -52,6 +53,14 @@ public class MyVideoEntity implements Parcelable {
             return field_media_video_file;
         }
 
+        public String getNid() {
+            return nid;
+        }
+
+        public void setNid(String nid) {
+            this.nid = nid;
+        }
+
         public void setField_media_video_file(String field_media_video_file) {
             this.field_media_video_file = field_media_video_file;
         }
@@ -64,6 +73,9 @@ public class MyVideoEntity implements Parcelable {
             this.field_media_oembed_video = field_media_oembed_video;
         }
 
+        public DataBean() {
+        }
+
         @Override
         public int describeContents() {
             return 0;
@@ -72,15 +84,14 @@ public class MyVideoEntity implements Parcelable {
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeString(this.title);
+            dest.writeString(this.nid);
             dest.writeString(this.field_media_video_file);
             dest.writeString(this.field_media_oembed_video);
         }
 
-        public DataBean() {
-        }
-
         protected DataBean(Parcel in) {
             this.title = in.readString();
+            this.nid = in.readString();
             this.field_media_video_file = in.readString();
             this.field_media_oembed_video = in.readString();
         }
