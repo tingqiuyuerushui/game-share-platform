@@ -1,6 +1,7 @@
 package com.mine.shortvideo.constant;
 
 public class Const {
+    public static boolean isRefreshUserInfo = false;
 
     public static String tokenRongIM = "IUfl58RT07nV+bevakr37kK8wVquZAqi8oaweHed+/nK2Ah2StAaMCfjuv4Qyp/j1Y95GSFPW/0N2XqjryPQ1nEodYYPvvCy";
 //    public static final String tokenRongIM1 = "GNqSNjh7A5K1/IkDOuQVdNv7nwl/U+JNwTLU1jKihiEFPAIjYKXZSW15ZOFqGWEkaIV2w9euQj57DaZ9PDwe2w==";
@@ -14,6 +15,8 @@ public class Const {
     public static final String upUserShowPicUrl = baseUrl + "/file/upload/user/user/field_personalpicshow?_format=json";
     //获取用户信息接口
     public static final String getUserInfoUrl = baseUrl + "/api/v1/user/mobile/";
+    //修改用户信息接口
+    public static final String changeUserInfoUrl = baseUrl + "/user/";
     //创建用户
     public static final String createUser = baseUrl + "/entity/user?_format=json";
     //保留

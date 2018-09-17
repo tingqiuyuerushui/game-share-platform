@@ -355,6 +355,16 @@ public class MineFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(Const.isRefreshUserInfo){
+            getUserInfo();
+            Const.isRefreshUserInfo = false;
+        }
+        Timber.e("我是onResume----->");
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -565,8 +575,8 @@ public class MineFragment extends BaseFragment {
         }
 //        tvLable.setText("♀" +userInfoEntity.getData().get(0).getField_user_age().get(0).getValue() +
 //                userInfoEntity.getData().get(0).getField_user_tags().get(0));
-        if (userInfoEntity.getData().get(0).getField_user_starsign().size() > 0) {
-            tvSignature.setText(userInfoEntity.getData().get(0).getField_user_starsign().get(0).getValue());
+        if (userInfoEntity.getData().get(0).getField_user_statement().size() > 0) {
+            tvSignature.setText(userInfoEntity.getData().get(0).getField_user_statement().get(0).getValue());
         } else {
             tvSignature.setText("本宝宝太懒，没有留下任何签名");
         }
@@ -599,11 +609,7 @@ public class MineFragment extends BaseFragment {
             } else {
                 listShowPicUrl.clear();
             }
-            if (personalpicshowBeanList == null) {
-                personalpicshowBeanList = new ArrayList<>();
-            } else {
-                personalpicshowBeanList.clear();
-            }
+
             if(fieldPersonalpicshowBeanList == null){
                 fieldPersonalpicshowBeanList = new ArrayList<>();
             }else {
@@ -611,6 +617,11 @@ public class MineFragment extends BaseFragment {
             }
             if (gameThumbRecyclerViewAdapter == null && layoutManager1 == null) {
 
+                if (personalpicshowBeanList == null) {
+                    personalpicshowBeanList = new ArrayList<>();
+                } else {
+                    personalpicshowBeanList.clear();
+                }
                 personalpicshowBeanList.addAll(userInfoEntity.getData().get(0).getField_personalpicshow());
                 for (int i = 0; i < personalpicshowBeanList.size(); i++) {
 

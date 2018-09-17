@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -90,6 +92,7 @@ public class AccountSettingActivity extends Activity {
     private boolean QUESTAUTH = true;
     private boolean QUESTNOAUTH = false;
     private String userName;
+    private String gender;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -109,11 +112,11 @@ public class AccountSettingActivity extends Activity {
         tvRight.setVisibility(View.VISIBLE);
         tvRight.setText("提交");
         tvTitle.setText("个人资料");
+        gender = "女";
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-               String gender = checkedId == R.id.male ? "男" : "女";
-               ToastUtils.show(gender);
+                gender = checkedId == R.id.male ? "男" : "女";
             }
         });
     }
@@ -202,6 +205,25 @@ public class AccountSettingActivity extends Activity {
             }
         });
     }
+    private void changeUserInfo(String jsonStr) {
+        dialogUtils.showProgress(context);
+        OkHttpUtils.patchJsonAsync(Const.changeUserInfoUrl + userId + "?_format=json", jsonStr, new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+                Utils.sendHandleMsg(2,"修改失败",handler);
+            }
+
+            @Override
+            public void requestSuccess(String result) throws Exception {
+                Timber.e("修改用户结果-->" + result);
+                if(result.length() > 100){
+                    Utils.sendHandleMsg(2,"修改成功",handler);
+                }else {
+                    Utils.sendHandleMsg(2,"修改失败",handler);
+                }
+            }
+        });
+    }
 
     @OnClick({R.id.img_left, R.id.tv_right, R.id.tv_change_portrait, R.id.tv_birthday, R.id.img_portrait})
     public void onViewClicked(View view) {
@@ -210,6 +232,10 @@ public class AccountSettingActivity extends Activity {
                 finish();
                 break;
             case R.id.tv_right:
+                String nickName = etNickname.getText().toString();
+                String statement = etSignature.getText().toString();
+                String gender = this.gender;
+                changeUserInfo(generateJsonStr(nickName,gender,statement));
                 break;
             case R.id.tv_change_portrait:
             case R.id.img_portrait:
@@ -219,6 +245,32 @@ public class AccountSettingActivity extends Activity {
                 onYearMonthDayPicker();
                 break;
         }
+    }
+    private String generateJsonStr(String nickName,String gender,String statement){
+        UserInfoEntity.DataBean dataBean = new UserInfoEntity.DataBean();
+        List<UserInfoEntity.DataBean.FieldUserNicknameBean> fieldUserNicknameBeanList = new ArrayList<>();
+        UserInfoEntity.DataBean.FieldUserNicknameBean fieldUserNicknameBean = new UserInfoEntity.DataBean.FieldUserNicknameBean();
+        fieldUserNicknameBean.setValue(nickName);
+        fieldUserNicknameBeanList.add(fieldUserNicknameBean);
+
+        List<UserInfoEntity.DataBean.FieldUserGenderBean> fieldUserGenderBeanList = new ArrayList<>();
+        UserInfoEntity.DataBean.FieldUserGenderBean fieldUserGenderBean = new UserInfoEntity.DataBean.FieldUserGenderBean();
+        fieldUserGenderBean.setValue(gender);
+        fieldUserGenderBeanList.add(fieldUserGenderBean);
+
+        if(!TextUtils.isEmpty(statement)){
+            List<UserInfoEntity.DataBean.FieldUserStatementBean> fieldUserStatementBeanList = new ArrayList<>();
+            UserInfoEntity.DataBean.FieldUserStatementBean fieldUserStatementBean = new UserInfoEntity.DataBean.FieldUserStatementBean();
+            fieldUserStatementBean.setValue(statement);
+            fieldUserStatementBeanList.add(fieldUserStatementBean);
+            dataBean.setField_user_statement(fieldUserStatementBeanList);
+        }
+        dataBean.setField_user_gender(fieldUserGenderBeanList);
+        dataBean.setField_user_nickname(fieldUserNicknameBeanList);
+        Gson gson = new Gson();
+        String formatString = gson.toJson(dataBean);
+        return formatString;
+
     }
 
     private void updateUserPortrait() {
@@ -280,6 +332,10 @@ public class AccountSettingActivity extends Activity {
                         break;
                     case 2:
                         ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
+                        if(msg.obj.toString().equals("修改成功")){
+                            finish();
+                            Const.isRefreshUserInfo = true;
+                        }
                         break;
                     case 3:
                         ToastUtils.show("", Toast.LENGTH_SHORT);
