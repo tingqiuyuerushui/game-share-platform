@@ -99,6 +99,7 @@ public class LoginActivity extends Activity {
                     RegistResultEntity registResultEntity = gson.fromJson(sb.toString(),RegistResultEntity.class);
                     Timber.e(registResultEntity.getData().getField_user_mobile().get(0).getValue()+"");
                     MySharedData.sharedata_WriteString(context,"userId",registResultEntity.getData().getField_user_mobile().get(0).getValue());
+                    MySharedData.sharedata_WriteInt(context,"uid",registResultEntity.getData().getUid().get(0).getValue());
                     MySharedData.sharedata_WriteString(context,"password",password);
                 }else {
                     Timber.e("create result" + result);

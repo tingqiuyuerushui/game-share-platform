@@ -45,4 +45,6 @@ public class Const {
     public static final String getRongToken = base + "/peipei/getUserToken";
     //更新融云用户信息
     public static final String updateRongUserInfo = base + "/peipei/refreshUserInfo";
+    //视频点赞
+    public static final String likeVideo = baseUrl + "/api/v1/flagrest?_format=json";
 }

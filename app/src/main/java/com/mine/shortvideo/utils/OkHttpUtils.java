@@ -347,6 +347,10 @@ public class OkHttpUtils {
     public static void postJsonAsync(String url, String json, DataCallBack callBack) {
         getInstance().inner_postJsonAsync(url, json, callBack);
     }
+    //-------------------------提交json--------------------------
+    public static void postJsonNoAuthAsync(String url, String json, DataCallBack callBack) {
+        getInstance().inner_postJsonNoAuthAsync(url, json, callBack);
+    }
     private void inner_postJsonAsync(String url, String json, final DataCallBack callBack) {
         Timber.e("postJson url=="+url);
         Timber.e("json parameter=="+json);
@@ -355,6 +359,27 @@ public class OkHttpUtils {
                 .url(url)
                 .post(body)
                 .addHeader("Authorization","Basic " + getAuthHeader())
+                .addHeader("X-CSRF-Token",MySharedData.sharedata_ReadString(MyApplication.getAppContext(),"token"))
+                .build();
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                deliverDataFailure(request, e, callBack);
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                deliverDataSuccess(result, callBack);
+            }
+        });
+    }
+    private void inner_postJsonNoAuthAsync(String url, String json, final DataCallBack callBack) {
+        Timber.e("postJson url=="+url);
+        Timber.e("json parameter=="+json);
+        RequestBody body = RequestBody.create(JSONTYPE, json);
+        final Request request = new Request.Builder()
+                .url(url)
+                .post(body)
                 .addHeader("X-CSRF-Token",MySharedData.sharedata_ReadString(MyApplication.getAppContext(),"token"))
                 .build();
         mClient.newCall(request).enqueue(new Callback() {

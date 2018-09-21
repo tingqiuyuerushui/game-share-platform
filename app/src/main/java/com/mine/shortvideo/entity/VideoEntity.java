@@ -50,6 +50,24 @@ public class VideoEntity {
         private String collect_count;
         private String body;
         private String nid;
+        private String Flags_like;
+        private String Flags_collect;
+
+        public String getFlags_like() {
+            return Flags_like;
+        }
+
+        public void setFlags_like(String flags_like) {
+            Flags_like = flags_like;
+        }
+
+        public String getFlags_collect() {
+            return Flags_collect;
+        }
+
+        public void setFlags_collect(String flags_collect) {
+            Flags_collect = flags_collect;
+        }
 
         public String getTitle() {
             title = Utils.getTitle(title);
