@@ -27,6 +27,8 @@ import com.mine.shortvideo.utils.ToastUtils;
 import com.mine.shortvideo.utils.Utils;
 import com.mine.shortvideo.viewpager.OnViewPagerListener;
 import com.mine.shortvideo.viewpager.ViewPagerLayoutManager;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -276,4 +278,5 @@ public class VideoFragment extends BaseFragment {
             dialogUtils.dismissProgress();
         }
     }
+
 }

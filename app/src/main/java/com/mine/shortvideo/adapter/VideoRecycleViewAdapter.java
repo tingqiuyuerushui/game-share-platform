@@ -1,5 +1,6 @@
 package com.mine.shortvideo.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -22,6 +23,12 @@ import com.mine.shortvideo.entity.LikeCollectEntity;
 import com.mine.shortvideo.entity.VideoEntity;
 import com.mine.shortvideo.utils.MySharedData;
 import com.mine.shortvideo.utils.OkHttpUtils;
+import com.mine.shortvideo.utils.ToastUtils;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.media.UMVideo;
 
 import java.io.IOException;
 import java.util.List;
@@ -63,7 +70,7 @@ public class VideoRecycleViewAdapter extends RecyclerView.Adapter<VideoRecycleVi
             holder.imgUserPortrait.setImageResource(R.mipmap.img_user_example);
         }else{
 
-            String imgUrl = "http://www.uaes.site:8088" + listVideo.get(position).getUser_picture();
+            String imgUrl = Const.baseUrl + listVideo.get(position).getUser_picture();
             Glide.with(context)
                     .load(imgUrl)
                     .into(holder.imgUserPortrait);
@@ -110,6 +117,13 @@ public class VideoRecycleViewAdapter extends RecyclerView.Adapter<VideoRecycleVi
                 }
             }
         });
+        holder.tvCollectCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new ShareAction((Activity) context).withText("分享").withMedia(shareVideo(listVideo.get(position).getField_media_video_file())).setDisplayList(SHARE_MEDIA.SINA,SHARE_MEDIA.QQ,SHARE_MEDIA.WEIXIN,SHARE_MEDIA.WEIXIN_CIRCLE)
+                        .setCallback(shareListener).open();
+            }
+        });
 //        holder.imgUserPortrait.setImageResource(imgs[position / 2]);
 //        holder.videoView.setVideoURI(Uri.parse("android.resource://"+context.getPackageName()+"/"+ videos[position/2]));
     }
@@ -119,7 +133,17 @@ public class VideoRecycleViewAdapter extends RecyclerView.Adapter<VideoRecycleVi
         return listVideo.size();
     }
 
-
+    private UMVideo shareVideo(String urlVideo){
+//        String videourl = "http://ips.ifeng.com/video19.ifeng.com/video09/2018/07/05/35476841-102-009-091221.mp4?vid=42871dd3-9891-4694-8027-dae611ee9106&uid=1489972570765_iiyhy01818&from=v_Free&pver=vHTML5Player_v2.0.0&sver=&se=%E5%87%A4%E5%87%B0%E7%BD%91%E9%9D%9E%E5%B8%B8%E9%81%93&cat=61-65&ptype=61&platform=pc&sourceType=h5&dt=1530752669000&gid=avx1AWRthOKX&sign=83f904d8762d24e936e9b85b058b8650&tm=1530845782680";
+        String videourl = urlVideo;
+        UMVideo video;
+        video = new UMVideo(videourl);
+        video.setTitle("王者五杀视频");//视频的标题
+//        video.setH5Url("http://www.51pepe.com/sites/default/files/pictures/2018-09/frame_1s_0.jpg");//视频的缩略图
+        video.setThumb(new UMImage(context,"http://www.51pepe.com/sites/default/files/pictures/2018-09/frame_1s_0.jpg"));
+        video.setDescription("这是个有趣的游戏视频");//视频的描述
+        return video;
+    }
     class ViewHolder extends RecyclerView.ViewHolder{
         private boolean isClicked = false;
         @BindView(R.id.video_view)
@@ -149,11 +173,11 @@ public class VideoRecycleViewAdapter extends RecyclerView.Adapter<VideoRecycleVi
 //            wechatIntent.setType("text/plain");
 //            wechatIntent.putExtra(Intent.EXTRA_TEXT, "分享到微信的内容");
 //            context.startActivity(wechatIntent);
-//            Intent shareIntent = new Intent();
-//            shareIntent.setAction(Intent.ACTION_SEND);            //分享视频只能单个分享
-//            shareIntent.putExtra(Intent.EXTRA_STREAM,"www.uaes.site:8088/d86//sites//default/files/2018-09/%25E5%258D%25A2%25E5%25B8%2583.mp4");
-//            shareIntent.setType("audio/*");
-//            context.startActivity(Intent.createChooser(shareIntent, "分享到"));
+////            Intent shareIntent = new Intent();
+////            shareIntent.setAction(Intent.ACTION_SEND);            //分享视频只能单个分享
+////            shareIntent.putExtra(Intent.EXTRA_STREAM,"www.uaes.site:8088/d86//sites//default/files/2018-09/%25E5%258D%25A2%25E5%25B8%2583.mp4");
+////            shareIntent.setType("audio/*");
+////            context.startActivity(Intent.createChooser(shareIntent, "分享到"));
         }
         @OnClick(R.id.tv_comment_count)
         public void comment(){
@@ -186,4 +210,43 @@ public class VideoRecycleViewAdapter extends RecyclerView.Adapter<VideoRecycleVi
             }
         });
     }
+    private UMShareListener shareListener = new UMShareListener() {
+        /**
+         * @descrption 分享开始的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onStart(SHARE_MEDIA platform) {
+
+        }
+
+        /**
+         * @descrption 分享成功的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onResult(SHARE_MEDIA platform) {
+            ToastUtils.show("分享成功");
+        }
+
+        /**
+         * @descrption 分享失败的回调
+         * @param platform 平台类型
+         * @param t 错误原因
+         */
+        @Override
+        public void onError(SHARE_MEDIA platform, Throwable t) {
+            ToastUtils.show("分享失败");
+        }
+
+        /**
+         * @descrption 分享取消的回调
+         * @param platform 平台类型
+         */
+        @Override
+        public void onCancel(SHARE_MEDIA platform) {
+            ToastUtils.show("分享取消");
+
+        }
+    };
 }

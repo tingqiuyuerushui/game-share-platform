@@ -45,6 +45,7 @@ import com.mine.shortvideo.utils.MySharedData;
 import com.mine.shortvideo.utils.OkHttpUtils;
 import com.mine.shortvideo.utils.ToastUtils;
 import com.mine.shortvideo.utils.Utils;
+import com.umeng.socialize.UMShareAPI;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -533,7 +534,11 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         }
     }
     private long exitTime = 0;
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+    }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -19,7 +20,8 @@
         android:id="@+id/et_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_marginTop="150dp"
+        android:layout_centerHorizontal="true"
         android:background="@null"
         android:ems="10"
         android:hint="输入手机号码"
@@ -82,4 +84,39 @@
         android:padding="10dp"
         android:textColor="@color/white"
         android:text="完成"/>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="300dp"
+        android:textColor="@color/white"
+        android:text="其他方式登入"/>
+
+    <ImageView
+        android:id="@+id/img_wechat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="100dp"
+        android:src="@mipmap/icon_wechat"/>
+
+    <ImageView
+        android:id="@+id/img_qq"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/img_wechat"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/icon_qq"/>
+
+    <ImageView
+        android:id="@+id/img_weibo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/img_wechat"
+        android:layout_toEndOf="@+id/textView3"
+        android:src="@mipmap/icon_weibo"/>
 </RelativeLayout>

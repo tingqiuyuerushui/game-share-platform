@@ -212,13 +212,13 @@ public class Utils {
      */
     public static String getImgUrl(final String s)
     {
-        if(s.startsWith("/d86")){
+        if(s.startsWith("/sites")){
             return s;
         }
         String regex;
         final List<String> list = new ArrayList<String>();
 //        regex = "<a[^>]*href=(\"([^\"]*)\"|\'([^\']*)\'|([^\\s>]*))[^>]*>(.*?)</a>";
-        regex ="/d86.*?\"";
+        regex ="/sites.*?\"";
         final Pattern pa = Pattern.compile(regex, Pattern.DOTALL);
         final Matcher ma = pa.matcher(s);
         while (ma.find())
@@ -266,7 +266,6 @@ public class Utils {
         }
         int index = s.indexOf("-");
         String result = s.substring(index+1);
-
         return result;
 
     }

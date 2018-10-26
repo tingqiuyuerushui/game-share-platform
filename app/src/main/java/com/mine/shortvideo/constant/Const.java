@@ -5,7 +5,8 @@ public class Const {
 
     public static String tokenRongIM = "IUfl58RT07nV+bevakr37kK8wVquZAqi8oaweHed+/nK2Ah2StAaMCfjuv4Qyp/j1Y95GSFPW/0N2XqjryPQ1nEodYYPvvCy";
 //    public static final String tokenRongIM1 = "GNqSNjh7A5K1/IkDOuQVdNv7nwl/U+JNwTLU1jKihiEFPAIjYKXZSW15ZOFqGWEkaIV2w9euQj57DaZ9PDwe2w==";
-    public static final String baseUrl = "http://www.uaes.site:8088/d86";
+//    public static final String baseUrl = "http://www.uaes.site:8088/d86";
+    public static final String baseUrl = "http://www.51pepe.com";
     public static final String base = "http://121.196.197.77:8060";
     //获取token接口
     public static final String getTokenUrl = baseUrl + "/rest/session/token?_format=json";

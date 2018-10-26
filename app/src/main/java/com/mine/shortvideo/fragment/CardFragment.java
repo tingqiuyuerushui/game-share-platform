@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.mine.shortvideo.R;
 import com.mine.shortvideo.activity.LoginActivity;
+import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.entity.PublishTaskEntity;
 import com.mine.shortvideo.utils.ToastUtils;
 import com.mine.shortvideo.utils.Utils;
@@ -98,8 +100,9 @@ public class CardFragment extends Fragment {
         taskInfo = taskListInfo.get(index-1);
         uid = taskInfo.getUid();
         if (bundle != null) {
+//            Timber.e("头像URL---->"+Const.baseUrl+taskInfo.getUser_picture());
             Glide.with(getActivity())
-                    .load("http://www.uaes.site:8088"+taskInfo.getUser_picture())
+                    .load(Const.baseUrl+taskInfo.getUser_picture())
                     .into(imgPortrait);
             if(!TextUtils.isEmpty(taskInfo.getField_user_location())){
                 tvDistance.setText("☞ "+taskInfo.getField_user_location());

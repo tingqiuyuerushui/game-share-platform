@@ -36,11 +36,11 @@ public class MyApplication extends Application {
         RongIM.init(this);
     }
     private void initPlatformConfig(){
-        PlatformConfig.setWeixin("wxdc1e388c3822c80b", "3baf1193c85774b3fd9d18447d76cab0");
+        PlatformConfig.setWeixin("wxdf23590fa50d364c", "f6647b234ecae0b88de92a6cedf2a8b6");
         //豆瓣RENREN平台目前只能在服务器端配置
-        PlatformConfig.setSinaWeibo("3921700954", "04b48b094faeb16683c32669824ebdad", "http://sns.whalecloud.com");
+        PlatformConfig.setSinaWeibo("556912100", "49c810e08c4f8292392412b9720bceed", "http://www.51pepe.com");
         PlatformConfig.setYixin("yxc0614e80c9304c11b0391514d09f13bf");
-        PlatformConfig.setQQZone("100424468", "c7394704798a158208a74ab60104f0ba");
+        PlatformConfig.setQQZone("101511523", "03ab383d9eff82180199a23849be1618");
         PlatformConfig.setTwitter("3aIN7fuF685MuZ7jtXkQxalyi", "MK6FEYG63eWcpDFgRYw4w9puJhzDl0tyuqWjZ3M7XJuuG7mMbO");
         PlatformConfig.setAlipay("2015111700822536");
         PlatformConfig.setLaiwang("laiwangd497e70d4", "d497e70d4c3e4efeab1381476bac4c5e");
