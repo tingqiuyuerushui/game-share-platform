@@ -316,7 +316,6 @@ public class AccountSettingActivity extends Activity {
 
     public class MyHandler extends Handler {
         private WeakReference<Activity> reference;
-
         public MyHandler(Activity activity) {
             reference = new WeakReference<Activity>(activity);
         }

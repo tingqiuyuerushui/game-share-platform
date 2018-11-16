@@ -3,6 +3,7 @@ package com.mine.shortvideo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,8 +62,10 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.qqtheme.framework.picker.OptionPicker;
 import cn.qqtheme.framework.picker.TimePicker;
 import cn.qqtheme.framework.util.ConvertUtils;
+import cn.qqtheme.framework.widget.WheelView;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
 import okhttp3.Request;
@@ -100,6 +104,12 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     private int userId;
     private String nickName;
     private String userPortrait;
+    private static int TASKTYPE = 0;
+    private int goldvalue = 200;
+    private int starnum = 1;
+    private String targetclass = "青铜";
+    private int teachnum = 2;
+    private String TASKTYPESTR = "playtogether";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -234,9 +244,10 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     }
 
     //全屏弹出
-    public void showPublishTask() {
+    public void showPublishTask(int tasktype) {
         if (popupWindow1 != null && popupWindow1.isShowing()) return;
         View upView = LayoutInflater.from(this).inflate(R.layout.publish_task, null);
+
         //测量View的宽高
         Utils.measureWidthAndHeight(upView);
         popupWindow1 = new CommonPopupWindow.Builder(this)
@@ -354,6 +365,74 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         });
         picker.show();
     }
+    public void onOptionPicker(View view) {
+        final TextView tvTargetClass = view.findViewById(R.id.tv_target_class);
+        OptionPicker picker = null;
+        if(TASKTYPE == Const.TASKTUTORIAL){
+            picker = new OptionPicker(this, new String[]{
+                    "1", "2", "3","4","5","6","7", "8","9", "10"
+            });
+        }else {
+            picker = new OptionPicker(this, new String[]{
+                    "青铜","白银", "黄金","铂金", "砖石","星耀","王者"
+            });
+        }
+        picker.setCanceledOnTouchOutside(false);
+        picker.setDividerRatio(WheelView.DividerConfig.FILL);
+        picker.setShadowColor(Color.GRAY, 40);
+        picker.setSelectedIndex(1);
+        picker.setCycleDisable(true);
+        picker.setTextSize(14);
+        picker.setOnOptionPickListener(new OptionPicker.OnOptionPickListener() {
+            @Override
+            public void onOptionPicked(int index, String item) {
+//                ToastUtils.show("index=" + index + ", item=" + item);
+                if(TASKTYPE == Const.TASKTUTORIAL){
+                    tvTargetClass.setText(item + "局");
+                    teachnum = Integer.parseInt(item);
+                }else {
+                    tvTargetClass.setText(item);
+                    targetclass = item;
+                }
+            }
+        });
+        picker.show();
+    }
+    public void onNumPicker(View view, final int numType) {
+        final TextView tvStarNum = view.findViewById(R.id.tv_star_num);
+        final TextView tvGoldValue = view.findViewById(R.id.tv_gold_value);
+        OptionPicker picker = null;
+        if(numType == Const.STARNUM){
+            picker = new OptionPicker(this, new String[]{
+                    "1", "2", "3","4","5"
+            });
+        }else {
+            picker = new OptionPicker(this, new String[]{
+                    "100","200","400","500", "1000"
+            });
+        }
+        picker.setCanceledOnTouchOutside(false);
+        picker.setDividerRatio(WheelView.DividerConfig.FILL);
+        picker.setShadowColor(Color.GRAY, 40);
+        picker.setSelectedIndex(1);
+        picker.setCycleDisable(true);
+        picker.setTextSize(14);
+        picker.setOnOptionPickListener(new OptionPicker.OnOptionPickListener() {
+            @Override
+            public void onOptionPicked(int index, String item) {
+//                ToastUtils.show("index=" + index + ", item=" + item);
+                if (numType == Const.STARNUM){
+                    tvStarNum.setText(item + "星");
+                    starnum = Integer.parseInt(item);
+                }
+                if(numType == Const.GOLD){
+                    tvGoldValue.setText(item);
+                    goldvalue = Integer.parseInt(item);
+                }
+            }
+        });
+        picker.show();
+    }
     private void publishTask(String jsonStr){
         dialogUtils.showProgress(context);
         OkHttpUtils.postJsonAsync(Const.publishTask, jsonStr, new OkHttpUtils.DataCallBack() {
@@ -446,7 +525,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                 });
                 break;
             case R.layout.publish_task:
-                ViewHolder1 viewHolder1 = new ViewHolder1(view);
+                ViewHolder1 viewHolder1 = new ViewHolder1(view,TASKTYPE);
                 break;
         }
     }
@@ -454,6 +533,8 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     class ViewHolder {
         @OnClick(R.id.ll_score)
         public void showToast() {
+            TASKTYPE = Const.TASKSCORE;
+            showPublishTask(TASKTYPE);
             ToastUtils.show("急速上分");
             if (popupWindow != null) {
                 popupWindow.dismiss();
@@ -462,6 +543,8 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
 
         @OnClick(R.id.ll_gold)
         public void showToast1() {
+            TASKTYPE = Const.TASKGOLD;
+            showPublishTask(TASKTYPE);
             ToastUtils.show("任务赏金");
             if (popupWindow != null) {
                 popupWindow.dismiss();
@@ -470,6 +553,8 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
 
         @OnClick(R.id.ll_tutorial)
         public void showToast2() {
+            TASKTYPE = Const.TASKTUTORIAL;
+            showPublishTask(TASKTYPE);
             ToastUtils.show("大神教程");
             if (popupWindow != null) {
                 popupWindow.dismiss();
@@ -478,7 +563,8 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
 
         @OnClick(R.id.ll_free)
         public void showToast3() {
-            showPublishTask();
+            TASKTYPE = Const.TASKFREE;
+            showPublishTask(TASKTYPE);
             ToastUtils.show("完美脱单");
             if (popupWindow != null) {
                 popupWindow.dismiss();
@@ -505,12 +591,18 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         @OnClick(R.id.btn_publish)
         public void publish() {
             ToastUtils.show("发布任务");
-            String jsonStr = RequestJsonParameter.publishTask(
-                    "完美脱单 by"+ MySharedData.sharedata_ReadString(context,"userId"),
+            String jsonStr = RequestJsonParameter.publishTaskV2(
+                    userId,
+                    goldvalue,
+                    starnum,
+                    teachnum,
+                    "任务 by"+ MySharedData.sharedata_ReadString(context,"userId"),
                     tvGameLevel.getText().toString(),
                     tvGamePlatform.getText().toString(),
                     tvGamename.getText().toString(),
-                    date + "T"+tvBooktime.getText().toString()+":00+00:00"
+                    targetclass,
+                    date + "T"+tvBooktime.getText().toString()+":00+00:00",
+                    TASKTYPESTR
             );
             publishTask(jsonStr);
 
@@ -521,16 +613,97 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
             onTimePicker(view);
         }
 
+        @OnClick(R.id.tv_target_class)
+        public void targetClass(){
+            onOptionPicker(view);
+        }
+
         @OnClick(R.id.img_close)
         public void closePop() {
             if (popupWindow1 != null) {
                 popupWindow1.dismiss();
             }
         }
+        @OnClick(R.id.tv_star_num)
+        public void starNum(){
+            onNumPicker(view,Const.STARNUM);
+        }
+        @OnClick(R.id.tv_gold_value)
+        public void taskGold(){
+            onNumPicker(view,Const.GOLD);
+        }
 
-        ViewHolder1(View view) {
+        ViewHolder1(View view,int tasktype) {
             ButterKnife.bind(this, view);
             this.view = view;
+            LinearLayout llGold = view.findViewById(R.id.ll_gold);
+            LinearLayout llTarget = view.findViewById(R.id.ll_target);
+            TextView tvTarget = view.findViewById(R.id.tv_target);
+            TextView tvTargetClass = view.findViewById(R.id.tv_target_class);
+            TextView tvStar = view.findViewById(R.id.tv_star);
+            TextView tvStarNum = view.findViewById(R.id.tv_star_num);
+            TextView tvGold = view.findViewById(R.id.tv_gold);
+            TextView tvGoldValue = view.findViewById(R.id.tv_gold_value);
+            switch (tasktype){
+                case Const.TASKSCORE:
+                    TASKTYPESTR = Const.TASKSCORESTR;
+                    if(llGold.getVisibility() == View.GONE){
+                        llGold.setVisibility(View.VISIBLE);
+                    }
+                    if(llTarget.getVisibility() == View.GONE){
+                        llTarget.setVisibility(View.VISIBLE);
+                    }
+                    if(tvStar.getVisibility() == View.GONE || tvStarNum.getVisibility() == View.GONE){
+                        tvStar.setVisibility(View.VISIBLE);
+                        tvStarNum.setVisibility(View.VISIBLE);
+                    }
+                    tvTarget.setText("目标段位");
+                    tvTargetClass.setText("青铜");
+                    tvStar.setText("星数");
+                    tvGold.setText("酬金");
+
+                    break;
+                case Const.TASKGOLD:
+                    TASKTYPESTR = Const.TASKGOLDSTR;
+                    if(llGold.getVisibility() == View.GONE){
+                        llGold.setVisibility(View.VISIBLE);
+                    }
+                    if(llTarget.getVisibility() == View.GONE){
+                        llTarget.setVisibility(View.VISIBLE);
+                    }
+                    if(tvStar.getVisibility() == View.GONE || tvStarNum.getVisibility() == View.GONE){
+                        tvStar.setVisibility(View.VISIBLE);
+                        tvStarNum.setVisibility(View.VISIBLE);
+                    }
+                    tvTarget.setText("目标段位");
+                    tvTargetClass.setText("青铜");
+                    tvStar.setText("星数");
+                    tvGold.setText("赏金");
+                    break;
+                case Const.TASKTUTORIAL:
+                    TASKTYPESTR = Const.TASKTUTORIALSTR;
+                    if(llGold.getVisibility() == View.GONE){
+                        llGold.setVisibility(View.VISIBLE);
+                    }
+                    if(llTarget.getVisibility() == View.GONE){
+                        llTarget.setVisibility(View.VISIBLE);
+                    }
+                    tvTarget.setText("教学局数");
+                    tvTargetClass.setText("2局");
+                    tvStar.setVisibility(View.GONE);
+                    tvStarNum.setVisibility(View.GONE);
+                    tvGold.setText("酬金");
+                    break;
+                case Const.TASKFREE:
+                    TASKTYPESTR = Const.TASKFREESTR;
+                    if(llGold.getVisibility() == View.VISIBLE){
+                        llGold.setVisibility(View.GONE);
+                    }
+                    if(llTarget.getVisibility() == View.VISIBLE){
+                        llTarget.setVisibility(View.GONE);
+                    }
+                    break;
+            }
         }
     }
     private long exitTime = 0;

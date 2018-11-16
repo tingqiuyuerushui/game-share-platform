@@ -132,6 +132,12 @@
         <activity android:name=".activity.VideoCommentActivity"
                   android:screenOrientation="portrait"
                   android:theme="@style/myTransparent"/>
+        <activity android:name=".activity.WalletActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/AppTheme.Skid_1"/>
+        <activity android:name=".activity.NotifyActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/AppTheme.Skid_1"/>
     </application>
 
 </manifest>

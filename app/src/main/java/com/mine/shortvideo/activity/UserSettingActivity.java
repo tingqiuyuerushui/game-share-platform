@@ -55,7 +55,7 @@ public class UserSettingActivity extends Activity {
 //        Timber.e("UserInfoEntity serializable-->" + userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue());
     }
 
-    @OnClick({R.id.tv_account_setting, R.id.ll_account_setting,R.id.img_left,R.id.ll_user_exit,R.id.tv_user_exit})
+    @OnClick({R.id.tv_account_setting, R.id.ll_account_setting,R.id.img_left,R.id.ll_user_exit,R.id.tv_user_exit,R.id.ll_wallet})
     public void onViewClicked(View view) {
         Intent intent = new Intent();
         switch (view.getId()) {
@@ -66,6 +66,10 @@ public class UserSettingActivity extends Activity {
                 break;
             case R.id.img_left:
                 finish();
+                break;
+            case R.id.ll_wallet:
+                intent.setClass(context,WalletActivity.class);
+                startActivity(intent);
                 break;
             case R.id.ll_user_exit:
             case R.id.tv_user_exit:

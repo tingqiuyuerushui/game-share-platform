@@ -66,6 +66,65 @@
             android:layout_marginLeft="2dp"
             android:text="12:00"/>
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_target"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="40dp"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/tv_target"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorGray"
+            android:text="教学局数"/>
+        <TextView
+            android:id="@+id/tv_target_class"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="20dp"
+            android:text="2局"/>
+        <TextView
+            android:id="@+id/tv_star"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorGray"
+            android:layout_marginLeft="15dp"
+            android:text="星数"/>
+        <TextView
+            android:id="@+id/tv_star_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="20dp"
+            android:text="1星"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_gold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="40dp"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/tv_gold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorGray"
+            android:text="酬金"/>
+        <TextView
+            android:id="@+id/tv_gold_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="20dp"
+            android:text="200"/>
+    </LinearLayout>
     <TextView
         android:id="@+id/btn_publish"
         android:layout_width="match_parent"
@@ -80,6 +139,7 @@
         android:orientation="horizontal"
         android:layout_marginBottom="20dp"
         android:gravity="right">
+
         <ImageView
             android:id="@+id/img_close"
             android:layout_width="wrap_content"

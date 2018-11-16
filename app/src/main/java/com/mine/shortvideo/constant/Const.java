@@ -38,6 +38,8 @@ public class Const {
     public static final String linkFile = baseUrl + "/user/";
     //获取用户视频
     public static final String getUserVideoList = baseUrl + "/api/v1/myvideo/";
+    //获取发布的任务
+    public static final String getTaskListV2 = baseUrl + "/api/v1/gettask?_format=json";
     //删除用户视频
     public static final String deleteUserVideo = baseUrl + "/node/";
     //发布完美脱单
@@ -48,4 +50,16 @@ public class Const {
     public static final String updateRongUserInfo = base + "/peipei/refreshUserInfo";
     //视频点赞
     public static final String likeVideo = baseUrl + "/api/v1/flagrest?_format=json";
+
+
+    public final static int TASKSCORE = 1;
+    public final static int TASKGOLD = 2;
+    public final static int TASKTUTORIAL = 3;
+    public final static int TASKFREE = 4;
+    public final static int STARNUM = 5;
+    public final static int GOLD = 6;
+    public final static String TASKSCORESTR = "pointup";
+    public final static String TASKGOLDSTR = "taskgold";
+    public final static String TASKTUTORIALSTR = "tutorial";
+    public final static String TASKFREESTR = "playtogether";
 }

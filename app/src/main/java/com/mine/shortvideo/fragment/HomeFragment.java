@@ -16,10 +16,8 @@ import com.mine.shortvideo.adapter.ContentFragmentAdapter;
 import com.mine.shortvideo.application.MyApplication;
 import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.customview.OrientedViewPager;
-import com.mine.shortvideo.entity.PublishTaskEntity;
-import com.mine.shortvideo.entity.UserInfoEntity;
+import com.mine.shortvideo.entity.PublishTaskListEntity;
 import com.mine.shortvideo.transformer.VerticalStackTransformer;
-import com.mine.shortvideo.utils.CommonDialogUtils;
 import com.mine.shortvideo.utils.MySharedData;
 import com.mine.shortvideo.utils.OkHttpUtils;
 import com.mine.shortvideo.utils.ToastUtils;
@@ -42,9 +40,9 @@ public class HomeFragment extends BaseFragment {
     private boolean QUESTAUTH = true;
     private boolean QUESTNOAUTH = false;
     private Context context;
-    private int page = 1;
-    private PublishTaskEntity publishTaskEntity;
-    private List<PublishTaskEntity.DataBean> listTaskList;
+    private int page = 0;
+    private PublishTaskListEntity publishTaskEntity;
+    private List<PublishTaskListEntity.DataBean> listTaskList;
 //    private CommonDialogUtils dialogUtils;
     private MyHandler handler = null;
     private int TASK_COUNT = 0;
@@ -84,7 +82,7 @@ public class HomeFragment extends BaseFragment {
 
     private void getPublishTaskList() {
 //        dialogUtils.showProgress(context);
-        OkHttpUtils.getAsync(Const.getTaskList+"&page="+page,QUESTNOAUTH, new OkHttpUtils.DataCallBack() {
+        OkHttpUtils.getAsync(Const.getTaskListV2+"&page="+page,QUESTNOAUTH, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
                 Timber.e("请求失败：" + e);
@@ -103,7 +101,7 @@ public class HomeFragment extends BaseFragment {
                 sb.append(result);
                 sb.append("}");
                 Gson gson = new Gson();
-                publishTaskEntity = gson.fromJson(sb.toString(),PublishTaskEntity.class);
+                publishTaskEntity = gson.fromJson(sb.toString(),PublishTaskListEntity.class);
                 if(listTaskList == null){
                     listTaskList = new ArrayList<>();
                 }

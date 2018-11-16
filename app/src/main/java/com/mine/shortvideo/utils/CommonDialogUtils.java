@@ -40,7 +40,7 @@ public class CommonDialogUtils {
      * 显示ProgressDialog
      */
     public void showProgress(Context context) {
-        /*if (activity == null || activity.isFinishing()) {
+        /*if (activity_wallet == null || activity_wallet.isFinishing()) {
             return;
         }*/
         if(mProgressDialog==null){

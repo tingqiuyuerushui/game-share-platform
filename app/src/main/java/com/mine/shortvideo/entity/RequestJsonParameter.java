@@ -62,6 +62,45 @@ public class RequestJsonParameter {
                 "\"}]}";
         return postJsonData;
     }
+    //发布任务json string
+    public static String publishTaskV2(
+            int uid,
+            int goldvalue,
+            int starnum,
+            int teachnum,
+            String title,
+            String gameLevel,
+            String gamePlatform,
+            String gameName,
+            String targetClass,
+            String bookTime,
+            String taskType
+            ){
+        String postJsonData = " { \"type\":[{\"target_id\":\"task\", \"target_type\":\"node_type\"}],\"title\":[{\"value\":\"" +
+                title +
+                "\"}],\"uid\":[{\"target_id\":" +
+                uid +
+                ",\"target_type\":\"user\"}],\"field_anytime\":[{\"value\":true}],\"field_booktime\":[{\"value\":\"" +
+                bookTime +
+                "\"}],\"field_game_level\":[ {\"value\":\"" +
+                gameLevel +
+                "\"} ],\"field_game_platform\":[{ \"value\":\"" +
+                gamePlatform +
+                "\"}],\"field_gamename\":[{\"value\":\"" +
+                gameName +
+                "\" } ],\"field_remuneration\":[{\"value\":" +
+                goldvalue +
+                "}],\"field_stars\":[{\"value\":" +
+                starnum +
+                "}],\"field_target_division\":[{\"value\":\"" +
+                targetClass +
+                "\"}],\"field_task_state\":[{\"value\":\"published\"}],\"field_teach_game_numbers\":[{\"value\":" +
+                teachnum +
+                "}],\"field_type\":[{\"value\":\"" +
+                taskType +
+                "\"}]}";
+        return postJsonData;
+    }
     //上传视频第二步json参数
     public static String CreateMediaJsonStr(int uid,int targerId){
         String postJsonData = "{\"bundle\": [{\"target_id\": \"video\",\"target_type\": \"media_type\"}],\"name\": [{\"value\": \"sample2\"}],\"uid\": [{\"target_id\": " +

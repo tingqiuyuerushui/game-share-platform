@@ -1,6 +1,7 @@
 package com.mine.shortvideo.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.mine.shortvideo.R;
+import com.mine.shortvideo.activity.NotifyActivity;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -21,8 +23,8 @@ import io.rong.imkit.fragment.ConversationListFragment;
 public class MessageFragment extends BaseFragment {
     @BindView(R.id.button2)
     Button button2;
-     @BindView(R.id.fragment_conversationlist)
-     FrameLayout fragmentContent;
+    @BindView(R.id.fragment_conversationlist)
+    FrameLayout fragmentContent;
     private Context context;
     private Conversation.ConversationType[] mConversationsTypes = null;
     private ConversationListFragment mConversationListFragment = null;
@@ -87,11 +89,17 @@ public class MessageFragment extends BaseFragment {
             return mConversationListFragment;
         }
     }
-    @OnClick(R.id.button2)
+    @OnClick({R.id.button2,R.id.tv_notify,R.id.btn_notity})
     public void onViewClicked(View view) {
+        Intent intent = new Intent();
         switch (view.getId()) {
             case R.id.button2:
                 RongIM.getInstance().startConversation(context, Conversation.ConversationType.PRIVATE, "Android", "Android");
+                break;
+            case R.id.btn_notity:
+            case R.id.tv_notify:
+                intent.setClass(context, NotifyActivity.class);
+                startActivity(intent);
                 break;
         }
     }

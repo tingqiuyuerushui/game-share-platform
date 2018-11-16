@@ -17,6 +17,7 @@
     </LinearLayout>
     <View style="@style/user_setting_line"/>
     <LinearLayout
+        android:id="@+id/ll_wallet"
         style="@style/user_setting_ll">
         <TextView
             android:text="钱包"
