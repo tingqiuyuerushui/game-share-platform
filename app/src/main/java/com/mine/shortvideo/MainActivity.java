@@ -150,7 +150,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     }
 
     private void initView() {
-        connectRongIM(Const.tokenRongIM);
+//        connectRongIM(Const.tokenRongIM);
         disableAllAnimation(bnveCenterIconOnly);
         int centerPosition = 2;
         bnveCenterIconOnly.setIconVisibility(false);
@@ -306,6 +306,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                 JSONObject jsonObject = JSON.parseObject(result);
                 String token = jsonObject.getString("token");
                 Const.tokenRongIM = jsonObject.getString("token");
+                connectRongIM(Const.tokenRongIM);
 
             }
         });

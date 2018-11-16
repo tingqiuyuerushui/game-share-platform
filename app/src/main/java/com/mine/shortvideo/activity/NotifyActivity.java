@@ -35,10 +35,6 @@ public class NotifyActivity extends Activity {
     TextView tvMatchReward;
     @BindView(R.id.tv_match_finish)
     TextView tvMatchFinish;
-    @BindView(R.id.rc_rate)
-    RatingBar rcRate;
-    @BindView(R.id.tv_star)
-    TextView tvStar;
     @BindView(R.id.tv_confirm_score)
     TextView tvConfirmScore;
     @BindView(R.id.ll_score)
