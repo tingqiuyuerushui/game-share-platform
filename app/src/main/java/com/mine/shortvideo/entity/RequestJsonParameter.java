@@ -101,6 +101,14 @@ public class RequestJsonParameter {
                 "\"}]}";
         return postJsonData;
     }
+    public static String changeTaskStatus(int uid,String taskStatus){
+        String postJsonData = "{\"field_gotuser\":[{\"target_id\":" +
+                uid +
+                ",\"target_type\":\"user\"}],\"field_task_state\":[{\"value\":\"" +
+                taskStatus +
+                "\"}],\"type\":[{\"target_id\": \"task\",\"target_type\": \"node_type\"}]}";
+        return postJsonData;
+    }
     //上传视频第二步json参数
     public static String CreateMediaJsonStr(int uid,int targerId){
         String postJsonData = "{\"bundle\": [{\"target_id\": \"video\",\"target_type\": \"media_type\"}],\"name\": [{\"value\": \"sample2\"}],\"uid\": [{\"target_id\": " +

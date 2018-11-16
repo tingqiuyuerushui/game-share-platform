@@ -50,6 +50,8 @@ public class Const {
     public static final String updateRongUserInfo = base + "/peipei/refreshUserInfo";
     //视频点赞
     public static final String likeVideo = baseUrl + "/api/v1/flagrest?_format=json";
+    //匹配任务
+    public static final String changeTaskStatus = baseUrl + "/node/";
 
 
     public final static int TASKSCORE = 1;
@@ -62,4 +64,9 @@ public class Const {
     public final static String TASKGOLDSTR = "taskgold";
     public final static String TASKTUTORIALSTR = "tutorial";
     public final static String TASKFREESTR = "playtogether";
+    public final static String TASKSTATUSMATCHED = "matched";
+    public final static String TASKSTATUSPUBLISHED = "published";
+    public final static String TASKSTATUSGONING = "TaskOngoning";
+    public final static String TASKSTATUSFINISH= "TaskFinish";
+    public final static String TASKSTATUSCLOSED= "TaskClose";
 }

@@ -1,7 +1,11 @@
 package com.mine.shortvideo.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
@@ -11,18 +15,32 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.mine.shortvideo.R;
 import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.entity.PublishTaskListEntity;
+import com.mine.shortvideo.entity.RequestJsonParameter;
+import com.mine.shortvideo.entity.UserInfoEntity;
+import com.mine.shortvideo.utils.CommonDialogUtils;
+import com.mine.shortvideo.utils.MySharedData;
+import com.mine.shortvideo.utils.OkHttpUtils;
+import com.mine.shortvideo.utils.ToastUtils;
+import com.mine.shortvideo.utils.Utils;
 
+import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Request;
+import timber.log.Timber;
+
+import static com.umeng.socialize.utils.DeviceConfig.context;
 
 /**
  * 作者：created by lun.zhang on 8/16/2018 14:05
@@ -88,14 +106,23 @@ public class ConversationActivity extends FragmentActivity {
     private float mPosX, mPosY, mCurPosX, mCurPosY;
     private String nickName;
     private String imgMyPortraitUrl;
+    private MyHandler handler;
+    private CommonDialogUtils dialogUtils;
+    private int userId;
+    private Context context;
+    private String nid;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.conversation);
+        context = this;
         ButterKnife.bind(this);
         title = getIntent().getData().getQueryParameter("title");
         Bundle bundle = getIntent().getExtras();
+        userId = MySharedData.sharedata_ReadInt(context, "uid");
+        dialogUtils = new CommonDialogUtils();
+        handler = new MyHandler(ConversationActivity.this);
         if (bundle != null) {
             taskInfo = bundle.getParcelable("task_info");
             initView();
@@ -124,6 +151,7 @@ public class ConversationActivity extends FragmentActivity {
             } else {
                 tvDistance.setText("未知");
             }
+            nid = taskInfo.getNid();
             nickName = taskInfo.getField_user_nickname();
             tvNickname.setText(nickName);
             tvNickname1.setText(nickName);
@@ -214,7 +242,26 @@ public class ConversationActivity extends FragmentActivity {
 
         });
     }
+    private void patchTask(){
+        String jsonStr = RequestJsonParameter.changeTaskStatus(userId,Const.TASKSTATUSMATCHED);
+        OkHttpUtils.patchJsonAsync(Const.changeTaskStatus + nid + "?_format=json", jsonStr, new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+                Utils.sendHandleMsg(2,"修改失败",handler);
+            }
 
+            @Override
+            public void requestSuccess(String result) throws Exception {
+                Timber.e("修改匹配结果-->" + result);
+                if(result.length() > 100){
+                    Utils.sendHandleMsg(2,"匹配成功",handler);
+                    finish();
+                }else {
+                    Utils.sendHandleMsg(2,"匹配失败",handler);
+                }
+            }
+        });
+    }
     private void collapse() {
         if (llUserInfo.getVisibility() == View.VISIBLE) {
             llUserInfo.setVisibility(View.GONE);
@@ -226,7 +273,35 @@ public class ConversationActivity extends FragmentActivity {
             llUserInfo.setVisibility(View.VISIBLE);
         }
     }
+    public class MyHandler extends Handler {
+        private WeakReference<Activity> reference;
+        public MyHandler(Activity activity) {
+            reference = new WeakReference<Activity>(activity);
+        }
 
+        @Override
+        public void handleMessage(Message msg) {
+            if (reference.get() != null) {
+                dismissProgress();
+                switch (msg.what) {
+                    case 1:
+                        break;
+                    case 2:
+                        ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                }
+            }
+        }
+    }
+    private void dismissProgress() {
+        if (dialogUtils != null) {
+            dialogUtils.dismissProgress();
+        }
+    }
     @OnClick({R.id.img_left, R.id.tv_title, R.id.tv_right})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -236,7 +311,7 @@ public class ConversationActivity extends FragmentActivity {
             case R.id.tv_title:
                 break;
             case R.id.tv_right:
-
+                patchTask();
                 break;
         }
     }

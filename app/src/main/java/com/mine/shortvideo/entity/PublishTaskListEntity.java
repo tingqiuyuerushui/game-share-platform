@@ -99,6 +99,15 @@ public class PublishTaskListEntity {
         private String field_user_level;
         private String field_user_voice;
         private String uid;
+        private String nid;
+
+        public String getNid() {
+            return nid;
+        }
+
+        public void setNid(String nid) {
+            this.nid = nid;
+        }
 
         public String getUid() {
             return uid;
@@ -425,6 +434,7 @@ public class PublishTaskListEntity {
             dest.writeString(this.field_user_level);
             dest.writeString(this.field_user_voice);
             dest.writeString(this.uid);
+            dest.writeString(this.nid);
         }
 
         public DataBean() {
@@ -466,6 +476,7 @@ public class PublishTaskListEntity {
             this.field_user_level = in.readString();
             this.field_user_voice = in.readString();
             this.uid = in.readString();
+            this.nid = in.readString();
         }
 
         public static final Parcelable.Creator<DataBean> CREATOR = new Parcelable.Creator<DataBean>() {
