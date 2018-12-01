@@ -74,6 +74,7 @@ public abstract class VerticalBaseTransformer implements ViewPager.PageTransform
         page.setPivotX(0);
         page.setPivotY(0);
         page.setTranslationX(0);
+        page.setTranslationY(0);
         page.setTranslationY(isPagingEnabled() ? 0f : -height * position);
 
         if (hideOffscreenPages()) {

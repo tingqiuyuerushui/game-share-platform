@@ -7,7 +7,8 @@ public class Const {
 //    public static final String tokenRongIM1 = "GNqSNjh7A5K1/IkDOuQVdNv7nwl/U+JNwTLU1jKihiEFPAIjYKXZSW15ZOFqGWEkaIV2w9euQj57DaZ9PDwe2w==";
 //    public static final String baseUrl = "http://www.uaes.site:8088/d86";
     public static final String baseUrl = "http://www.51pepe.com";
-    public static final String base = "http://121.196.197.77:8060";
+    public static final String base = "http://47.101.156.40:8060";
+//    public static final String base = "http://121.196.197.77:8060";
     //获取token接口
     public static final String getTokenUrl = baseUrl + "/rest/session/token?_format=json";
     //上传头像图片接口

@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.mine.shortvideo.R;
 import com.mine.shortvideo.activity.LoginActivity;
+import com.mine.shortvideo.activity.MallListActivity;
 import com.mine.shortvideo.activity.MinePlayVideoActivity;
 import com.mine.shortvideo.activity.SelectVideoListActivity;
 import com.mine.shortvideo.activity.UserSettingActivity;
@@ -434,7 +435,8 @@ public class MineFragment extends BaseFragment {
         }
     }
 
-    @OnClick({R.id.btn_share, R.id.btn_delete, R.id.btn_private_msg, R.id.btn_attention, R.id.btn_more,R.id.btn_login,R.id.tv_login})
+    @OnClick({R.id.btn_share, R.id.btn_delete, R.id.btn_private_msg, R.id.btn_attention,
+            R.id.btn_more,R.id.btn_login,R.id.tv_login,R.id.btn_mall})
     public void onViewClicked(View view) {
         Intent intent = new Intent();
         switch (view.getId()) {
@@ -465,6 +467,11 @@ public class MineFragment extends BaseFragment {
                     intent.setClass(context, LoginActivity.class);
                     startActivityForResult(intent, Code.LOGININ_REQUEST);
                 }
+                break;
+            case R.id.btn_mall:
+                intent.setClass(context, MallListActivity.class);
+                startActivity(intent);
+
                 break;
         }
     }
