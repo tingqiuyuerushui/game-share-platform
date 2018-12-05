@@ -58,7 +58,7 @@ public class MallListActivity extends Activity {
             public void onItemOnClick(View view, int position) {
                 ToastUtils.show("点击了" + position);
                 Intent intent = new Intent();
-                intent.setClass(context,ProductDetailsActivity.class);
+                intent.setClass(context,GoodsDetailActivity.class);
                 startActivity(intent);
             }
         });

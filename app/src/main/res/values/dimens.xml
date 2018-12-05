@@ -15,7 +15,7 @@
     <dimen name="top_margin_normal">8dp</dimen>
     <dimen name="bottom_margin_big">10dp</dimen>
     <dimen name="bottom_margin_normal">8dp</dimen>
-
+    <dimen name="gap" >100dp</dimen >
     <!-- cardview阴影-->
     <dimen name="card_elevation">50dp</dimen>
 </resources>

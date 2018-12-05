@@ -101,14 +101,14 @@
                             android:layout_height="10dp"
                             android:src="@mipmap/icon_like"/>
                         <TextView
-                            android:id="@+id/tv_like_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:textColor="@color/login_line_color"
-                            android:layout_marginLeft="5dp"
-                            android:textSize="12sp"
-                            android:text="45"/>
+                        android:id="@+id/tv_like_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textColor="@color/login_line_color"
+                        android:layout_marginLeft="5dp"
+                        android:textSize="12sp"
+                        android:text="45"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
