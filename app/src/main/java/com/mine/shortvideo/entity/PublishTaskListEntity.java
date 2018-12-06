@@ -247,6 +247,7 @@ public class PublishTaskListEntity {
         }
 
         public String getField_user_tags() {
+            field_user_tags = Utils.getUserLable(field_user_tags);
             return field_user_tags;
         }
 

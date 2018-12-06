@@ -122,7 +122,7 @@ public class CardFragment extends Fragment {
             } else {
                 lvLevel.setText("lv0");
             }
-            tvLable.setText("♀" + taskInfo.getField_user_age() + taskInfo.getField_user_tags());
+            tvLable.setText("♀" + taskInfo.getField_user_age() + " "+taskInfo.getField_user_tags());
             tvSignature.setText(taskInfo.getField_user_statement());
             tvStar.setText(taskInfo.getField_user_stars());
             tvScore.setText(taskInfo.getField_user_matches());

@@ -125,7 +125,6 @@ public class HomeFragment extends BaseFragment {
         @Override
         public void handleMessage(Message msg) {
             if(reference.get() != null) {
-//                dismissProgress();
                 switch (msg.what) {
                     case 1:
                         getPublishTaskList();

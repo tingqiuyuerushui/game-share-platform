@@ -51,7 +51,7 @@
                     android:layout_height="160dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
-                    android:scaleType="centerCrop"
+                    android:scaleType="centerInside"
                     android:src="@mipmap/img_user_example"/>
 
                 <LinearLayout

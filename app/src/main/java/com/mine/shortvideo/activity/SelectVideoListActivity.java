@@ -52,7 +52,7 @@ public class SelectVideoListActivity extends AppCompatActivity {
         btnBack = (Button) findViewById(R.id.btn_back);
         lastIntent = getIntent();
         requestReadExternalStorage();
-        initData();
+//        initData();
         mListView.setOnItemClickListener(new ItemClick());
     }
     private void requestReadExternalStorage(){

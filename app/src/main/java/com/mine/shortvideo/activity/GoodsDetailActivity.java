@@ -2,6 +2,7 @@ package com.mine.shortvideo.activity;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,21 +10,32 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.mine.shortvideo.R;
 import com.mine.shortvideo.fragment.CommentFragment;
 import com.mine.shortvideo.fragment.GoodsDetailFragment;
 import com.mine.shortvideo.fragment.ReleativeFragment;
+import com.mine.shortvideo.utils.ToastUtils;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * 作者：created by lun.zhang on 12/5/2018 14:19
  * 邮箱：zhanglun_study@163.com
  */
 public class GoodsDetailActivity extends AppCompatActivity {
-    private TabLayout tabs;
-    private ViewPager viewpager;
-    private Toolbar toolbar;
+    @BindView(R.id.tabs)
+    TabLayout tabs;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.appbar)
+    AppBarLayout appbar;
+    @BindView(R.id.viewpager)
+    ViewPager viewpager;
     private MinePagerAdapter minePagerAdapter;
 
     @Override
@@ -33,18 +45,23 @@ public class GoodsDetailActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
         setContentView(R.layout.activity_goods_detail);
-        tabs = (TabLayout) findViewById(R.id.tabs);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        viewpager = (ViewPager) findViewById(R.id.viewpager);
+        ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        initView();
+    }
 
-//        setSupportActionBar(toolbar);
-
+    private void initView() {
         toolbar.setNavigationIcon(R.mipmap.back_arrow);
-
         minePagerAdapter = new MinePagerAdapter(getSupportFragmentManager());
         viewpager.setOffscreenPageLimit(3);
         viewpager.setAdapter(minePagerAdapter);
         tabs.setupWithViewPager(viewpager);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
 
@@ -53,7 +70,7 @@ public class GoodsDetailActivity extends AppCompatActivity {
      */
     public class MinePagerAdapter extends FragmentPagerAdapter {
         Fragment[] fragments = new Fragment[]{GoodsDetailFragment.newInstance(), CommentFragment.newInstance(), ReleativeFragment.newInstance()};
-        String[] titles = new String[]{"商品", "详情", "评价"};
+        String[] titles = new String[]{"商品", "详情", "评论"};
 
         public MinePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -74,5 +91,21 @@ public class GoodsDetailActivity extends AppCompatActivity {
             return fragments.length;
         }
     }
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_share:
+                ToastUtils.show("分享");
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

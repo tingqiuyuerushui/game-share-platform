@@ -22,7 +22,7 @@ public class Const {
     //创建用户
     public static final String createUser = baseUrl + "/entity/user?_format=json";
     //保留
-    public static final String getStatus = baseUrl + "/node/12?_format=json";
+    public static final String getStatus = baseUrl + "/node/71?_format=json";
     //上传视频第一步
     public static final String uploadVideoUrl = baseUrl + "/file/upload/media/video/field_media_video_file?_format=json";
     //上传视频第二步

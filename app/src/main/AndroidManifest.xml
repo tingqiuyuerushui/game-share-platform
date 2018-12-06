@@ -144,6 +144,9 @@
         <activity android:name=".activity.ProductDetailsActivity"
                   android:screenOrientation="portrait"
                   android:theme="@style/AppTheme.Skid_1"/>
+        <activity android:name=".activity.OrderCommitActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/AppTheme.Skid_1"/>
         <activity android:name=".activity.GoodsDetailActivity"
                   android:screenOrientation="portrait"
                   android:theme="@style/AppThemeNoActionBar"/>

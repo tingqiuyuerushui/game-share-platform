@@ -182,7 +182,7 @@ public class MineFragment extends BaseFragment {
 
             @Override
             public void requestSuccess(String result) throws Exception {
-//                Timber.e(result);
+                Timber.e(result);
                 StringBuilder sb = new StringBuilder();
                 sb.append("{");
                 sb.append("\"data\":");
