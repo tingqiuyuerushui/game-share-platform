@@ -67,18 +67,18 @@ public class ProductDetailsActivity extends Activity implements ViewPager.OnPage
     }
 
     private void setupDetailImg() {
-        imgDetailsRecycleViewAdapter = new ProductDetailsRecycleViewAdapter(context);
-        rvProductDetails.setLayoutManager(new LinearLayoutManager(this));
-        rvProductDetails.setAdapter(imgDetailsRecycleViewAdapter);
+//        imgDetailsRecycleViewAdapter = new ProductDetailsRecycleViewAdapter(context);
+//        rvProductDetails.setLayoutManager(new LinearLayoutManager(this));
+//        rvProductDetails.setAdapter(imgDetailsRecycleViewAdapter);
 
 
     }
 
     private void setupViewPager() {
-        viewPager.setAdapter(new ProductDetailsPagerAdapter(this, imgs));
-        viewPager.setCurrentItem(mIndex);
-        tvCount.setText(mIndex + 1 + "/" + imgs.length);
-        viewPager.addOnPageChangeListener(this);
+//        viewPager.setAdapter(new ProductDetailsPagerAdapter(this, imgs));
+//        viewPager.setCurrentItem(mIndex);
+//        tvCount.setText(mIndex + 1 + "/" + imgs.length);
+//        viewPager.addOnPageChangeListener(this);
     }
 
     @Override

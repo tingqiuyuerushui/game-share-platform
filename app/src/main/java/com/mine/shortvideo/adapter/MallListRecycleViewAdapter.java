@@ -7,10 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.mine.shortvideo.R;
+import com.mine.shortvideo.constant.Const;
+import com.mine.shortvideo.entity.AllGoodsEntity;
 import com.mine.shortvideo.myInterface.MyItemOnClickListener;
 import com.mine.shortvideo.myInterface.MyItemOnLongClickListener;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 作者：created by lun.zhang on 11/22/2018 11:06
@@ -20,9 +28,11 @@ public class MallListRecycleViewAdapter extends RecyclerView.Adapter<MallListRec
     private Context context;
     private MyItemOnClickListener mMyItemOnClickListener;
     private MyItemOnLongClickListener myItemOnLongClickListener;
+    private List<AllGoodsEntity.DataBean> list;
 
-    public MallListRecycleViewAdapter(Context context) {
+    public MallListRecycleViewAdapter(Context context,List<AllGoodsEntity.DataBean> list) {
         this.context = context;
+        this.list = list;
     }
 
     @NonNull
@@ -35,21 +45,30 @@ public class MallListRecycleViewAdapter extends RecyclerView.Adapter<MallListRec
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.tvProductName.setText(list.get(position).getTitle());
+        Glide.with(context)
+                .load(Const.baseUrl + list.get(position).getField_c_goods_cover())
+                .into(holder.imgThumb);
+        holder.tvIntegral.setText(new BigDecimal(list.get(0).getField_c_goods_price()).stripTrailingZeros()+"积分");
 
     }
 
     @Override
     public int getItemCount() {
-        return 10;
+        return list.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener{
         ImageView imgThumb;
+        TextView tvProductName;
+        TextView tvIntegral;
         MyItemOnClickListener mListener;
         MyItemOnLongClickListener myLongClickListener;
         public ViewHolder(View itemView,MyItemOnClickListener myItemOnClickListener,MyItemOnLongClickListener myItemOnLongClickListener) {
             super(itemView);
             imgThumb = itemView.findViewById(R.id.img_product);
+            tvProductName = itemView.findViewById(R.id.tv_product_name);
+            tvIntegral = itemView.findViewById(R.id.tv_integral);
             this.mListener = myItemOnClickListener;
             this.myLongClickListener = myItemOnLongClickListener;
             itemView.setOnClickListener(this);

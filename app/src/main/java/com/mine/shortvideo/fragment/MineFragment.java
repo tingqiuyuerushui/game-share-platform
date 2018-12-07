@@ -178,6 +178,7 @@ public class MineFragment extends BaseFragment {
             @Override
             public void requestFailure(Request request, IOException e) {
                 Timber.e("获取数据失败");
+                Utils.sendHandleMsg(4,"数据获取失败",handler);
             }
 
             @Override
@@ -211,6 +212,7 @@ public class MineFragment extends BaseFragment {
             @Override
             public void requestFailure(Request request, IOException e) {
                 Timber.e("获取数据失败");
+                Utils.sendHandleMsg(4,"数据获取失败",handler);
             }
 
             @Override

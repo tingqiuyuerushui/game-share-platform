@@ -61,7 +61,7 @@ public class VideoFragment extends BaseFragment {
 
     @Override
     protected void init(Bundle savedInstanceState) {
-        context = getActivity();
+            context = getActivity();
         handler = new MyHandler(getActivity());
         dialogUtils = new CommonDialogUtils();
 

@@ -10,6 +10,6 @@
         android:id="@+id/img_product_details"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
-        android:scaleType="centerInside"
+        android:scaleType="centerCrop"
         android:src="@mipmap/demo_3"/>
 </LinearLayout>

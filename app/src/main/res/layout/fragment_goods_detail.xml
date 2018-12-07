@@ -36,37 +36,30 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center_vertical"
+                android:paddingBottom="10dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginLeft="30dp">
-
+                <TextView
+                    android:id="@+id/tv_product_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="8dp"
+                    android:text="雷蛇鼠标垫"/>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_horizontal">
-
+                    android:gravity="right"
+                    android:paddingRight="30dp">
                     <TextView
-                        android:id="@+id/tv_product_name"
+                        android:id="@+id/btn_exchange_now"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:layout_marginTop="8dp"
-                        android:text="雷蛇鼠标垫"/>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:paddingRight="30dp">
-                        <TextView
-                            android:id="@+id/btn_exchange_now"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/lv_tv_shape"
-                            android:padding="2dp"
-                            android:text="积分兑换"
-                            android:textColor="@android:color/white"
-                            />
-                    </LinearLayout>
+                        android:background="@drawable/lv_tv_shape"
+                        android:padding="2dp"
+                        android:text="积分兑换"
+                        android:textColor="@android:color/white"
+                        />
                 </LinearLayout>
 
                 <TextView

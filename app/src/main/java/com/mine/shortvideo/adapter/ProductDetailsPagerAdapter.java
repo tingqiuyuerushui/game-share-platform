@@ -7,7 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 import com.mine.shortvideo.R;
+import com.mine.shortvideo.constant.Const;
+
+import timber.log.Timber;
 
 /**
  * 作者：created by lun.zhang on 11/27/2018 15:59
@@ -15,16 +20,16 @@ import com.mine.shortvideo.R;
  */
 public class ProductDetailsPagerAdapter extends PagerAdapter {
     private Context context;
-    private int[] imgs;
+    private String[] homePicList;
 
-    public ProductDetailsPagerAdapter(Context context, int[] imgs) {
+    public ProductDetailsPagerAdapter(Context context,String[] homePicList) {
         this.context = context;
-        this.imgs = imgs;
+        this.homePicList = homePicList;
     }
 
     @Override
     public int getCount() {
-        return imgs != null ? imgs.length : 0;
+        return homePicList != null ? homePicList.length : 0;
     }
 
     @Override
@@ -37,7 +42,9 @@ public class ProductDetailsPagerAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_product_details_pager_adapter, null);
         ImageView itemImg = view.findViewById(R.id.item_product_detail_pager);
-        itemImg.setImageResource(imgs[position]);
+        String urlImg = Const.baseUrl + homePicList[position];
+        Timber.e("pager imgUrl ---->" + urlImg);
+        Glide.with(context).load(urlImg).into(itemImg);
         container.addView(view);
         view.requestLayout();
         return view;

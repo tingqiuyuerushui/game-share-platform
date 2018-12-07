@@ -53,6 +53,10 @@ public class Const {
     public static final String likeVideo = baseUrl + "/api/v1/flagrest?_format=json";
     //匹配任务
     public static final String changeTaskStatus = baseUrl + "/node/";
+    //获取商城列表
+    public static final String getAllGoods = baseUrl + "/api/v1/getallgoods?_format=json";
+    //获取商品详情
+    public static final String getGoodsDetails = baseUrl + "/api/v1/getgoods/";
 
 
     public final static int TASKSCORE = 1;

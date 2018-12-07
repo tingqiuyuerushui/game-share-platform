@@ -8,7 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.mine.shortvideo.R;
+import com.mine.shortvideo.constant.Const;
 
 /**
  * 作者：created by lun.zhang on 12/1/2018 16:15
@@ -16,9 +18,10 @@ import com.mine.shortvideo.R;
  */
 public class ProductDetailsRecycleViewAdapter extends RecyclerView.Adapter<ProductDetailsRecycleViewAdapter.ViewHolder> {
     private Context context;
-
-    public ProductDetailsRecycleViewAdapter(Context context) {
+    private String[] listDetailsPic;
+    public ProductDetailsRecycleViewAdapter(Context context,String[] listDetailsPic) {
         this.context = context;
+        this.listDetailsPic = listDetailsPic;
     }
 
     @NonNull
@@ -31,12 +34,13 @@ public class ProductDetailsRecycleViewAdapter extends RecyclerView.Adapter<Produ
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 //        holder.imgThumb.setImageResource();
+        Glide.with(context).load(Const.baseUrl + listDetailsPic[position]).into(holder.imgThumb);
 
     }
 
     @Override
     public int getItemCount() {
-        return 4;
+        return listDetailsPic != null ? listDetailsPic.length:0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

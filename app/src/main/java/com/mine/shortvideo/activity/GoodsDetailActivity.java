@@ -1,7 +1,11 @@
 package com.mine.shortvideo.activity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,15 +17,28 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.mine.shortvideo.R;
+import com.mine.shortvideo.constant.Const;
+import com.mine.shortvideo.entity.GoodsDetailsEntity;
 import com.mine.shortvideo.fragment.CommentFragment;
 import com.mine.shortvideo.fragment.GoodsDetailFragment;
 import com.mine.shortvideo.fragment.ReleativeFragment;
+import com.mine.shortvideo.utils.Code;
+import com.mine.shortvideo.utils.CommonDialogUtils;
+import com.mine.shortvideo.utils.OkHttpUtils;
 import com.mine.shortvideo.utils.ToastUtils;
+import com.mine.shortvideo.utils.Utils;
+
+import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.Request;
+import timber.log.Timber;
 
 /**
  * 作者：created by lun.zhang on 12/5/2018 14:19
@@ -36,8 +53,21 @@ public class GoodsDetailActivity extends AppCompatActivity {
     AppBarLayout appbar;
     @BindView(R.id.viewpager)
     ViewPager viewpager;
+    private Context context;
     private MinePagerAdapter minePagerAdapter;
+    private String goodsId = "1";
+    private CommonDialogUtils dialogUtils;
+    private MyHandler handler = null;
 
+    public GoodsDetailsEntity getGoodsDetailsEntity() {
+        return goodsDetailsEntity;
+    }
+
+    public void setGoodsDetailsEntity(GoodsDetailsEntity goodsDetailsEntity) {
+        this.goodsDetailsEntity = goodsDetailsEntity;
+    }
+
+    private GoodsDetailsEntity goodsDetailsEntity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,11 +77,21 @@ public class GoodsDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_goods_detail);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        context = this;
+        dialogUtils = new CommonDialogUtils();
+        handler = new MyHandler(this);
         initView();
+        initNetworkData();
     }
 
     private void initView() {
+        goodsId = getIntent().getStringExtra("GoodsId");
+        Timber.e("goodsId="+ goodsId);
         toolbar.setNavigationIcon(R.mipmap.back_arrow);
+
+    }
+
+    private void setUpPageAdapter() {
         minePagerAdapter = new MinePagerAdapter(getSupportFragmentManager());
         viewpager.setOffscreenPageLimit(3);
         viewpager.setAdapter(minePagerAdapter);
@@ -64,13 +104,69 @@ public class GoodsDetailActivity extends AppCompatActivity {
         });
     }
 
+    private void initNetworkData(){
+        dialogUtils.showProgress(context);
+        OkHttpUtils.getAsync(Const.getGoodsDetails + goodsId + "?_format=json", Code.QUESTNOAUTH, new OkHttpUtils.DataCallBack() {
+            @Override
+            public void requestFailure(Request request, IOException e) {
+                Utils.sendHandleMsg(2, "数据获取失败", handler);
+            }
 
+            @Override
+            public void requestSuccess(String result) throws Exception {
+                StringBuilder sb = new StringBuilder();
+                sb.append("{");
+                sb.append("\"data\":");
+                sb.append(result);
+                sb.append("}");
+                Gson gson = new Gson();
+                goodsDetailsEntity = gson.fromJson(sb.toString(),GoodsDetailsEntity.class);
+                setGoodsDetailsEntity(goodsDetailsEntity);
+                Utils.sendHandleMsg(1,goodsDetailsEntity,handler);
+            }
+        });
+
+
+    }
+    public class MyHandler extends Handler {
+        private WeakReference<Activity> reference;
+
+        public MyHandler(Activity activity) {
+            reference = new WeakReference<Activity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            if(reference.get() != null) {
+                dismissProgress();
+                switch (msg.what) {
+                    case 1:
+                        setUpPageAdapter();
+                        break;
+                    case 2:
+                        ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
+                        break;
+                    case 3:
+                        ToastUtils.show("",Toast.LENGTH_SHORT);
+                        break;
+                    case 4:
+                        ToastUtils.show(msg.obj.toString(),Toast.LENGTH_SHORT);
+                        break;
+                }
+            }
+        }
+    }
+    private void dismissProgress(){
+        if(dialogUtils!=null){
+            dialogUtils.dismissProgress();
+        }
+    }
     /**
      * ViewPager的PagerAdapter
      */
     public class MinePagerAdapter extends FragmentPagerAdapter {
         Fragment[] fragments = new Fragment[]{GoodsDetailFragment.newInstance(), CommentFragment.newInstance(), ReleativeFragment.newInstance()};
-        String[] titles = new String[]{"商品", "详情", "评论"};
+        String[] titles = new String[]{"商品", "详情", "相关"};
 
         public MinePagerAdapter(FragmentManager fm) {
             super(fm);

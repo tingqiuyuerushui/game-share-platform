@@ -13,4 +13,6 @@ public class Code {
     public static final int LOGININ_RESULT = 104; //登录功能结果码
     public static final int SETTING_REQUEST = 105; //设置功能请求码
     public static final int SETTING_RESULT = 106; //设置功能结果码
+    public static final boolean QUESTAUTH = true;
+    public static final boolean QUESTNOAUTH = false;
 }

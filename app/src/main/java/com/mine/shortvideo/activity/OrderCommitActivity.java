@@ -47,6 +47,9 @@ public class OrderCommitActivity extends Activity implements ViewPager.OnPageCha
     private int[] imgs = {R.mipmap.demo_3, R.mipmap.demo_2, R.mipmap.demo_1};
     private Context context;
     private int mIndex = 0;
+    private String[] listHomePic;
+    private String productName;
+    private String productValue;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +66,12 @@ public class OrderCommitActivity extends Activity implements ViewPager.OnPageCha
 
 
     private void setupViewPager() {
-        viewPager.setAdapter(new ProductDetailsPagerAdapter(context, imgs));
+        listHomePic = getIntent().getStringArrayExtra("homePic");
+        productName = getIntent().getStringExtra("productName");
+        productValue = getIntent().getStringExtra("productValue");
+        tvProductName.setText(productName);
+        tvIntegral.setText(productValue);
+        viewPager.setAdapter(new ProductDetailsPagerAdapter(context, listHomePic));
         viewPager.setCurrentItem(mIndex);
         tvCount.setText(mIndex + 1 + "/" + imgs.length);
         viewPager.addOnPageChangeListener(this);
