@@ -23,6 +23,8 @@ import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.entity.PublishTaskListEntity;
 import com.mine.shortvideo.entity.RequestJsonParameter;
 import com.mine.shortvideo.entity.UserInfoEntity;
+import com.mine.shortvideo.special.AndroidBug5497Workaround;
+import com.mine.shortvideo.special.SoftKeyboardFixerForFullscreen;
 import com.mine.shortvideo.utils.CommonDialogUtils;
 import com.mine.shortvideo.utils.MySharedData;
 import com.mine.shortvideo.utils.OkHttpUtils;
@@ -117,7 +119,9 @@ public class ConversationActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.conversation);
         context = this;
+//        AndroidBug5497Workaround.assistActivity(this);
         ButterKnife.bind(this);
+        SoftKeyboardFixerForFullscreen.assistActivity(this);
         title = getIntent().getData().getQueryParameter("title");
         Bundle bundle = getIntent().getExtras();
         userId = MySharedData.sharedata_ReadInt(context, "uid");
@@ -302,6 +306,7 @@ public class ConversationActivity extends FragmentActivity {
             dialogUtils.dismissProgress();
         }
     }
+
     @OnClick({R.id.img_left, R.id.tv_title, R.id.tv_right})
     public void onViewClicked(View view) {
         switch (view.getId()) {

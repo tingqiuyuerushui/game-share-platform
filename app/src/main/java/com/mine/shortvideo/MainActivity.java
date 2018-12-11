@@ -22,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +52,6 @@ import com.umeng.socialize.UMShareAPI;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -66,6 +66,7 @@ import cn.qqtheme.framework.picker.OptionPicker;
 import cn.qqtheme.framework.picker.TimePicker;
 import cn.qqtheme.framework.util.ConvertUtils;
 import cn.qqtheme.framework.widget.WheelView;
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
 import okhttp3.Request;
@@ -81,6 +82,8 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     ImageView btnSearch;
     @BindView(R.id.btn_pull)
     ImageView btnPull;
+    @BindView(R.id.img_portrait_live)
+    CircleImageView imgPortraitLive;
 
     private Context context;
     private static final String TAG = "MainActivity";
@@ -128,13 +131,13 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
     }
 
     private void initNetworkData() {
-        if(!userName.equals("")){
+        if (!userName.equals("")) {
             getUserInfo();
         }
         OkHttpUtils.getAsync(Const.getStatus, true, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
-                    Utils.sendHandleMsg(1,"数据获取失败",handler);
+                Utils.sendHandleMsg(1, "数据获取失败", handler);
             }
 
             @Override
@@ -186,7 +189,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                         case R.id.i_mine:
                             if (Utils.isUserLogin(context)) {
                                 tabAdapter.getRadioGroup(MINEFRAGMENT);
-                            }else{
+                            } else {
                                 Intent intent = new Intent();
                                 intent.setClass(context, LoginActivity.class);
                                 startActivity(intent);
@@ -259,6 +262,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                 .create();
         popupWindow1.showAtLocation(findViewById(android.R.id.content), Gravity.BOTTOM, 0, 0);
     }
+
     private void getUserInfo() {
         dialogUtils.showProgress(context);
         OkHttpUtils.getAsync(Const.getUserInfoUrl + userName + "?_format=json", QUESTAUTH, new OkHttpUtils.DataCallBack() {
@@ -280,37 +284,39 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                 UserInfoEntity userInfoEntity = gson.fromJson(sb.toString(), UserInfoEntity.class);
                 Timber.e(userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue() + "");
                 userId = userInfoEntity.getData().get(0).getUid().get(0).getValue();
-                MySharedData.sharedata_WriteInt(context,"uid",userId);
+                MySharedData.sharedata_WriteInt(context, "uid", userId);
                 nickName = userInfoEntity.getData().get(0).getField_user_nickname().get(0).getValue();
-                if (userInfoEntity.getData().get(0).getUser_picture().size() > 0){
+                if (userInfoEntity.getData().get(0).getUser_picture().size() > 0) {
                     userPortrait = userInfoEntity.getData().get(0).getUser_picture().get(0).getUrl();
                 }
-                getRongImToken(userId,nickName,userPortrait);
+                getRongImToken(userId, nickName, userPortrait);
                 Utils.sendHandleMsg(1, userInfoEntity, handler);
             }
         });
     }
-    private void getRongImToken(int userId,String nickName,String userPortrait){
-        OkHttpUtils.getAsync(Const.getRongToken + "?userId="+userId +
-                        "&name="+nickName +
+
+    private void getRongImToken(int userId, String nickName, String userPortrait) {
+        OkHttpUtils.getAsync(Const.getRongToken + "?userId=" + userId +
+                        "&name=" + nickName +
                         "&portraitUri=" + userPortrait
                 , QUESTNOAUTH, new OkHttpUtils.DataCallBack() {
-            @Override
-            public void requestFailure(Request request, IOException e) {
+                    @Override
+                    public void requestFailure(Request request, IOException e) {
 
-            }
+                    }
 
-            @Override
-            public void requestSuccess(String result) throws Exception {
-                Timber.e("RongIm token--->" + result);
-                JSONObject jsonObject = JSON.parseObject(result);
-                String token = jsonObject.getString("token");
-                Const.tokenRongIM = jsonObject.getString("token");
-                connectRongIM(Const.tokenRongIM);
+                    @Override
+                    public void requestSuccess(String result) throws Exception {
+                        Timber.e("RongIm token--->" + result);
+                        JSONObject jsonObject = JSON.parseObject(result);
+                        String token = jsonObject.getString("token");
+                        Const.tokenRongIM = token;
+                        connectRongIM(token);
 
-            }
-        });
+                    }
+                });
     }
+
     private void connectRongIM(String token) {
         if (getApplicationInfo().packageName.equals(MyApplication.getCurProcessName(getApplicationContext()))) {
             RongIM.connect(token, new RongIMClient.ConnectCallback() {
@@ -330,7 +336,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                  */
                 @Override
                 public void onSuccess(String userid) {
-                    Timber.e("userid" + userid);
+                    Timber.e("消息服务器连接成功 userid==" + userid);
                 }
 
                 /**
@@ -344,6 +350,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
             });
         }
     }
+
     public void onTimePicker(View view) {
         final TextView tvBookTime = view.findViewById(R.id.tv_booktime);
         TimePicker picker = new TimePicker(this, TimePicker.HOUR_24);
@@ -359,23 +366,24 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         picker.setOnTimePickListener(new TimePicker.OnTimePickListener() {
             @Override
             public void onTimePicked(String hour, String minute) {
-                tvBookTime.setText( hour + ":" + minute);
+                tvBookTime.setText(hour + ":" + minute);
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 date = simpleDateFormat.format(new Date());
             }
         });
         picker.show();
     }
+
     public void onOptionPicker(View view) {
         final TextView tvTargetClass = view.findViewById(R.id.tv_target_class);
         OptionPicker picker = null;
-        if(TASKTYPE == Const.TASKTUTORIAL){
+        if (TASKTYPE == Const.TASKTUTORIAL) {
             picker = new OptionPicker(this, new String[]{
-                    "1", "2", "3","4","5","6","7", "8","9", "10"
+                    "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"
             });
-        }else {
+        } else {
             picker = new OptionPicker(this, new String[]{
-                    "青铜","白银", "黄金","铂金", "砖石","星耀","王者"
+                    "青铜", "白银", "黄金", "铂金", "砖石", "星耀", "王者"
             });
         }
         picker.setCanceledOnTouchOutside(false);
@@ -388,10 +396,10 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
             @Override
             public void onOptionPicked(int index, String item) {
 //                ToastUtils.show("index=" + index + ", item=" + item);
-                if(TASKTYPE == Const.TASKTUTORIAL){
+                if (TASKTYPE == Const.TASKTUTORIAL) {
                     tvTargetClass.setText(item + "局");
                     teachnum = Integer.parseInt(item);
-                }else {
+                } else {
                     tvTargetClass.setText(item);
                     targetclass = item;
                 }
@@ -399,17 +407,18 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         });
         picker.show();
     }
+
     public void onNumPicker(View view, final int numType) {
         final TextView tvStarNum = view.findViewById(R.id.tv_star_num);
         final TextView tvGoldValue = view.findViewById(R.id.tv_gold_value);
         OptionPicker picker = null;
-        if(numType == Const.STARNUM){
+        if (numType == Const.STARNUM) {
             picker = new OptionPicker(this, new String[]{
-                    "1", "2", "3","4","5"
+                    "1", "2", "3", "4", "5"
             });
-        }else {
+        } else {
             picker = new OptionPicker(this, new String[]{
-                    "100","200","400","500", "1000"
+                    "100", "200", "400", "500", "1000"
             });
         }
         picker.setCanceledOnTouchOutside(false);
@@ -422,11 +431,11 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
             @Override
             public void onOptionPicked(int index, String item) {
 //                ToastUtils.show("index=" + index + ", item=" + item);
-                if (numType == Const.STARNUM){
+                if (numType == Const.STARNUM) {
                     tvStarNum.setText(item + "星");
                     starnum = Integer.parseInt(item);
                 }
-                if(numType == Const.GOLD){
+                if (numType == Const.GOLD) {
                     tvGoldValue.setText(item);
                     goldvalue = Integer.parseInt(item);
                 }
@@ -434,12 +443,13 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         });
         picker.show();
     }
-    private void publishTask(String jsonStr){
+
+    private void publishTask(String jsonStr) {
         dialogUtils.showProgress(context);
         OkHttpUtils.postJsonAsync(Const.publishTask, jsonStr, new OkHttpUtils.DataCallBack() {
             @Override
             public void requestFailure(Request request, IOException e) {
-                Utils.sendHandleMsg(1,"失败",handler);
+                Utils.sendHandleMsg(1, "失败", handler);
             }
 
             @Override
@@ -448,11 +458,12 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                 if (popupWindow1 != null) {
                     popupWindow1.dismiss();
                 }
-                Utils.sendHandleMsg(4,"发布成功",handler);
+                Utils.sendHandleMsg(4, "发布成功", handler);
             }
         });
 
     }
+
     public class MyHandler extends Handler {
         private WeakReference<Activity> reference;
 
@@ -462,7 +473,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
 
         @Override
         public void handleMessage(Message msg) {
-            if(reference.get() != null) {
+            if (reference.get() != null) {
                 dismissProgress();
                 switch (msg.what) {
                     case 1:
@@ -471,18 +482,19 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                         ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
                         break;
                     case 3:
-                        ToastUtils.show("",Toast.LENGTH_SHORT);
+                        ToastUtils.show("", Toast.LENGTH_SHORT);
                         break;
                     case 4:
-                        ToastUtils.show(msg.obj.toString(),Toast.LENGTH_SHORT);
+                        ToastUtils.show(msg.obj.toString(), Toast.LENGTH_SHORT);
 //                        LoadDataToView();
                         break;
                 }
             }
         }
     }
-    private void dismissProgress(){
-        if(dialogUtils!=null){
+
+    private void dismissProgress() {
+        if (dialogUtils != null) {
             dialogUtils.dismissProgress();
         }
     }
@@ -500,15 +512,25 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                 if (ISUPPULL) {
                     btnPull.setImageResource(R.mipmap.icon_down_pull);
                     ISUPPULL = false;
+                    imgPortraitLive.setVisibility(View.VISIBLE);
+                    setMarginTop(btnPull,10);
+                    setMarginTop(btnSearch,10);
                 } else {
                     btnPull.setImageResource(R.mipmap.icon_up_pull);
                     ISUPPULL = true;
+                    setMarginTop(btnPull,60);
+                    setMarginTop(btnSearch,60);
+                    imgPortraitLive.setVisibility(View.GONE);
                 }
                 break;
 
         }
     }
-
+    private void setMarginTop(ImageView imgView,int top){
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) imgView.getLayoutParams();
+        lp.topMargin = top;
+        imgView.setLayoutParams(lp);
+    }
     @Override
     public void getChildView(View view, int layoutResId) {
         switch (layoutResId) {
@@ -526,7 +548,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                 });
                 break;
             case R.layout.publish_task:
-                ViewHolder1 viewHolder1 = new ViewHolder1(view,TASKTYPE);
+                ViewHolder1 viewHolder1 = new ViewHolder1(view, TASKTYPE);
                 break;
         }
     }
@@ -589,6 +611,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         @BindView(R.id.tv_booktime)
         TextView tvBooktime;
         View view = null;
+
         @OnClick(R.id.btn_publish)
         public void publish() {
             ToastUtils.show("发布任务");
@@ -597,12 +620,12 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                     goldvalue,
                     starnum,
                     teachnum,
-                    "任务 by"+ MySharedData.sharedata_ReadString(context,"userId"),
+                    "任务 by" + MySharedData.sharedata_ReadString(context, "userId"),
                     tvGameLevel.getText().toString(),
                     tvGamePlatform.getText().toString(),
                     tvGamename.getText().toString(),
                     targetclass,
-                    date + "T"+tvBooktime.getText().toString()+":00+00:00",
+                    date + "T" + tvBooktime.getText().toString() + ":00+00:00",
                     TASKTYPESTR
             );
             publishTask(jsonStr);
@@ -615,7 +638,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         }
 
         @OnClick(R.id.tv_target_class)
-        public void targetClass(){
+        public void targetClass() {
             onOptionPicker(view);
         }
 
@@ -625,16 +648,18 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                 popupWindow1.dismiss();
             }
         }
+
         @OnClick(R.id.tv_star_num)
-        public void starNum(){
-            onNumPicker(view,Const.STARNUM);
-        }
-        @OnClick(R.id.tv_gold_value)
-        public void taskGold(){
-            onNumPicker(view,Const.GOLD);
+        public void starNum() {
+            onNumPicker(view, Const.STARNUM);
         }
 
-        ViewHolder1(View view,int tasktype) {
+        @OnClick(R.id.tv_gold_value)
+        public void taskGold() {
+            onNumPicker(view, Const.GOLD);
+        }
+
+        ViewHolder1(View view, int tasktype) {
             ButterKnife.bind(this, view);
             this.view = view;
             LinearLayout llGold = view.findViewById(R.id.ll_gold);
@@ -645,16 +670,16 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
             TextView tvStarNum = view.findViewById(R.id.tv_star_num);
             TextView tvGold = view.findViewById(R.id.tv_gold);
             TextView tvGoldValue = view.findViewById(R.id.tv_gold_value);
-            switch (tasktype){
+            switch (tasktype) {
                 case Const.TASKSCORE:
                     TASKTYPESTR = Const.TASKSCORESTR;
-                    if(llGold.getVisibility() == View.GONE){
+                    if (llGold.getVisibility() == View.GONE) {
                         llGold.setVisibility(View.VISIBLE);
                     }
-                    if(llTarget.getVisibility() == View.GONE){
+                    if (llTarget.getVisibility() == View.GONE) {
                         llTarget.setVisibility(View.VISIBLE);
                     }
-                    if(tvStar.getVisibility() == View.GONE || tvStarNum.getVisibility() == View.GONE){
+                    if (tvStar.getVisibility() == View.GONE || tvStarNum.getVisibility() == View.GONE) {
                         tvStar.setVisibility(View.VISIBLE);
                         tvStarNum.setVisibility(View.VISIBLE);
                     }
@@ -666,13 +691,13 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                     break;
                 case Const.TASKGOLD:
                     TASKTYPESTR = Const.TASKGOLDSTR;
-                    if(llGold.getVisibility() == View.GONE){
+                    if (llGold.getVisibility() == View.GONE) {
                         llGold.setVisibility(View.VISIBLE);
                     }
-                    if(llTarget.getVisibility() == View.GONE){
+                    if (llTarget.getVisibility() == View.GONE) {
                         llTarget.setVisibility(View.VISIBLE);
                     }
-                    if(tvStar.getVisibility() == View.GONE || tvStarNum.getVisibility() == View.GONE){
+                    if (tvStar.getVisibility() == View.GONE || tvStarNum.getVisibility() == View.GONE) {
                         tvStar.setVisibility(View.VISIBLE);
                         tvStarNum.setVisibility(View.VISIBLE);
                     }
@@ -683,10 +708,10 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                     break;
                 case Const.TASKTUTORIAL:
                     TASKTYPESTR = Const.TASKTUTORIALSTR;
-                    if(llGold.getVisibility() == View.GONE){
+                    if (llGold.getVisibility() == View.GONE) {
                         llGold.setVisibility(View.VISIBLE);
                     }
-                    if(llTarget.getVisibility() == View.GONE){
+                    if (llTarget.getVisibility() == View.GONE) {
                         llTarget.setVisibility(View.VISIBLE);
                     }
                     tvTarget.setText("教学局数");
@@ -697,22 +722,25 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                     break;
                 case Const.TASKFREE:
                     TASKTYPESTR = Const.TASKFREESTR;
-                    if(llGold.getVisibility() == View.VISIBLE){
+                    if (llGold.getVisibility() == View.VISIBLE) {
                         llGold.setVisibility(View.GONE);
                     }
-                    if(llTarget.getVisibility() == View.VISIBLE){
+                    if (llTarget.getVisibility() == View.VISIBLE) {
                         llTarget.setVisibility(View.GONE);
                     }
                     break;
             }
         }
     }
+
     private long exitTime = 0;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {

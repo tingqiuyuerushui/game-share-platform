@@ -83,8 +83,8 @@ public class GoodsDetailFragment extends Fragment implements PageBehavior.OnPage
     private String goodsId = "1";
     private CommonDialogUtils dialogUtils;
     private int homeSize;
-    private String[] listHomePic;
-    private String[] listDetailsPic;
+    private String[] listHomePic = {};
+    private String[] listDetailsPic = {};
     private String productName;
     private String productValue;
     private  GoodsDetailActivity parentActivity;
@@ -147,6 +147,7 @@ public class GoodsDetailFragment extends Fragment implements PageBehavior.OnPage
 
     }
     private void setupDetailImg(String[] listDetailsPic) {
+//        pageOne.setScrollAble(false);
         imgDetailsRecycleViewAdapter = new ProductDetailsRecycleViewAdapter(context,listDetailsPic);
         rvProductDetails.setLayoutManager(new LinearLayoutManager(context));
         rvProductDetails.setAdapter(imgDetailsRecycleViewAdapter);

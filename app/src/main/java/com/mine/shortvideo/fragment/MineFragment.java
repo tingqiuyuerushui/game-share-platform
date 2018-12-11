@@ -655,7 +655,7 @@ public class MineFragment extends BaseFragment {
                         } else if (listShowPicUrl != null && listShowPicUrl.size() > 0) {
                             PhotoPreview.builder()
                                     .setPhotos(listShowPicUrl)
-                                    .setCurrentItem(0)
+                                    .setCurrentItem(position)
                                     .start(getActivity());
                         }
                     }
