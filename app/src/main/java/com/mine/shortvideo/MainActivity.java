@@ -40,6 +40,7 @@ import com.mine.shortvideo.entity.RequestJsonParameter;
 import com.mine.shortvideo.entity.UserInfoEntity;
 import com.mine.shortvideo.fragment.FragmentTabAdapter;
 import com.mine.shortvideo.fragment.HomeFragment;
+import com.mine.shortvideo.fragment.HomeV2Fragment;
 import com.mine.shortvideo.fragment.MessageFragment;
 import com.mine.shortvideo.fragment.MineFragment;
 import com.mine.shortvideo.fragment.VideoFragment;
@@ -200,11 +201,11 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
                 return false;
             }
         });
-        FragmentTagList.add("HomeFragment");
+        FragmentTagList.add("HomeV2Fragment");
         FragmentTagList.add("VideoFragment");
         FragmentTagList.add("MessageFragment");
         FragmentTagList.add("MineFragment");
-        fragments.add(new HomeFragment());
+        fragments.add(new HomeV2Fragment());
         fragments.add(new VideoFragment());
         fragments.add(new MessageFragment());
         fragments.add(new MineFragment());

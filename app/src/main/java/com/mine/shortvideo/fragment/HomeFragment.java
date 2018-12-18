@@ -17,6 +17,7 @@ import com.mine.shortvideo.application.MyApplication;
 import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.customview.OrientedViewPager;
 import com.mine.shortvideo.entity.PublishTaskListEntity;
+import com.mine.shortvideo.transformer.DepthPageTransformer;
 import com.mine.shortvideo.transformer.VerticalStackTransformer;
 import com.mine.shortvideo.utils.MySharedData;
 import com.mine.shortvideo.utils.OkHttpUtils;
@@ -156,7 +157,8 @@ public class HomeFragment extends BaseFragment {
             //设置limit
             viewPager.setOffscreenPageLimit(3);
             //设置transformer
-            viewPager.setPageTransformer(true, new VerticalStackTransformer(getActivity()));
+            viewPager.setPageTransformer(true, new DepthPageTransformer(getActivity()));
+//            viewPager.setPageTransformer(true, new VerticalStackTransformer(getActivity()));
             viewPager.setAdapter(mContentFragmentAdapter);
             viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 int limitValue = 0;
