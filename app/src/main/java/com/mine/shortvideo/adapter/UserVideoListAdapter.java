@@ -22,8 +22,10 @@ public class UserVideoListAdapter extends RecyclerView.Adapter<UserVideoListAdap
     private MyItemOnLongClickListener myItemOnLongClickListener;
     private int[] imgs = {R.mipmap.img_list_example_thumb_1,R.mipmap.img_list_example_thumb_0,R.mipmap.timg_0,R.mipmap.timg_1};
     private List<MyVideoEntity.DataBean> myVideoList;
-    public UserVideoListAdapter(Context context,List<MyVideoEntity.DataBean> myVideoList) {
+    private boolean isViewUserInfo = false;
+    public UserVideoListAdapter(Context context,boolean isViewUserInfo,List<MyVideoEntity.DataBean> myVideoList) {
         this.context = context;
+        this.isViewUserInfo = isViewUserInfo;
         this.myVideoList = myVideoList;
     }
 
@@ -36,7 +38,7 @@ public class UserVideoListAdapter extends RecyclerView.Adapter<UserVideoListAdap
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if(position == 0){
+        if(position == 0 && !isViewUserInfo){
             holder.imgAdd.setVisibility(View.VISIBLE);
             holder.imgUserVideoListItemThumb.setVisibility(View.GONE);
             holder.imgAdd.setImageResource(R.mipmap.icon_add);
@@ -50,7 +52,7 @@ public class UserVideoListAdapter extends RecyclerView.Adapter<UserVideoListAdap
     @Override
 
     public int getItemCount() {
-        return myVideoList.size() + 1;
+        return isViewUserInfo ? myVideoList.size() : myVideoList.size() + 1;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener{

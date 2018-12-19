@@ -12,13 +12,14 @@ public class CarouselZoomPostLayoutListener implements CarouselLayoutManager.Pos
 
     @Override
     public ItemTransformation transformChild(@NonNull final View child, final float itemPositionToCenterDiff, final int orientation) {
-        float scale = (float) (2 * (2 * -StrictMath.atan(Math.abs(itemPositionToCenterDiff) + 1.0) / Math.PI + 1));
-
+//        float scale = (float) (2 * (2 * -StrictMath.atan(Math.abs(itemPositionToCenterDiff) + 1.0) / Math.PI + 1));
+        //增大了scale的值
+        float scale = 2 - (float) (4*(StrictMath.atan(1/(Math.abs(itemPositionToCenterDiff)+1)+Math.abs(itemPositionToCenterDiff)))/Math.PI);
         // because scaling will make view smaller in its center, then we should move this item to the top or bottom to make it visible
         final float translateY;
         final float translateX;
         if (CarouselLayoutManager.VERTICAL == orientation) {
-            final float translateYGeneral = child.getMeasuredHeight() * (1 - scale) / 2f;
+            final float translateYGeneral = child.getMeasuredHeight() * (1 - scale) / 1.8f;
             translateY = Math.signum(itemPositionToCenterDiff) * translateYGeneral;
             translateX = 0;
         } else {
@@ -26,13 +27,6 @@ public class CarouselZoomPostLayoutListener implements CarouselLayoutManager.Pos
             translateX = Math.signum(itemPositionToCenterDiff) * translateXGeneral;
             translateY = 0;
         }
-//        if(Math.abs(itemPositionToCenterDiff) == 1.0f){
-//            scale = 0.8f;
-//        }else if(Math.abs(itemPositionToCenterDiff) == 2.0f){
-//            scale = 0.6f;
-//        }else if(Math.abs(itemPositionToCenterDiff) == 3.0f){
-//            scale = 0.4f;
-//        }
         return new ItemTransformation(scale, scale, translateX, translateY);
     }
 }

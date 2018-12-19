@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -70,10 +71,11 @@ import cn.qqtheme.framework.widget.WheelView;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
+import io.rong.imlib.model.UserInfo;
 import okhttp3.Request;
 import timber.log.Timber;
 
-public class MainActivity extends FragmentActivity implements CommonPopupWindow.ViewInterface {
+public class MainActivity extends FragmentActivity implements CommonPopupWindow.ViewInterface, RongIM.UserInfoProvider {
 
     @BindView(R.id.bnve_center_icon_only)
     BottomNavigationViewEx bnveCenterIconOnly;
@@ -126,6 +128,7 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
         ButterKnife.bind(this);
         initView();
         initNetworkData();
+        RongIM.setUserInfoProvider(this, false);
 
 //        if(RongIM.getInstance() != null)
 //            RongIM.getInstance().startConversationList(context);
@@ -463,6 +466,12 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
             }
         });
 
+    }
+
+    @Override
+    public UserInfo getUserInfo(String s) {
+        Uri uri = Uri.parse(userPortrait);
+        return new UserInfo(userId+"", nickName, uri);
     }
 
     public class MyHandler extends Handler {

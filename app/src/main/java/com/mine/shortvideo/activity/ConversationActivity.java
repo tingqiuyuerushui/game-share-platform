@@ -142,6 +142,7 @@ public class ConversationActivity extends FragmentActivity {
         tvRight.setText("匹配");
         llTop.setVisibility(View.VISIBLE);
         llBothPortrait.setVisibility(View.VISIBLE);
+        collapse();
         if (taskInfo != null) {
 //            Timber.e("头像URL---->"+Const.baseUrl+taskInfo.getUser_picture());
             Glide.with(ConversationActivity.this)

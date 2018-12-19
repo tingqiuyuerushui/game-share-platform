@@ -23,8 +23,10 @@ public class UserGameThumbRecyclerViewAdapter extends RecyclerView.Adapter<UserG
     private int[] imgs = {R.mipmap.icon_add};
     private List<UserInfoEntity.DataBean.FieldPersonalpicshowBean> personalpicshowBeanList;
     private int listSize = 0;
-    public UserGameThumbRecyclerViewAdapter(Context context,List<UserInfoEntity.DataBean.FieldPersonalpicshowBean> personalpicshowBeanList) {
+    private boolean isViewUserInfo = false;
+    public UserGameThumbRecyclerViewAdapter(Context context,boolean isViewUserInfo,List<UserInfoEntity.DataBean.FieldPersonalpicshowBean> personalpicshowBeanList) {
         this.context = context;
+        this.isViewUserInfo = isViewUserInfo;
         this.personalpicshowBeanList = personalpicshowBeanList;
     }
 
@@ -38,7 +40,7 @@ public class UserGameThumbRecyclerViewAdapter extends RecyclerView.Adapter<UserG
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         listSize = personalpicshowBeanList.size();
-        if(position+1 >  listSize && listSize < 4){
+        if(position+1 >  listSize && listSize < 4 && !isViewUserInfo){
             holder.imgThumb.setImageResource(imgs[0]);
         }else {
             Glide.with(context)
@@ -49,7 +51,11 @@ public class UserGameThumbRecyclerViewAdapter extends RecyclerView.Adapter<UserG
 
     @Override
     public int getItemCount() {
-        return (personalpicshowBeanList.size() >= 4) ? personalpicshowBeanList.size() : (personalpicshowBeanList.size()+1);
+        if (isViewUserInfo){
+            return personalpicshowBeanList.size();
+        }else {
+            return (personalpicshowBeanList.size() >= 4) ? personalpicshowBeanList.size() : (personalpicshowBeanList.size()+1);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener{

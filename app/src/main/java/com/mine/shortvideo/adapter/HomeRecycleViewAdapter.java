@@ -1,6 +1,8 @@
 package com.mine.shortvideo.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -15,14 +17,19 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mine.shortvideo.R;
+import com.mine.shortvideo.activity.LoginActivity;
+import com.mine.shortvideo.activity.UserInfoActivity;
 import com.mine.shortvideo.constant.Const;
 import com.mine.shortvideo.entity.PublishTaskListEntity;
+import com.mine.shortvideo.utils.Utils;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.rong.imkit.RongIM;
+import io.rong.imlib.model.Conversation;
 
 /**
  * 作者：created by lun.zhang on 12/18/2018 09:29
@@ -48,7 +55,7 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         taskInfo = taskListInfo.get(position);
         uid = taskInfo.getUid();
         Glide.with(context)
@@ -78,7 +85,7 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
         switch (taskType){
             case Const.TASKFREESTR:
                 if(holder.llTarget.getVisibility() == View.VISIBLE){
-                    holder.llTarget.setVisibility(View.INVISIBLE);
+                    holder.llTarget.setVisibility(View.GONE);
                 }
                 break;
             case Const.TASKSCORESTR:
@@ -103,6 +110,30 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
                 holder.tvReward.setText("奖励"+taskInfo.getField_remuneration()+"佩币");
                 break;
         }
+        holder.llUserInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.putExtra("userName",taskListInfo.get(position).getField_user_mobile());
+                intent.putExtra("nickName",taskListInfo.get(position).getField_user_nickname());
+                intent.setClass(context, UserInfoActivity.class);
+                context.startActivity(intent);
+            }
+        });
+        holder.tvMatch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Utils.isUserLogin(context)) {
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("task_info", taskListInfo.get(position));
+                    RongIM.getInstance().startConversation(context, Conversation.ConversationType.PRIVATE, uid, nickName, bundle);
+                } else {
+                    Intent intent = new Intent();
+                    intent.setClass(context, LoginActivity.class);
+                    context.startActivity(intent);
+                }
+            }
+        });
 
     }
 
@@ -150,6 +181,8 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
         ImageView imgShare;
         @BindView(R.id.ll_cardview)
         LinearLayout llCardview;
+        @BindView(R.id.ll_user_info)
+        LinearLayout llUserInfo;
         @BindView(R.id.card_view)
         CardView cardView;
 

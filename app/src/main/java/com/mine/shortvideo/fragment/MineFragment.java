@@ -524,7 +524,7 @@ public class MineFragment extends BaseFragment {
         }
         myVideoList.addAll(myVideoEntity.getData());
         if (userVideoListAdapter == null && layoutManager2 == null) {
-            userVideoListAdapter = new UserVideoListAdapter(context, myVideoList);
+            userVideoListAdapter = new UserVideoListAdapter(context,false, myVideoList);
             layoutManager2 = new LinearLayoutManager(context);
             layoutManager2.setOrientation(LinearLayoutManager.HORIZONTAL);
             videoRecycler.setLayoutManager(layoutManager2);
@@ -636,7 +636,7 @@ public class MineFragment extends BaseFragment {
 
                     listShowPicUrl.add(personalpicshowBeanList.get(i).getUrl());
                 }
-                gameThumbRecyclerViewAdapter = new UserGameThumbRecyclerViewAdapter(context, personalpicshowBeanList);
+                gameThumbRecyclerViewAdapter = new UserGameThumbRecyclerViewAdapter(context,false, personalpicshowBeanList);
                 layoutManager1 = new LinearLayoutManager(context);
                 layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
                 pictureRecycler.setLayoutManager(layoutManager1);
