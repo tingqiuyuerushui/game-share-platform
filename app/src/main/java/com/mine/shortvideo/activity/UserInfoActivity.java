@@ -285,16 +285,11 @@ public class UserInfoActivity extends Activity {
             userVideoListAdapter.setItemOnClickListener(new MyItemOnClickListener() {
                 @Override
                 public void onItemOnClick(View view, int postion) {
-                    if (postion == 0 || myVideoList.size() == 0) {
-                        Intent intent = new Intent(context, SelectVideoListActivity.class);
-                        startActivityForResult(intent, Code.LOCAL_VIDEO_REQUEST);
-                    } else {
                         Intent intent = new Intent();
                         intent.setClass(context, MinePlayVideoActivity.class);
                         intent.putExtra("VideoIndex", postion);
                         intent.putExtra("myVideoEntity", myVideoEntity);
                         startActivity(intent);
-                    }
                 }
             });
         } else {
