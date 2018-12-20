@@ -578,9 +578,9 @@ public class MineFragment extends BaseFragment {
         }
         tvDistance.setText("未知");
         if (userInfoEntity.getData().get(0).getField_user_level().size() > 0 && !TextUtils.isEmpty(userInfoEntity.getData().get(0).getField_user_level().get(0).getValue())) {
-            tvLv.setText("lv" + new BigDecimal(userInfoEntity.getData().get(0).getField_user_level().get(0).getValue()).stripTrailingZeros());
+            tvLv.setText("LV" + new BigDecimal(userInfoEntity.getData().get(0).getField_user_level().get(0).getValue()).stripTrailingZeros());
         } else {
-            tvLv.setText("lv0");
+            tvLv.setText("LV0");
         }
 //        tvLable.setText("♀" +userInfoEntity.getData().get(0).getField_user_age().get(0).getValue() +
 //                userInfoEntity.getData().get(0).getField_user_tags().get(0));
