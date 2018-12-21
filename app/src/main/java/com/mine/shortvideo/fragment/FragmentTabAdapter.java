@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
+import com.mine.shortvideo.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,11 +72,13 @@ public class FragmentTabAdapter {
     @SuppressLint("ResourceType")
     private FragmentTransaction obtainFragmentTransaction(int index){
         FragmentTransaction ft = fragmentActivity.getSupportFragmentManager().beginTransaction();
-//        // 设置切换动画
+//        ft.setCustomAnimations(
+//                R.anim.fragment_slide_right_enter, R.anim.fragment_slide_left_exit,
+//                R.anim.fragment_slide_left_enter, R.anim.fragment_slide_right_exit);
 //        if(index > currentTab){
-//            ft.setCustomAnimations(R.anim.slide_left_in, R.anim.slide_left_out);
+//            ft.setCustomAnimations(R.anim.fragment_slide_left_enter, R.anim.fragment_slide_left_exit);
 //        }else{
-//            ft.setCustomAnimations(R.anim.slide_right_in, R.anim.slide_right_out);
+//            ft.setCustomAnimations(R.anim.fragment_slide_right_enter, R.anim.fragment_slide_right_exit);
 //        }
         return ft;
     }

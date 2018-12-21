@@ -467,7 +467,8 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
 
             view.setScaleX(transformation.mScaleX);
             view.setScaleY(transformation.mScaleY);
-            view.setAlpha(transformation.mScaleX);
+            //设置透明度
+            view.setAlpha((float) Math.pow(transformation.mScaleX,3.0));
         }
     }
 
@@ -626,7 +627,8 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
         } else {
             // this item is close from center line. we should slow it down and don't make it speed up very quick.
             // so square function in range of [0, (1/maxVisible)^(1/3)] is quite good in it;
-            return StrictMath.pow(absIemPositionDiff, 2.0f);
+//            return StrictMath.pow(absIemPositionDiff, 2.0f);
+            return StrictMath.pow(absIemPositionDiff, 1.0f);
         }
     }
 

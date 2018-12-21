@@ -151,7 +151,7 @@ public class HomeV2Fragment extends BaseFragment {
             listVertical.setAdapter(homeRecycleViewAdapter);
             CarouselLayoutManager carouselLayoutManager = new CarouselLayoutManager(CarouselLayoutManager.VERTICAL, false);
             carouselLayoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
-            carouselLayoutManager.setMaxVisibleItems(2);
+            carouselLayoutManager.setMaxVisibleItems(1);
             listVertical.setLayoutManager(carouselLayoutManager);
             listVertical.setHasFixedSize(true);
             listVertical.addOnScrollListener(new CenterScrollListener());
