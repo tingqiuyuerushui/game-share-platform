@@ -38,6 +38,13 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:visibility="visible">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/icon_voice"
+                android:layout_marginLeft="15dp"
+                android:layout_marginBottom="-20dp"
+                android:visibility="gone"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
@@ -244,8 +251,7 @@
                 android:id="@+id/picture_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
-                android:layout_marginTop="15dp"
-                android:background="@color/colorMain"/>
+                android:layout_marginTop="15dp" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
@@ -362,8 +368,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/video_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:background="@color/colorMain"/>
+                android:layout_height="120dp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

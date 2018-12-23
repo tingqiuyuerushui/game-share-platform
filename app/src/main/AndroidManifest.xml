@@ -18,7 +18,7 @@
         android:roundIcon="@mipmap/logo_1"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
+        <activity android:name=".activity.AppStartActivity"
                   android:theme="@style/AppTheme.Skid_1"
                   android:screenOrientation="portrait"
                   >
@@ -27,6 +27,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".MainActivity"
+                  android:theme="@style/AppTheme.Skid_1"
+                  android:screenOrientation="portrait"/>
         <activity android:name=".activity.UserActivity"
                   android:theme="@style/AppTheme.Skid_1"
                   android:screenOrientation="portrait"/>

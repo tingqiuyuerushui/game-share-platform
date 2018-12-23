@@ -11,7 +11,7 @@
     <!--must set the item title to empty-->
     <item
         android:id="@+id/menu_add"
-        android:icon="@drawable/ic_add_48dp"
+        android:icon="@drawable/ic_icon_logo"
         android:title="" />
     <item
         android:id="@+id/i_message"

@@ -468,7 +468,7 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager implements
             view.setScaleX(transformation.mScaleX);
             view.setScaleY(transformation.mScaleY);
             //设置透明度
-            view.setAlpha((float) Math.pow(transformation.mScaleX,3.0));
+            view.setAlpha((float) Math.pow(transformation.mScaleX,4.0));
         }
     }
 
