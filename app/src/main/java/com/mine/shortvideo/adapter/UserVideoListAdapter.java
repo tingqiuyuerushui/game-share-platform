@@ -20,7 +20,7 @@ public class UserVideoListAdapter extends RecyclerView.Adapter<UserVideoListAdap
     private Context context;
     private MyItemOnClickListener mMyItemOnClickListener;
     private MyItemOnLongClickListener myItemOnLongClickListener;
-    private int[] imgs = {R.mipmap.img_list_example_thumb_1,R.mipmap.img_list_example_thumb_0,R.mipmap.timg_0,R.mipmap.timg_1};
+    private int[] imgs = {R.mipmap.img_list_example_thumb_2,R.mipmap.img_list_example_thumb_2,R.mipmap.timg_0,R.mipmap.timg_1};
     private List<MyVideoEntity.DataBean> myVideoList;
     private boolean isViewUserInfo = false;
     public UserVideoListAdapter(Context context,boolean isViewUserInfo,List<MyVideoEntity.DataBean> myVideoList) {

@@ -38,6 +38,7 @@ public class AppStartActivity extends Activity {
                 Intent intent = new Intent();
                 intent.setClass(AppStartActivity.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             }
         },2000);//延时1s执行
     }

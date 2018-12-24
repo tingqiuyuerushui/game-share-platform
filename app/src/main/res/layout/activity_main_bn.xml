@@ -12,7 +12,7 @@
         android:id="@+id/fragment_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <com.mine.shortvideo.customview.BottomNavigationViewEx
+    <com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
         android:id="@+id/bnve_center_icon_only"
         style="@style/bnve_primary_bg"
         android:layout_alignParentBottom="true"

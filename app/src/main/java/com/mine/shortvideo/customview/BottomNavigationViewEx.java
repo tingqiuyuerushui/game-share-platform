@@ -177,9 +177,9 @@ public class BottomNavigationViewEx extends BottomNavigationView {
         // 3. get mIcon in mButtons
         for (BottomNavigationItemView button : mButtons) {
             ImageView mIcon = getField(button.getClass(), button, "mIcon");
-            if(mButtons[2] == button){
-                continue;
-            }
+//            if(mButtons[2] == button){
+//                continue;
+//            }
             // 4. set mIcon visibility gone
             mIcon.setVisibility(visibility ? View.VISIBLE : View.INVISIBLE);
         }

@@ -31,12 +31,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
+import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.mine.shortvideo.PopupWindow.CommonPopupWindow;
 import com.mine.shortvideo.activity.LoginActivity;
 import com.mine.shortvideo.activity.SearchActivity;
 import com.mine.shortvideo.application.MyApplication;
 import com.mine.shortvideo.constant.Const;
-import com.mine.shortvideo.customview.BottomNavigationViewEx;
 import com.mine.shortvideo.entity.RequestJsonParameter;
 import com.mine.shortvideo.entity.UserInfoEntity;
 import com.mine.shortvideo.fragment.FragmentTabAdapter;
@@ -160,12 +160,13 @@ public class MainActivity extends FragmentActivity implements CommonPopupWindow.
 //        connectRongIM(Const.tokenRongIM);
         disableAllAnimation(bnveCenterIconOnly);
         int centerPosition = 2;
-        bnveCenterIconOnly.setIconVisibility(false);
+//        bnveCenterIconOnly.setIconVisibility(true);
         bnveCenterIconOnly.setIconSizeAt(centerPosition, 40, 40);
         bnveCenterIconOnly.setTextSize(16);
         bnveCenterIconOnly.setIconTintList(centerPosition,
                 getResources().getColorStateList(R.color.selector_item_gray_color));
-        bnveCenterIconOnly.setIconMarginTop(centerPosition, BottomNavigationViewEx.dp2px(this, 4));
+        bnveCenterIconOnly.setItemBackground(centerPosition,R.color.transparent);
+        bnveCenterIconOnly.setIconMarginTop(centerPosition, BottomNavigationViewEx.dp2px(this, 20));
         // you could set a listener for bnve. and return false when click the center item so that it won't be checked.
         bnveCenterIconOnly.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

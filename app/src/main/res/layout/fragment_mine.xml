@@ -38,13 +38,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:visibility="visible">
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@mipmap/icon_voice"
-                android:layout_marginLeft="15dp"
-                android:layout_marginBottom="-20dp"
-                android:visibility="gone"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
@@ -212,7 +206,6 @@
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -336,7 +329,7 @@
                 <View
                     android:layout_width="0.5dp"
                     android:layout_height="100dp"
-                    android:background="@android:color/white"/>
+                    android:background="@color/login_line_color"/>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -355,7 +348,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="0.5dp"
-                        android:background="@android:color/white"/>
+                        android:background="@color/login_line_color"/>
 
                     <ImageView
                         android:id="@+id/btn_delete"
